@@ -1,0 +1,101 @@
+# List of suppressions
+# Timeouts
+Http/MediaTest.*
+File/MediaTest.*
+ExternalClearKey/EncryptedMediaTest.*
+ClearKey/EncryptedMediaTest.*
+WorkerTest.*
+MediaTest.*
+WebGLConformanceTest.*
+MessagePortTest.Tests
+EncryptedMediaTest.InvalidKeySystem
+CrossPlatformAccessibilityBrowserTest.*
+DatabaseTest.*
+
+# Failures
+RenderViewHostTest.BaseURLParam
+OffTheRecordClipboardTest.ClearContentData
+GpuPixelBrowserTest.*
+FileSystemBrowserTestWithLowQuota.QuotaTest
+ChildProcessSecurityPolicyInProcessBrowserTest.NoLeak
+AudioLayoutTest.AudioDataUrl
+AudioLayoutTest.AudioConstructor
+AudioLayoutTest.AudioConstructorPreload
+AudioLayoutTest.AudioConstructorSrc
+AudioLayoutTest.AudioOnlyVideoIntrinsicSize
+MediaLayoutTest.VideoNoAutoplayTest
+MediaLayoutTest.VideoAutoplayTest
+MediaLayoutTest.VideoLoopTest
+WorkerLayoutTest.SharedWorkerFastConstructor
+WorkerLayoutTest.SharedWorkerFastContextGC
+WorkerLayoutTest.SharedWorkerFastException
+WorkerLayoutTest.SharedWorkerFastGC
+WorkerLayoutTest.SharedWorkerFastInIframe
+WorkerLayoutTest.SharedWorkerFastLocation
+WorkerLayoutTest.SharedWorkerFastName
+WorkerLayoutTest.SharedWorkerFastNavigator
+WorkerLayoutTest.SharedWorkerFastReplaceGlobalConstructor
+WorkerLayoutTest.SharedWorkerFastReplaceSelf
+WorkerLayoutTest.SharedWorkerFastScriptError
+WorkerLayoutTest.SharedWorkerFastShared
+WorkerLayoutTest.SharedWorkerFastSimple
+WorkerXHRHttpLayoutTest.Tests
+
+# Needs to start the test server before
+# BrowserTestBase::SetUpCommandLine is called, but on Android
+# the test server needs to be started in SetUpOnMainThread().
+SecurityExploitBrowserTest.SetWebUIProperty
+
+# Plugins are not supported.
+BrowserPluginHostTest.*
+BrowserPluginTest.*
+PluginTest.*
+
+# These used to be test_shell_tests and were ported to content_browsertests in
+# https://codereview.chromium.org/14304004/. Investigate more.
+DomSerializerTests.*
+
+# http://crbug.com/187500
+RenderViewImplTest.*
+RendererAccessibilityTest.EditableTextModeFocusNotifications
+RendererAccessibilityTest.SendFullAccessibilityTreeOnReload
+RendererAccessibilityTest.HideAccessibilityObject
+RendererAccessibilityTest.ShowAccessibilityObject
+RenderWidgetTest.OnMsgPaintAtSize
+PasswordFormConversionUtilsTest.ValidWebFormElementToPasswordForm
+PasswordFormConversionUtilsTest.InvalidWebFormElementToPasswordForm
+
+# Multiple test servers support: http://crbug/187570
+RenderViewHostManagerTest.*
+
+# http://crbug.com/215894
+DownloadContentTest.ResumeInterruptedDownload
+DownloadContentTest.ResumeInterruptedDownloadNoRange
+DownloadContentTest.ResumeInterruptedDownloadNoVerifiers
+DownloadContentTest.ResumeInterruptedDownloadBadPrecondition
+DownloadContentTest.ResumeWithDeletedFile
+
+# http://crbug.com/181069
+WebrtcBrowserTest.CanSetupVideoCall
+WebrtcBrowserTest.CanSetupAudioAndVideoCall
+WebrtcBrowserTest.CanSetupAudioAndVideoCallWithoutMsidAndBundle
+WebrtcBrowserTest.CallWithDataOnly
+WebrtcBrowserTest.CallWithDataAndMedia
+WebrtcBrowserTest.CanMakeEmptyCallThenAddStreamsAndRenegotiate
+WebrtcBrowserTest.CallWithNewVideoMediaStream
+WebrtcBrowserTest.GetAudioAndVideoStreamAndClone
+WebrtcBrowserTest.GetAudioAndVideoStreamAndStop
+WebrtcBrowserTest.GetVideoStreamAndStop
+WebRTCInternalsBrowserTest.withRealPeerConnectionCall
+
+# http://crbug.com/224134
+RenderWidgetHostBrowserTest.GetSnapshotFromRendererTest
+
+# http://crbug.com/233118
+FileSystemLayoutTest.*
+IndexedDBBrowserTest.*
+IndexedDBLayoutTest.*
+IndexedDBBrowserTestWithVersion0Schema.MigrationTest
+IndexedDBBrowserTestWithVersion123456Schema.DestroyTest
+IndexedDBBrowserTestWithVersion987654SSVData.DestroyTest
+BlobLayoutTest.XhrResponseBlob

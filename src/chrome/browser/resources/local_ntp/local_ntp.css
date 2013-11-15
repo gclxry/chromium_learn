@@ -1,0 +1,369 @@
+/* Copyright 2013 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
+body {
+  background-attachment: fixed !important;
+  background-color: white;
+  cursor: default;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+body.hide-ntp {
+  overflow: hidden;
+}
+
+#ntp-contents {
+  text-align: -webkit-center;
+}
+
+body.hide-ntp #ntp-contents {
+  display: none;
+}
+
+body.fakebox-animate #ntp-contents {
+  -webkit-transition: opacity 100ms linear;
+  opacity: 0.2;
+}
+
+/* Hide suggestions during the fakebox animation. */
+body.fakebox-animate .active-suggestions-container {
+  height: 0;
+  visibility: hidden;
+}
+
+body.fakebox-animate .suggestion-contents {
+  visibility: hidden;
+}
+
+body.google-page #mv-top-margin {
+  display: none;
+}
+
+#logo {
+  background: -webkit-image-set(
+      url(images/google_logo.png) 1x,
+      url(images/2x/google_logo.png) 2x) no-repeat;
+  height: 95px;
+  margin-bottom: 24px;
+  margin-top: 134px;
+  width: 275px;
+}
+
+body.custom-theme #logo {
+  background: -webkit-image-set(
+      url(images/white_google_logo.png) 1x,
+      url(images/2x/white_google_logo.png) 2x) no-repeat;
+}
+
+#fakebox {
+  /* Use GPU compositing if available. */
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transition: -webkit-transform 100ms linear;
+  background-color: #fff;
+  border: 1px solid #b9b9b9;
+  border-radius: 1px;
+  border-top-color: #a0a0a0;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  cursor: text;
+  font: 18px arial, sans-serif;
+  height: 36px;
+  max-width: 620px;
+  width: 300px;
+}
+
+#fakebox:hover {
+  border: 1px solid #a9a9a9;
+  border-top-color: #909090;
+}
+
+body.fakebox-focused #fakebox {
+  border: 1px solid rgb(77, 144, 254);
+}
+
+body.fakebox-animate #fakebox {
+  -webkit-transform: translateY(-100px);
+}
+
+#fakebox > input {
+  bottom: 0;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+#cursor {
+  background: #333;
+  bottom: 5px;
+  position: absolute;
+  top: 5px;
+  visibility: hidden;
+  width: 1px;
+}
+
+@-webkit-keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  61.55% {
+    opacity: 0;
+  }
+}
+body.fakebox-focused #cursor {
+  -webkit-animation: blink 1.3s step-end infinite;
+  visibility: inherit;
+}
+
+#most-visited {
+  -webkit-user-select: none;
+  margin-top: 51px;
+  text-align: -webkit-center;
+}
+
+.custom-theme .mv-title,
+.custom-theme #mv-msg {
+  color: #fff;
+  text-shadow: black 0 1px 3px;
+}
+
+.custom-theme #mv-notice-links span {
+  color: #fff;
+  text-shadow: rgb(17, 85, 204) 0 1px 3px;
+}
+
+#mv-tiles {
+  /* Use GPU compositing if available. */
+  -webkit-transform: translate3d(0, 0, 0);
+  height: 260px;
+  overflow: hidden;
+  padding: 0 1em;
+  white-space: nowrap;
+  width: 304px;
+}
+
+@media only screen and (min-width:660px) {
+  #fakebox,
+  #mv-tiles {
+    width: 458px;
+  }
+}
+
+@media only screen and (min-width:820px) {
+  #fakebox,
+  #mv-tiles {
+    width: 618px;
+  }
+}
+
+.mv-row {
+  margin-bottom: 50px;
+}
+
+.mv-tile:first-child {
+  -webkit-margin-start: -1px;
+}
+
+.mv-tile {
+  -webkit-margin-start: 20px;
+  -webkit-transform: translate3d(0, 0, 0);
+  -webkit-transition-duration: 200ms;
+  -webkit-transition-property: -webkit-transform, margin, opacity, width;
+  display: inline-block;
+  height: 83px;
+  width: 138px;
+}
+
+.mv-tile.mv-tile-hide {
+  -webkit-margin-end: -10px;
+  opacity: 0;
+  width: 10px;
+}
+
+/* Class applied to tiles to trigger the blacklist animation. */
+.mv-tile.mv-blacklist {
+  -webkit-transform: scale(0.5);
+  opacity: 0;
+}
+
+.mv-filler {
+  background: -webkit-linear-gradient(#f2f2f2, #e8e8e8);
+  border: 1px solid #e0e0e0;
+  border-radius: 3px;
+  box-shadow: inset 0 2px 3px rgba(0, 0, 0, .09);
+}
+
+.mv-page {
+  background: #fff;
+  border: 1px solid #c0c0c0;
+  border-radius: 2px;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .7);
+  cursor: pointer;
+}
+
+.mv-page:hover {
+  border-color: #7f7f7f
+}
+
+.mv-thumb {
+  background-size: 140px 85px;
+  height: 100%;
+  width: 100%;
+}
+
+.mv-title {
+  bottom: -28px;
+  color: #777;
+  position: absolute;
+  width: 100%;
+}
+
+.mv-x-hide .mv-x {
+  display: none;
+}
+
+/* An X button to blacklist a tile or hide the notification. */
+.mv-x {
+  background: transparent url(images/close_2.png);
+  border: none;
+  cursor: default;
+  height: 16px;
+  width: 16px;
+}
+
+.mv-x:hover {
+  background: transparent url(images/close_2_hover.png);
+}
+
+.mv-x:active {
+  background: transparent url(images/close_2_active.png);
+}
+
+.mv-page .mv-x {
+  -webkit-transition: opacity 500ms ease-in-out;
+  opacity: 0;
+  position: absolute;
+  right: 2px;
+  top: 2px;
+}
+
+.mv-page:hover .mv-x {
+  -webkit-transition-delay: 500ms;
+  opacity: 1;
+}
+
+.mv-domain {
+  bottom: 24px;
+  color: #777;
+  margin: 0 7px;
+  position: absolute;
+}
+
+.mv-favicon {
+  bottom: -8px;
+  height: 16px;
+  left: 61px;
+  position: absolute;
+  width: 16px;
+}
+
+/* The notification shown when a tile is blacklisted. */
+#mv-notice {
+  font-family: Arial;
+  font-size: 75%;
+  font-weight: bold;
+  opacity: 1;
+  padding: 10px 0;
+}
+
+#mv-notice span {
+  cursor: default;
+}
+
+/* Links in the notification. */
+#mv-notice-links span {
+  -webkit-margin-start: 6px;
+  color: rgb(17, 85, 204);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+#mv-notice-links span:hover {
+  text-decoration: underline;
+}
+
+#mv-notice-links .mv-x {
+  -webkit-margin-start: 8px;
+  vertical-align: top;
+}
+
+#mv-notice.mv-notice-delayed-hide {
+  -webkit-transition-delay: 10s;
+  -webkit-transition-property: opacity;
+  opacity: 0;
+}
+
+#mv-notice.mv-notice-hide {
+  visibility: hidden;
+}
+
+#attribution {
+  -webkit-user-select: none;
+  bottom: 0;
+  color: #fff;
+  cursor: default;
+  font-size: 75%;
+  position: absolute;
+  right: 13px;
+  text-align: left;
+  z-index: -1;
+}
+
+#attribution img {
+  display: block;
+}
+
+.suggestions-box {
+  border-bottom: 1px #d9d9d9 solid;
+  padding-bottom: 6px;
+  padding-top: 6px;
+}
+
+.suggestion {
+  background: -webkit-image-set(
+      url(images/page_icon.png) 1x,
+      url(images/2x/page_icon.png) 2x) no-repeat;
+  border-radius: 2px;
+  padding-bottom: 2px;
+  padding-top: 3px;
+  height: 22px;
+  white-space: nowrap;
+}
+
+.search {
+  background: -webkit-image-set(
+      url(images/search_icon.png) 1x,
+      url(images/2x/search_icon.png) 2x) no-repeat;
+}
+
+.hovered {
+  background-color: #eee;
+}
+
+.selected {
+  background-color: rgba(181, 213, 255, 0.5);
+}
+
+.suggestion-contents {
+  -webkit-padding-start: 26px;
+  -webkit-user-select: none;
+  border: none;
+  height: 22px;
+  overflow: hidden;
+  position: absolute;
+}
+
+.pending-suggestions-container {
+  display: none;
+}

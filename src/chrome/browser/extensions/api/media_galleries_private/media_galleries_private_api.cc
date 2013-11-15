@@ -1,0 +1,550 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "chrome/browser/extensions/api/media_galleries_private/media_galleries_private_api.h"
+
+#include "base/basictypes.h"
+#include "base/bind.h"
+#include "base/files/file_path.h"
+#include "base/lazy_instance.h"
+#include "base/location.h"
+#include "base/prefs/pref_service.h"
+#include "base/strings/string_number_conversions.h"
+#include "chrome/browser/browser_process.h"
+#include "chrome/browser/extensions/api/media_galleries_private/gallery_watch_manager.h"
+#include "chrome/browser/extensions/api/media_galleries_private/media_galleries_private_event_router.h"
+#include "chrome/browser/extensions/event_names.h"
+#include "chrome/browser/extensions/event_router.h"
+#include "chrome/browser/extensions/extension_function.h"
+#include "chrome/browser/extensions/extension_service.h"
+#include "chrome/browser/extensions/extension_system.h"
+#include "chrome/browser/extensions/media_galleries_handler.h"
+#include "chrome/browser/media_galleries/media_file_system_registry.h"
+#include "chrome/browser/media_galleries/media_galleries_preferences.h"
+#include "chrome/browser/profiles/profile.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/browser/render_view_host.h"
+
+using base::DictionaryValue;
+using base::ListValue;
+
+namespace extensions {
+
+namespace AddGalleryWatch =
+    extensions::api::media_galleries_private::AddGalleryWatch;
+namespace RemoveGalleryWatch =
+    extensions::api::media_galleries_private::RemoveGalleryWatch;
+namespace GetAllGalleryWatch =
+    extensions::api::media_galleries_private::GetAllGalleryWatch;
+namespace EjectDevice =
+    extensions::api::media_galleries_private::EjectDevice;
+
+namespace {
+
+const char kInvalidGalleryIDError[] = "Invalid gallery ID";
+
+// List of media gallery permissions.
+const char kMediaGalleriesPermissions[] = "media_galleries_permissions";
+
+// Key for Media Gallery ID.
+const char kMediaGalleryIdKey[] = "id";
+
+// Key for Media Gallery Permission Value.
+const char kMediaGalleryHasPermissionKey[] = "has_permission";
+
+// Handles the profile shutdown event on the file thread to clean up
+// GalleryWatchManager.
+void HandleProfileShutdownOnFileThread(void* profile_id) {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::FILE));
+  GalleryWatchManager::OnProfileShutdown(profile_id);
+}
+
+// Gets the |gallery_file_path| and |gallery_pref_id| of the gallery specified
+// by the |gallery_id|. Returns true and set |gallery_file_path| and
+// |gallery_pref_id| if the |gallery_id| is valid and returns false otherwise.
+bool GetGalleryFilePathAndId(const std::string& gallery_id,
+                             Profile* profile,
+                             const Extension* extension,
+                             base::FilePath* gallery_file_path,
+                             chrome::MediaGalleryPrefId* gallery_pref_id) {
+  chrome::MediaGalleryPrefId pref_id;
+  if (!base::StringToUint64(gallery_id, &pref_id))
+    return false;
+  chrome::MediaFileSystemRegistry* registry =
+      g_browser_process->media_file_system_registry();
+   base::FilePath file_path(
+      registry->GetPreferences(profile)->LookUpGalleryPathForExtension(
+          pref_id, extension, false));
+  if (file_path.empty())
+    return false;
+  *gallery_pref_id = pref_id;
+  *gallery_file_path = file_path;
+  return true;
+}
+
+bool GetMediaGalleryPermissionFromDictionary(
+    const DictionaryValue* dict,
+    chrome::MediaGalleryPermission* out_permission) {
+  std::string string_id;
+  if (dict->GetString(kMediaGalleryIdKey, &string_id) &&
+      base::StringToUint64(string_id, &out_permission->pref_id) &&
+      dict->GetBoolean(kMediaGalleryHasPermissionKey,
+                       &out_permission->has_permission)) {
+    return true;
+  }
+  NOTREACHED();
+  return false;
+}
+
+}  // namespace
+
+
+///////////////////////////////////////////////////////////////////////////////
+//                      MediaGalleriesPrivateAPI                             //
+///////////////////////////////////////////////////////////////////////////////
+
+MediaGalleriesPrivateAPI::MediaGalleriesPrivateAPI(Profile* profile)
+    : profile_(profile),
+      tracker_(profile) {
+  DCHECK(profile_);
+  (new MediaGalleriesHandlerParser)->Register();
+  ExtensionSystem::Get(profile_)->event_router()->RegisterObserver(
+      this, event_names::kOnAttachEventName);
+  ExtensionSystem::Get(profile_)->event_router()->RegisterObserver(
+      this, event_names::kOnDetachEventName);
+  ExtensionSystem::Get(profile_)->event_router()->RegisterObserver(
+      this, event_names::kOnGalleryChangedEventName);
+}
+
+MediaGalleriesPrivateAPI::~MediaGalleriesPrivateAPI() {
+}
+
+void MediaGalleriesPrivateAPI::Shutdown() {
+  ExtensionSystem::Get(profile_)->event_router()->UnregisterObserver(this);
+  content::BrowserThread::PostTask(
+      content::BrowserThread::FILE, FROM_HERE,
+      base::Bind(&HandleProfileShutdownOnFileThread, profile_));
+}
+
+static base::LazyInstance<ProfileKeyedAPIFactory<MediaGalleriesPrivateAPI> >
+g_factory = LAZY_INSTANCE_INITIALIZER;
+
+// static
+ProfileKeyedAPIFactory<MediaGalleriesPrivateAPI>*
+    MediaGalleriesPrivateAPI::GetFactoryInstance() {
+  return &g_factory.Get();
+}
+
+// static
+MediaGalleriesPrivateAPI* MediaGalleriesPrivateAPI::Get(Profile* profile) {
+  return
+      ProfileKeyedAPIFactory<MediaGalleriesPrivateAPI>::GetForProfile(profile);
+}
+
+// static
+void MediaGalleriesPrivateAPI::SetMediaGalleryPermission(
+    ExtensionPrefs* prefs,
+    const std::string& extension_id,
+    chrome::MediaGalleryPrefId gallery_id,
+    bool has_access) {
+  if (!prefs)
+    return;
+
+  ExtensionPrefs::ScopedListUpdate update(prefs,
+                                          extension_id,
+                                          kMediaGalleriesPermissions);
+  ListValue* permissions = update.Get();
+  if (!permissions) {
+    permissions = update.Create();
+  } else {
+    // If the gallery is already in the list, update the permission...
+    for (ListValue::iterator iter = permissions->begin();
+         iter != permissions->end(); ++iter) {
+      DictionaryValue* dict = NULL;
+      if (!(*iter)->GetAsDictionary(&dict))
+        continue;
+      chrome::MediaGalleryPermission perm;
+      if (!GetMediaGalleryPermissionFromDictionary(dict, &perm))
+        continue;
+      if (perm.pref_id == gallery_id) {
+        dict->SetBoolean(kMediaGalleryHasPermissionKey, has_access);
+        return;
+      }
+    }
+  }
+  // ...Otherwise, add a new entry for the gallery.
+  DictionaryValue* dict = new DictionaryValue;
+  dict->SetString(kMediaGalleryIdKey, base::Uint64ToString(gallery_id));
+  dict->SetBoolean(kMediaGalleryHasPermissionKey, has_access);
+  permissions->Append(dict);
+}
+
+// static
+void MediaGalleriesPrivateAPI::UnsetMediaGalleryPermission(
+    ExtensionPrefs* prefs,
+    const std::string& extension_id,
+    chrome::MediaGalleryPrefId gallery_id) {
+  if (!prefs)
+    return;
+
+  ExtensionPrefs::ScopedListUpdate update(prefs,
+                                          extension_id,
+                                          kMediaGalleriesPermissions);
+  ListValue* permissions = update.Get();
+  if (!permissions)
+    return;
+
+  for (ListValue::iterator iter = permissions->begin();
+       iter != permissions->end(); ++iter) {
+    const DictionaryValue* dict = NULL;
+    if (!(*iter)->GetAsDictionary(&dict))
+      continue;
+    chrome::MediaGalleryPermission perm;
+    if (!GetMediaGalleryPermissionFromDictionary(dict, &perm))
+      continue;
+    if (perm.pref_id == gallery_id) {
+      permissions->Erase(iter, NULL);
+      return;
+    }
+  }
+}
+
+// static
+void MediaGalleriesPrivateAPI::GetMediaGalleryPermissions(
+    ExtensionPrefs* prefs,
+    const std::string& extension_id,
+    std::vector<chrome::MediaGalleryPermission>* result) {
+  CHECK(result);
+
+  if (!prefs)
+    return;
+
+  const ListValue* permissions;
+  if (!prefs->ReadPrefAsList(extension_id,
+                             kMediaGalleriesPermissions,
+                             &permissions)) {
+    return;
+  }
+  for (ListValue::const_iterator iter = permissions->begin();
+       iter != permissions->end(); ++iter) {
+    DictionaryValue* dict = NULL;
+    if (!(*iter)->GetAsDictionary(&dict))
+      continue;
+    chrome::MediaGalleryPermission perm;
+    if (!GetMediaGalleryPermissionFromDictionary(dict, &perm))
+      continue;
+    result->push_back(perm);
+  }
+}
+
+// static
+void MediaGalleriesPrivateAPI::RemoveMediaGalleryPermissions(
+    ExtensionPrefs* prefs,
+    chrome::MediaGalleryPrefId gallery_id) {
+  if (!prefs)
+    return;
+
+  const DictionaryValue* extensions =
+      prefs->pref_service()->GetDictionary(ExtensionPrefs::kExtensionsPref);
+  if (!extensions)
+    return;
+
+  for (DictionaryValue::Iterator iter(*extensions); !iter.IsAtEnd();
+       iter.Advance()) {
+    if (!Extension::IdIsValid(iter.key())) {
+      NOTREACHED();
+      continue;
+    }
+    UnsetMediaGalleryPermission(prefs, iter.key(), gallery_id);
+  }
+}
+
+void MediaGalleriesPrivateAPI::OnListenerAdded(
+    const EventListenerInfo& details) {
+  // Try to initialize the event router for the listener. If
+  // MediaGalleriesPrivateAPI::GetEventRouter() was called before adding
+  // the listener, router would be initialized.
+  MaybeInitializeEventRouter();
+}
+
+MediaGalleriesPrivateEventRouter* MediaGalleriesPrivateAPI::GetEventRouter() {
+  MaybeInitializeEventRouter();
+  return media_galleries_private_event_router_.get();
+}
+
+GalleryWatchStateTracker*
+MediaGalleriesPrivateAPI::GetGalleryWatchStateTracker() {
+  return &tracker_;
+}
+
+void MediaGalleriesPrivateAPI::MaybeInitializeEventRouter() {
+  if (media_galleries_private_event_router_.get())
+    return;
+  media_galleries_private_event_router_.reset(
+      new MediaGalleriesPrivateEventRouter(profile_));
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//              MediaGalleriesPrivateAddGalleryWatchFunction                 //
+///////////////////////////////////////////////////////////////////////////////
+MediaGalleriesPrivateAddGalleryWatchFunction::
+~MediaGalleriesPrivateAddGalleryWatchFunction() {
+}
+
+bool MediaGalleriesPrivateAddGalleryWatchFunction::RunImpl() {
+  DCHECK(profile_);
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+  if (!render_view_host() || !render_view_host()->GetProcess())
+    return false;
+
+  scoped_ptr<AddGalleryWatch::Params> params(
+      AddGalleryWatch::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+  base::FilePath gallery_file_path;
+  chrome::MediaGalleryPrefId gallery_pref_id = 0;
+  if (!GetGalleryFilePathAndId(params->gallery_id, profile_, GetExtension(),
+                               &gallery_file_path, &gallery_pref_id)) {
+    error_ = kInvalidGalleryIDError;
+    return false;
+  }
+
+#if defined(OS_WIN)
+  MediaGalleriesPrivateEventRouter* router =
+      MediaGalleriesPrivateAPI::Get(profile_)->GetEventRouter();
+  DCHECK(router);
+  content::BrowserThread::PostTaskAndReplyWithResult(
+      content::BrowserThread::FILE,
+      FROM_HERE,
+      base::Bind(&GalleryWatchManager::SetupGalleryWatch,
+                 profile_,
+                 gallery_pref_id,
+                 gallery_file_path,
+                 extension_id(),
+                 router->AsWeakPtr()),
+      base::Bind(&MediaGalleriesPrivateAddGalleryWatchFunction::HandleResponse,
+                 this,
+                 gallery_pref_id));
+#else
+  // Recursive gallery watch operation is not currently supported on
+  // non-windows platforms. Please refer to crbug.com/144491 for more details.
+  HandleResponse(gallery_pref_id, false);
+#endif
+  return true;
+}
+
+void MediaGalleriesPrivateAddGalleryWatchFunction::HandleResponse(
+    chrome::MediaGalleryPrefId gallery_id,
+    bool success) {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+  extensions::api::media_galleries_private::AddGalleryWatchResult result;
+  result.gallery_id = base::Uint64ToString(gallery_id);
+  result.success = success;
+  SetResult(result.ToValue().release());
+  if (success) {
+    GalleryWatchStateTracker* state_tracker =
+        MediaGalleriesPrivateAPI::Get(profile_)->GetGalleryWatchStateTracker();
+    state_tracker->OnGalleryWatchAdded(extension_id(), gallery_id);
+  }
+  SendResponse(true);
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+//              MediaGalleriesPrivateRemoveGalleryWatchFunction              //
+///////////////////////////////////////////////////////////////////////////////
+
+MediaGalleriesPrivateRemoveGalleryWatchFunction::
+~MediaGalleriesPrivateRemoveGalleryWatchFunction() {
+}
+
+bool MediaGalleriesPrivateRemoveGalleryWatchFunction::RunImpl() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+#if defined(OS_WIN)
+  if (!render_view_host() || !render_view_host()->GetProcess())
+    return false;
+
+  // Remove gallery watch operation is currently supported on windows platforms.
+  // Please refer to crbug.com/144491 for more details.
+  scoped_ptr<RemoveGalleryWatch::Params> params(
+      RemoveGalleryWatch::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  base::FilePath gallery_file_path;
+  chrome::MediaGalleryPrefId gallery_pref_id = 0;
+  if (!GetGalleryFilePathAndId(params->gallery_id, profile_, GetExtension(),
+                               &gallery_file_path, &gallery_pref_id)) {
+    error_ = kInvalidGalleryIDError;
+    return false;
+  }
+
+  content::BrowserThread::PostTask(
+      content::BrowserThread::FILE, FROM_HERE,
+      base::Bind(&GalleryWatchManager::RemoveGalleryWatch,
+                 profile_,
+                 gallery_file_path,
+                 extension_id()));
+
+  GalleryWatchStateTracker* state_tracker =
+      MediaGalleriesPrivateAPI::Get(profile_)->GetGalleryWatchStateTracker();
+  state_tracker->OnGalleryWatchRemoved(extension_id(), gallery_pref_id);
+#endif
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//              MediaGalleriesPrivateGetAllGalleryWatchFunction              //
+///////////////////////////////////////////////////////////////////////////////
+
+MediaGalleriesPrivateGetAllGalleryWatchFunction::
+~MediaGalleriesPrivateGetAllGalleryWatchFunction() {
+}
+
+bool MediaGalleriesPrivateGetAllGalleryWatchFunction::RunImpl() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+  if (!render_view_host() || !render_view_host()->GetProcess())
+    return false;
+
+  std::vector<std::string> result;
+#if defined(OS_WIN)
+  GalleryWatchStateTracker* state_tracker =
+      MediaGalleriesPrivateAPI::Get(profile_)->GetGalleryWatchStateTracker();
+  chrome::MediaGalleryPrefIdSet gallery_ids =
+      state_tracker->GetAllWatchedGalleryIDsForExtension(extension_id());
+  for (chrome::MediaGalleryPrefIdSet::const_iterator iter =
+           gallery_ids.begin();
+       iter != gallery_ids.end(); ++iter) {
+    result.push_back(base::Uint64ToString(*iter));
+  }
+#endif
+  results_ = GetAllGalleryWatch::Results::Create(result);
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//              MediaGalleriesPrivateRemoveAllGalleryWatchFunction           //
+///////////////////////////////////////////////////////////////////////////////
+
+MediaGalleriesPrivateRemoveAllGalleryWatchFunction::
+~MediaGalleriesPrivateRemoveAllGalleryWatchFunction() {
+}
+
+bool MediaGalleriesPrivateRemoveAllGalleryWatchFunction::RunImpl() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+#if defined(OS_WIN)
+  if (!render_view_host() || !render_view_host()->GetProcess())
+    return false;
+
+  GalleryWatchStateTracker* state_tracker =
+      MediaGalleriesPrivateAPI::Get(profile_)->GetGalleryWatchStateTracker();
+  state_tracker->RemoveAllGalleryWatchersForExtension(extension_id());
+#endif
+  return true;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//              MediaGalleriesPrivateEjectDeviceFunction                     //
+///////////////////////////////////////////////////////////////////////////////
+
+MediaGalleriesPrivateEjectDeviceFunction::
+~MediaGalleriesPrivateEjectDeviceFunction() {
+}
+
+bool MediaGalleriesPrivateEjectDeviceFunction::RunImpl() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+
+  scoped_ptr<EjectDevice::Params> params(EjectDevice::Params::Create(*args_));
+  EXTENSION_FUNCTION_VALIDATE(params.get());
+
+  chrome::StorageMonitor* monitor = chrome::StorageMonitor::GetInstance();
+  std::string device_id_str =
+      monitor->GetDeviceIdForTransientId(params->device_id);
+  if (device_id_str == "") {
+    HandleResponse(chrome::StorageMonitor::EJECT_NO_SUCH_DEVICE);
+    return true;
+  }
+
+  monitor->EjectDevice(
+      device_id_str,
+      base::Bind(&MediaGalleriesPrivateEjectDeviceFunction::HandleResponse,
+                 this));
+
+  return true;
+}
+
+void MediaGalleriesPrivateEjectDeviceFunction::HandleResponse(
+    chrome::StorageMonitor::EjectStatus status) {
+  using extensions::api::media_galleries_private::
+      EJECT_DEVICE_RESULT_CODE_FAILURE;
+  using extensions::api::media_galleries_private::
+      EJECT_DEVICE_RESULT_CODE_IN_USE;
+  using extensions::api::media_galleries_private::
+      EJECT_DEVICE_RESULT_CODE_NO_SUCH_DEVICE;
+  using extensions::api::media_galleries_private::
+      EJECT_DEVICE_RESULT_CODE_SUCCESS;
+  using extensions::api::media_galleries_private::EjectDeviceResultCode;
+
+  EjectDeviceResultCode result = EJECT_DEVICE_RESULT_CODE_FAILURE;
+  if (status == chrome::StorageMonitor::EJECT_OK)
+    result = EJECT_DEVICE_RESULT_CODE_SUCCESS;
+  if (status == chrome::StorageMonitor::EJECT_IN_USE)
+    result = EJECT_DEVICE_RESULT_CODE_IN_USE;
+  if (status == chrome::StorageMonitor::EJECT_NO_SUCH_DEVICE)
+    result = EJECT_DEVICE_RESULT_CODE_NO_SUCH_DEVICE;
+
+  SetResult(base::StringValue::CreateStringValue(
+      api::media_galleries_private::ToString(result)));
+  SendResponse(true);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//              MediaGalleriesPrivateGetHandlersFunction                     //
+///////////////////////////////////////////////////////////////////////////////
+
+MediaGalleriesPrivateGetHandlersFunction::
+~MediaGalleriesPrivateGetHandlersFunction() {
+}
+
+bool MediaGalleriesPrivateGetHandlersFunction::RunImpl() {
+  DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::UI));
+
+  ExtensionService* service =
+      extensions::ExtensionSystem::Get(profile_)->extension_service();
+  DCHECK(service);
+
+  ListValue* result_list = new ListValue;
+
+  for (ExtensionSet::const_iterator iter = service->extensions()->begin();
+       iter != service->extensions()->end();
+       ++iter) {
+    const Extension* extension = *iter;
+    if (profile_->IsOffTheRecord() &&
+        !service->IsIncognitoEnabled(extension->id()))
+      continue;
+
+    MediaGalleriesHandler::List* handler_list =
+        MediaGalleriesHandler::GetHandlers(extension);
+    if (!handler_list)
+      continue;
+
+    for (MediaGalleriesHandler::List::const_iterator action_iter =
+             handler_list->begin();
+         action_iter != handler_list->end();
+         ++action_iter) {
+      const MediaGalleriesHandler* action = action_iter->get();
+      DictionaryValue* handler = new DictionaryValue;
+      handler->SetString("extensionId", action->extension_id());
+      handler->SetString("id", action->id());
+      handler->SetString("title", action->title());
+      handler->SetString("iconUrl", action->icon_path());
+      result_list->Append(handler);
+    }
+  }
+
+  SetResult(result_list);
+  SendResponse(true);
+
+  return true;
+}
+
+}  // namespace extensions

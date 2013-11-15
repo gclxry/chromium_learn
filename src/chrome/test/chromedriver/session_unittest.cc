@@ -1,0 +1,70 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include <list>
+#include <string>
+
+#include "base/memory/ref_counted.h"
+#include "base/memory/scoped_ptr.h"
+#include "base/synchronization/lock.h"
+#include "chrome/test/chromedriver/chrome/status.h"
+#include "chrome/test/chromedriver/chrome/stub_chrome.h"
+#include "chrome/test/chromedriver/chrome/stub_web_view.h"
+#include "chrome/test/chromedriver/session.h"
+#include "testing/gtest/include/gtest/gtest.h"
+
+TEST(SessionAccessorTest, LocksSession) {
+  scoped_ptr<Session> scoped_session(new Session("id"));
+  Session* session = scoped_session.get();
+  scoped_refptr<SessionAccessor> accessor(
+      new SessionAccessorImpl(scoped_session.Pass()));
+  scoped_ptr<base::AutoLock> lock;
+  ASSERT_EQ(session, accessor->Access(&lock));
+  ASSERT_TRUE(lock.get());
+}
+
+namespace {
+
+class MockChrome : public StubChrome {
+ public:
+  MockChrome() : web_view_("1") {}
+  virtual ~MockChrome() {}
+
+  virtual Status GetWebViewById(const std::string& id,
+                                WebView** web_view) OVERRIDE {
+    if (id == web_view_.GetId()) {
+      *web_view = &web_view_;
+      return Status(kOk);
+    }
+    return Status(kUnknownError);
+  }
+
+ private:
+  StubWebView web_view_;
+};
+
+}  // namespace
+
+TEST(Session, GetTargetWindowNoChrome) {
+  Session session("1");
+  WebView* web_view;
+  ASSERT_EQ(kNoSuchWindow, session.GetTargetWindow(&web_view).code());
+}
+
+TEST(Session, GetTargetWindowTargetWindowClosed) {
+  scoped_ptr<Chrome> chrome(new MockChrome());
+  Session session("1", chrome.Pass());
+  session.window = "2";
+  WebView* web_view;
+  ASSERT_EQ(kNoSuchWindow, session.GetTargetWindow(&web_view).code());
+}
+
+TEST(Session, GetTargetWindowTargetWindowStillOpen) {
+  scoped_ptr<Chrome> chrome(new MockChrome());
+  Session session("1", chrome.Pass());
+  session.window = "1";
+  WebView* web_view = NULL;
+  ASSERT_EQ(kOk, session.GetTargetWindow(&web_view).code());
+  ASSERT_TRUE(web_view);
+}

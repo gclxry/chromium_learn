@@ -1,0 +1,244 @@
+// Copyright (c) 2013 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef CHROME_BROWSER_CHROMEOS_DRIVE_FAKE_DRIVE_FILE_SYSTEM_H_
+#define CHROME_BROWSER_CHROMEOS_DRIVE_FAKE_DRIVE_FILE_SYSTEM_H_
+
+#include <string>
+
+#include "base/basictypes.h"
+#include "base/callback_forward.h"
+#include "base/files/scoped_temp_dir.h"
+#include "base/memory/scoped_ptr.h"
+#include "chrome/browser/chromeos/drive/drive_file_system_interface.h"
+#include "chrome/browser/chromeos/drive/file_errors.h"
+#include "chrome/browser/google_apis/gdata_errorcode.h"
+
+namespace google_apis {
+
+class AboutResource;
+class DriveServiceInterface;
+class ResourceEntry;
+
+}  // namespace google_apis
+
+namespace drive {
+
+class DriveEntryProto;
+class FileSystemObserver;
+
+namespace test_util {
+
+// This class implements a fake DriveFileSystem which acts like a real Drive
+// file system with FakeDriveService, for testing purpose.
+// Note that this class doesn't support "caching" at the moment, so the number
+// of interactions to the FakeDriveService may be bigger than the real
+// implementation.
+// Currently most methods are empty (not implemented).
+class FakeDriveFileSystem : public DriveFileSystemInterface {
+ public:
+  explicit FakeDriveFileSystem(
+      google_apis::DriveServiceInterface* drive_service);
+  virtual ~FakeDriveFileSystem();
+
+  // Initialization for testing. This can be called instead of Initialize
+  // for testing purpose. Returns true for success.
+  bool InitializeForTesting();
+
+  // DriveFileSystemInterface Overrides.
+  virtual void Initialize() OVERRIDE;
+  virtual void AddObserver(FileSystemObserver* observer) OVERRIDE;
+  virtual void RemoveObserver(FileSystemObserver* observer) OVERRIDE;
+  virtual void CheckForUpdates() OVERRIDE;
+  virtual void GetEntryInfoByResourceId(
+      const std::string& resource_id,
+      const GetEntryInfoWithFilePathCallback& callback) OVERRIDE;
+  virtual void TransferFileFromRemoteToLocal(
+      const base::FilePath& remote_src_file_path,
+      const base::FilePath& local_dest_file_path,
+      const FileOperationCallback& callback) OVERRIDE;
+  virtual void TransferFileFromLocalToRemote(
+      const base::FilePath& local_src_file_path,
+      const base::FilePath& remote_dest_file_path,
+      const FileOperationCallback& callback) OVERRIDE;
+  virtual void OpenFile(const base::FilePath& file_path,
+                        const OpenFileCallback& callback) OVERRIDE;
+  virtual void CloseFile(const base::FilePath& file_path,
+                         const FileOperationCallback& callback) OVERRIDE;
+  virtual void Copy(const base::FilePath& src_file_path,
+                    const base::FilePath& dest_file_path,
+                    const FileOperationCallback& callback) OVERRIDE;
+  virtual void Move(const base::FilePath& src_file_path,
+                    const base::FilePath& dest_file_path,
+                    const FileOperationCallback& callback) OVERRIDE;
+  virtual void Remove(const base::FilePath& file_path,
+                      bool is_recursive,
+                      const FileOperationCallback& callback) OVERRIDE;
+  virtual void CreateDirectory(const base::FilePath& directory_path,
+                               bool is_exclusive,
+                               bool is_recursive,
+                               const FileOperationCallback& callback) OVERRIDE;
+  virtual void CreateFile(const base::FilePath& file_path,
+                          bool is_exclusive,
+                          const FileOperationCallback& callback) OVERRIDE;
+  virtual void Pin(const base::FilePath& file_path,
+                   const FileOperationCallback& callback) OVERRIDE;
+  virtual void Unpin(const base::FilePath& file_path,
+                     const FileOperationCallback& callback) OVERRIDE;
+  virtual void GetFileByPath(const base::FilePath& file_path,
+                             const GetFileCallback& callback) OVERRIDE;
+  virtual void GetFileByResourceId(
+      const std::string& resource_id,
+      const DriveClientContext& context,
+      const GetFileCallback& get_file_callback,
+      const google_apis::GetContentCallback& get_content_callback) OVERRIDE;
+  virtual void GetFileContentByPath(
+      const base::FilePath& file_path,
+      const GetFileContentInitializedCallback& initialized_callback,
+      const google_apis::GetContentCallback& get_content_callback,
+      const FileOperationCallback& completion_callback) OVERRIDE;
+  virtual void UpdateFileByResourceId(
+      const std::string& resource_id,
+      const DriveClientContext& context,
+      const FileOperationCallback& callback) OVERRIDE;
+  virtual void GetEntryInfoByPath(
+      const base::FilePath& file_path,
+      const GetEntryInfoCallback& callback) OVERRIDE;
+  virtual void ReadDirectoryByPath(
+      const base::FilePath& file_path,
+      const ReadDirectoryWithSettingCallback& callback) OVERRIDE;
+  virtual void RefreshDirectory(
+      const base::FilePath& file_path,
+      const FileOperationCallback& callback) OVERRIDE;
+  virtual void Search(const std::string& search_query,
+                      const GURL& next_feed,
+                      const SearchCallback& callback) OVERRIDE;
+  virtual void SearchMetadata(const std::string& query,
+                              int options,
+                              int at_most_num_matches,
+                              const SearchMetadataCallback& callback) OVERRIDE;
+  virtual void GetAvailableSpace(
+      const GetAvailableSpaceCallback& callback) OVERRIDE;
+  virtual void AddUploadedFile(scoped_ptr<google_apis::ResourceEntry> doc_entry,
+                               const base::FilePath& file_content_path,
+                               const FileOperationCallback& callback) OVERRIDE;
+  virtual void GetMetadata(
+      const GetFilesystemMetadataCallback& callback) OVERRIDE;
+  virtual void MarkCacheFileAsMounted(
+      const base::FilePath& drive_file_path,
+      const OpenFileCallback& callback) OVERRIDE;
+  virtual void MarkCacheFileAsUnmounted(
+      const base::FilePath& cache_file_path,
+      const FileOperationCallback& callback) OVERRIDE;
+  virtual void GetCacheEntryByResourceId(
+      const std::string& resource_id,
+      const std::string& md5,
+      const GetCacheEntryCallback& callback) OVERRIDE;
+  virtual void IterateCache(const CacheIterateCallback& iteration_callback,
+                            const base::Closure& completion_callback) OVERRIDE;
+  virtual void Reload() OVERRIDE;
+
+ private:
+  // Callback to return the result of GetFilePath.
+  typedef base::Callback<void(const base::FilePath& file_path)>
+      GetFilePathCallback;
+
+  // Returns the path for the |resource_id| via |callback|.
+  // How the method works:
+  // 1) Gets AboutResource from the drive service to obtain root resource id.
+  // 2) Gets ResourceEntry from the drive service to get the base name,
+  //    prepends it to the |file_path|. Unless it is root, also tries for
+  //    the parent recursively.
+  void GetFilePath(const std::string& resource_id,
+                   const GetFilePathCallback& callback);
+  void GetFilePathAfterGetAboutResource(
+      const std::string& resource_id,
+      const GetFilePathCallback& callback,
+      google_apis::GDataErrorCode error,
+      scoped_ptr<google_apis::AboutResource> about_resource);
+  void GetFilePathInternal(
+      const std::string& root_resource_id,
+      const std::string& resource_id,
+      const base::FilePath& file_path,
+      const GetFilePathCallback& callback);
+  void GetFilePathAfterGetResourceEntry(
+      const std::string& root_resource_id,
+      const base::FilePath& remaining_file_path,
+      const GetFilePathCallback& callback,
+      google_apis::GDataErrorCode error_in,
+      scoped_ptr<google_apis::ResourceEntry> resource_entry);
+
+  // Helpers of GetEntryInfoByResourceId.
+  // How the method works:
+  // 1) Gets ResourceEntry from the drive service.
+  // 2) Gets the file path of the resource.
+  // 3) Runs the |callback|.
+  void GetEntryInfoByResourceIdAfterGetResourceEntry(
+      const GetEntryInfoWithFilePathCallback& callback,
+      google_apis::GDataErrorCode error_in,
+      scoped_ptr<google_apis::ResourceEntry> resource_entry);
+  void GetEntryInfoByResourceIdAfterGetFilePath(
+      const GetEntryInfoWithFilePathCallback& callback,
+      FileError error,
+      scoped_ptr<DriveEntryProto> entry_proto,
+      const base::FilePath& parent_file_path);
+
+  // Helpers of GetFileContentByPath.
+  // How the method works:
+  // 1) Gets DriveEntryProto of the path.
+  // 2) Look at if there is a cache file or not. If found return it.
+  // 3) Otherwise start DownloadFile.
+  // 4) Runs the |completion_callback| upon the download completion.
+  void GetFileContentByPathAfterGetEntryInfo(
+      const base::FilePath& file_path,
+      const GetFileContentInitializedCallback& initialized_callback,
+      const google_apis::GetContentCallback& get_content_callback,
+      const FileOperationCallback& completion_callback,
+      FileError error,
+      scoped_ptr<DriveEntryProto> entry_proto);
+  void GetFileContentByPathAfterDownloadFile(
+      const FileOperationCallback& completion_callback,
+      google_apis::GDataErrorCode gdata_error,
+      const base::FilePath& temp_file);
+
+  // Helpers of GetEntryInfoByPath.
+  // How the method works:
+  // 1) If the path is root, gets AboutResrouce from the drive service
+  //    and create DriveEntryProto.
+  // 2-1) Otherwise, gets the parent's DriveEntryProto by recursive call.
+  // 2-2) Then, gets the resource list by restricting the parent with its id.
+  // 2-3) Search the results based on title, and return the DriveEntryProto.
+  // Note that adding suffix (e.g. " (2)") for files sharing a same name is
+  // not supported in FakeDriveFileSystem. Thus, even if the server has
+  // files sharing the same name under a directory, the second (or later)
+  // file cannot be taken with the suffixed name.
+  void GetEntryInfoByPathAfterGetAboutResource(
+      const GetEntryInfoCallback& callback,
+      google_apis::GDataErrorCode gdata_error,
+      scoped_ptr<google_apis::AboutResource> about_resource);
+  void GetEntryInfoByPathAfterGetParentEntryInfo(
+      const base::FilePath& base_name,
+      const GetEntryInfoCallback& callback,
+      FileError error,
+      scoped_ptr<DriveEntryProto> parent_entry_proto);
+  void GetEntryInfoByPathAfterGetResourceList(
+      const base::FilePath& base_name,
+      const GetEntryInfoCallback& callback,
+      google_apis::GDataErrorCode gdata_error,
+      scoped_ptr<google_apis::ResourceList> resource_list);
+
+  google_apis::DriveServiceInterface* drive_service_;  // Not owned.
+  base::ScopedTempDir cache_dir_;
+
+  // Note: This should remain the last member so it'll be destroyed and
+  // invalidate the weak pointers before any other members are destroyed.
+  base::WeakPtrFactory<FakeDriveFileSystem> weak_ptr_factory_;
+
+  DISALLOW_COPY_AND_ASSIGN(FakeDriveFileSystem);
+};
+
+}  // namespace test_util
+}  // namespace drive
+
+#endif  // CHROME_BROWSER_CHROMEOS_DRIVE_FAKE_DRIVE_FILE_SYSTEM_H_

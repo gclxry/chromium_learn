@@ -1,0 +1,543 @@
+/* Copyright (c) 2012 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file. */
+
+html[dir='rtl'] body.uber-frame > .page {
+  -webkit-margin-end: 0;
+}
+
+#top-container {
+  margin-top: 16px;
+  overflow: auto;
+}
+
+#editing-controls,
+#loading-spinner {
+  white-space: nowrap;
+}
+
+#lock-unlock-button:not(.profile-is-managed),
+.managed-user-locked #allow-selected,
+.managed-user-locked #block-selected {
+  display: none;
+}
+
+#search-button {
+  margin: 0;
+}
+
+#spinner {
+  position: relative;
+  top: 3px;
+}
+
+#notification-bar {
+  float: right;
+  padding-top: 5px;
+}
+
+html[dir='rtl'] #notification-bar {
+  float: left;
+}
+
+#notification-bar.alone {
+  float: left;
+  margin-top: 12px;
+}
+
+html[dir='rtl'] #notification-bar.alone {
+  float: right;
+}
+
+#filter-controls,
+#top-container,
+#results-display,
+#results-pagination {
+  max-width: 718px;
+}
+
+#filter-controls {
+  overflow: auto;
+}
+
+#editing-controls {
+  -webkit-margin-end: 12px;
+  float: left;
+}
+
+html[dir='rtl'] #editing-controls {
+  float: right;
+}
+
+#editing-controls button:first-of-type {
+  -webkit-margin-start: 0;
+}
+
+#filter-controls select {
+  -webkit-margin-end: 0;
+}
+
+html[dir='rtl'] #range-today,
+html[dir='rtl'] #range-previous,
+html[dir='rtl'] #range-next {
+  float: left;
+}
+
+#range-next img,
+#range-previous img {
+  position: relative;
+  top: 1px;
+}
+
+#range-next:disabled img,
+#range-previous:disabled img {
+  opacity: 0.4;
+}
+
+#display-filter-controls {
+  float: right;
+}
+
+#display-filter-controls > * {
+  -webkit-margin-start: 8px;
+}
+
+#display-filter-controls > *:not(:last-child) {
+  -webkit-border-end: 1px solid rgb(151, 156, 160);
+  -webkit-margin-start: 0;
+  padding: 0 6px 0 6px;
+}
+
+#results-display {
+  margin: 16px 0 0 0;
+}
+
+.edit-button {
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  color: blue; /* -webkit-link makes it purple :'( */
+  cursor: pointer;
+  display: inline-block;
+  font: inherit;
+  padding: 0 9px;
+  text-decoration: underline;
+}
+
+.entry,
+.gap,
+.no-entries,
+.site-entry {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gap {
+  -webkit-border-end: 1px solid rgb(192, 195, 198);
+  height: 14px;
+  margin: 1px 0;
+  width: 45px;
+}
+
+.entry-box,
+.site-domain-wrapper {
+  -webkit-align-items: center;
+  cursor: default;
+  display: -webkit-flex;
+  /* An odd line-height ensures a consistent baseline on all platforms. */
+  line-height: 1.75em;
+  margin-bottom: 6px;
+  /* The box should be no bigger than its parent. */
+  max-width: 100%;
+  overflow: hidden;
+  padding-bottom: 1px;
+}
+
+.site-domain-wrapper {
+  cursor: pointer;
+  width: 100%;
+}
+
+.search-results,
+.day-results {
+  margin: 0 0 24px 0;
+  padding: 0;
+}
+
+.site-results {
+  -webkit-transition: height 350ms ease-in-out;
+  clear: left;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+}
+
+.month-results {
+  -webkit-padding-start: 0;
+}
+
+html[dir='rtl'] .site-results {
+  clear: both;
+}
+
+h2.timeframe {
+  font-size: 1.5em;
+}
+
+.snippet {
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  -webkit-margin-start: 110px;
+  clear: both;
+  color: rgb(34, 34, 34);
+  display: -webkit-box;
+  line-height: 1.6em;
+  margin-bottom: 1em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.entry .domain {
+  color: rgb(151, 156, 160);
+  min-width: -webkit-min-content;
+  overflow: hidden;
+  padding-left: 6px;
+  padding-right: 6px;
+  white-space: nowrap;
+}
+
+.site-results .domain {
+  display: none;
+}
+
+
+html[dir='rtl'] .number-visits {
+  /* This element contains parentheses, which without the unicode-bidi: embed
+   * directive would show up incorrectly (e.g. '(www.google.com (5'). Using
+   * 'embed' makes the engine set the text in the parentheses as LTR even
+   * when the layout is set to RTL, which makes using -webkit-*-start
+   * impossible. So use margins and dir='rtl'.
+   */
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
+.number-visits {
+  color: rgb(151, 156, 160);
+}
+
+.drop-down {
+  -webkit-margin-end: 5px;
+  margin-top: 1px;
+}
+
+html[dir='rtl'] .entry .title,
+html[dir='rtl'] .site-domain {
+  /* Put the favicon on the right. */
+  background-position-x: right;
+}
+
+.entry .time {
+  color: rgb(151, 156, 160);
+  min-width: 90px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 90px;
+}
+
+.search-results .time,
+.month-results .time {
+  min-width: 110px;
+  width: 110px;
+}
+
+.entry input[type='checkbox'] {
+  -webkit-margin-end: 6px;
+  -webkit-margin-start: 4px;
+  line-height: 1em;
+}
+
+<if expr="not pp_ifdef('android')">
+/* Checkboxes are shown when checked or focused, or when the entry is hovered.
+ * Fade in on focus, but not on hover, because it makes the UI feel laggy. */
+.site-domain-wrapper input[type=checkbox]:not(:checked),
+.entry input[type='checkbox']:not(:checked) {
+  opacity: 0;
+}
+
+.site-domain-wrapper:hover input[type='checkbox'],
+.site-domain-wrapper input[type='checkbox']:focus,
+.entry-box:hover input[type='checkbox'],
+.entry-box input[type='checkbox']:focus {
+  opacity: 1;
+}
+
+.site-domain-wrapper input[type='checkbox']:focus,
+.entry-box input[type='checkbox']:focus {
+  -webkit-transition: opacity 150ms;
+}
+
+.filter-status {
+  display: -webkit-flex;
+  -webkit-flex: 1 0 auto;
+  -webkit-justify-content: flex-end;
+}
+
+.filter-status > div {
+  -webkit-flex: 0 0 auto;
+  -webkit-transition: background-color 500ms ease-in-out;
+  border-radius: 3px;
+  display: none;
+  font-size: 11px;
+  height: 14px;
+  line-height: 12px;
+  white-space: nowrap;
+}
+
+.filter-status > div.filter-allowed,
+.filter-status > div.filter-blocked,
+.filter-status > div.in-content-pack-active,
+.filter-status > div.in-content-pack-passive,
+.filter-status > div.blocked-visit-active {
+  display: block;
+  margin: 3px 3px 3px 0;
+  padding: 0 4px;
+}
+
+.filter-allowed,
+.in-content-pack-active {
+  background-color: rgb(141, 240, 127);
+  border: 1px solid rgb(33, 190, 33);
+  color: rgb(54, 54, 54);
+}
+
+.filter-blocked {
+  border: 1px solid rgb(211, 0, 0);
+  background-color: rgb(255, 147, 105);
+  color: rgb(54, 54, 54);
+}
+
+.in-content-pack-passive {
+  border: 1px solid rgb(155, 224, 163);
+  background-color: rgb(225, 255, 205);
+  color: rgb(148, 148, 148);
+}
+
+/* TODO(sergiu): If this is the final icon replace it with a separate resource.
+ */
+.blocked-indicator {
+  background: url(../ssl_roadblock_icon.png) no-repeat;
+  background-size: 30%;
+}
+
+.blocked-indicator .title {
+  color: rgb(151, 156, 160);
+}
+</if>
+
+#range-previous img {
+  -webkit-transform: scaleX(-1);
+}
+
+.entry-box {
+  background-color: none;
+}
+
+.entry-box:hover,
+.entry-box.contains-focus {
+  background-color: rgb(252, 252, 252);
+  border-radius: 2px;
+}
+
+.entry-box-container {
+  display: -webkit-flex;
+}
+
+.entry .title-and-domain {
+  display: -webkit-flex;
+  min-width: 0;
+}
+
+.entry .title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.entry .title-and-domain,
+.site-domain {
+  /* Make room for the favicon. */
+  -webkit-padding-start: 20px;
+
+  /* Control the favicon appearance. */
+  background-position-y: center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+}
+
+html[dir='rtl'] .entry .title-and-domain,
+html[dir='rtl'] .site-domain {
+  background-position-x: right;
+}
+
+.site-domain button {
+  color: rgb(48, 57, 66);
+}
+
+.site-domain button:hover {
+  text-decoration: none;
+}
+
+.site-domain-arrow {
+  -webkit-transition: -webkit-transform 300ms linear;
+  background: url(../disclosure_triangle_small.png) no-repeat;
+  background-position: 5px 5px;
+  color: rgb(143, 143, 143);
+  height: 21px;
+  margin-right: 2px;
+  opacity: 0.58;
+  text-align: center;
+  width: 21px;
+}
+
+.site-domain-arrow.collapse {
+  -webkit-transform: rotate(0);
+}
+
+.site-domain-arrow.expand {
+  -webkit-transform: rotate(90deg);
+}
+
+html[dir='rtl'] .site-domain-arrow.collapse {
+  -webkit-transform: rotate(90deg);
+}
+
+html[dir='rtl'] .site-domain-arrow.expand {
+  -webkit-transform: rotate(180deg);
+}
+
+.entry .starred {
+  -webkit-margin-start: 4px;
+  background:
+      url(../../../../ui/webui/resources/images/star_small.png) no-repeat;
+  display: inline-block;
+  height: 11px;
+  width: 11px;
+}
+
+.entry .title > a {
+  color: rgb(48, 57, 66);
+  text-decoration: none;
+}
+
+.entry .title > a.to-be-removed {
+  text-decoration: line-through;
+}
+
+.entry .title > a:hover {
+  text-decoration: underline;
+}
+
+.fade-out {
+  -webkit-transition: opacity 200ms;
+  opacity: 0;
+}
+
+button.menu-button.drop-down {
+  min-width: 12px;
+  top: 0;
+}
+
+#action-menu > [role=menuitem] {
+  line-height: 29px;
+  outline: none;
+}
+
+body:not(.has-results) #results-pagination {
+  display: none;
+}
+
+#older-button {
+  float: right;
+}
+
+
+html[dir='rtl'] #older-button {
+  float: left;
+}
+
+html[dir='ltr'] #newest-button::before {
+  /* Left-pointing double angle quotation mark followed by '&nbsp;'. */
+  content: '\00AB\A0';
+}
+
+html[dir='rtl'] #newest-button::after {
+  /* '&nbsp;' followed by right-pointing double angle quotation mark. */
+  content: '\A0\00BB';
+}
+
+html[dir='ltr'] #newer-button::before,
+html[dir='rtl'] #older-button::before {
+  /* Single left-pointing angle quotation mark followed by '&nbsp;'. */
+  content: '\2039\A0';
+}
+
+html[dir='ltr'] #older-button::after,
+html[dir='rtl'] #newer-button::after {
+  /* 'nbsp;' followed by single right-pointing angle quotation mark. */
+  content: '\A0\203A';
+}
+
+/* Clear the float to ensure that #results-pagination encloses its children. */
+#results-pagination::after {
+  clear: both;
+  content: '';
+  display: block;
+  height: 0;
+  visibility: hidden;
+}
+
+/* Styles for the action menu of visits that come from other devices, triggered
+   by setting the "data-devicename" attribute of the menu. */
+
+#action-menu[data-devicename]:not([data-devicename='']) {
+  padding-top: 0;
+}
+
+#action-menu[data-devicename]::before {
+  background-color: rgb(245, 245, 245);
+  background-repeat: no-repeat;
+  background-size: 24px;
+  border-bottom: 1px solid rgb(232, 232, 232);
+  color: rgb(151, 156, 160);
+  content: attr(data-devicename);
+  display: block;
+  font-size: 11px;
+  line-height: 29px;
+  margin-bottom: 8px;
+  padding: 0 19px 0 51px;
+}
+
+#action-menu[data-devicename='']::before {
+  display: none;
+}
+
+#action-menu[data-devicetype='laptop']::before {
+  background-image: url(../../../../ui/webui/resources/images/laptop_small.png);
+  background-position: 18px center;
+}
+
+#action-menu[data-devicetype='phone']::before {
+  background-image: url(../../../../ui/webui/resources/images/phone_small.png);
+  background-position: 14px center;
+  padding-left: 43px;
+}
+
+#action-menu[data-devicetype='tablet']::before {
+  background-image: url(../../../../ui/webui/resources/images/tablet_small.png);
+  background-position: 17px center;
+  padding-left: 49px;
+}

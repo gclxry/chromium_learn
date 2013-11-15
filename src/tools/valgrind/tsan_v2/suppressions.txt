@@ -1,0 +1,60 @@
+# False positives in libflashplayer.so and libglib.so. Since we don't
+# instrument them, we cannot reason about the synchronization in them.
+race:libflashplayer.so
+race:libglib*.so
+
+# Intentional race in ToolsSanityTest.DataRace in base_unittests.
+race:base/tools_sanity_unittest.cc
+
+# Data race on WatchdogCounter [test-only]
+race:base/threading/watchdog_unittest.cc
+
+# Races in libevent, http://crbug.com/23244
+race:libevent.c
+
+# http://crbug.com/84094
+race:sqlite3StatusSet
+race:pcache1EnforceMaxPage
+race:pcache1AllocPage
+
+# http://crbug.com/102327.
+# Test-only race, won't fix.
+race:tracked_objects::ThreadData::ShutdownSingleThreadedCleanup
+
+# http://crbug.com/115540
+race:base::Thread::ThreadMain
+race:content::BrowserThread::GetCurrentThreadIdentifier
+
+# http://crbug.com/120808
+race:base/threading/watchdog.cc
+
+# http://crbug.com/157586
+race:third_party/libvpx/source/libvpx/vp8/decoder/threading.c
+
+# http://crbug.com/158718
+race:third_party/ffmpeg/libavcodec/pthread.c
+race:third_party/ffmpeg/libavcodec/vp8.c
+race:third_party/ffmpeg/libavutil/mem.c
+race:*HashFrameForTesting
+race:third_party/ffmpeg/libavcodec/h264pred.c
+race:media::ReleaseData
+
+# http://crbug.com/158922
+race:third_party/libvpx/source/libvpx/vp8/encoder/*
+
+# See http://crbug.com/181502
+race:_M_rep
+race:_M_is_leaked
+
+# http://crbug.com/189177
+race:thread_manager
+
+# http://crbug.com/223352
+race:uprv_malloc_46
+race:uprv_realloc_46
+
+# http://crbug.com/223955
+race:PassRefPtr
+
+# http://crbug.com/224617
+race:base::debug::TraceEventTestFixture_TraceSampling_Test::TestBody

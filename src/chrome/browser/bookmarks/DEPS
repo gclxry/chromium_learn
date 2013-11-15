@@ -1,0 +1,38 @@
+include_rules = [
+  # Bookmarks is being made into a component (it will end up at
+  # //components/bookmarks and not depend on //chrome), so we have these basic
+  # rules followed by temporary exceptions.  Please don't add to the list of
+  # exceptions!
+  "-chrome/browser",
+  "+chrome/browser/bookmarks",
+
+  # TODO(kaiwang): Bring this list to zero.
+  # Do not add to the list of temporarily-allowed dependencies below,
+  # and please do not introduce more #includes of these files.
+  "!chrome/browser/favicon/favicon_service.h",
+  "!chrome/browser/favicon/favicon_service_factory.h",
+  "!chrome/browser/history/history_notifications.h",
+  "!chrome/browser/history/history_service.h",
+  "!chrome/browser/history/history_service_factory.h",
+  "!chrome/browser/history/history_types.h",
+  "!chrome/browser/history/query_parser.h",
+  "!chrome/browser/history/snippet.h",
+  "!chrome/browser/history/url_database.h",
+  "!chrome/browser/profiles/profile.h",
+  "!chrome/browser/profiles/profile_dependency_manager.h",
+  "!chrome/browser/profiles/profile_keyed_service.h",
+  "!chrome/browser/profiles/profile_keyed_service_factory.h",
+  "!chrome/browser/profiles/startup_task_runner_service.h",
+  "!chrome/browser/profiles/startup_task_runner_service_factory.h",
+  # Do not add to the list of temporarily-allowed dependencies above,
+  # and please do not introduce more #includes of these files.
+]
+
+specific_include_rules = {
+  # TODO(kaiwang): Bring this list to zero.
+  # Do not add to the list of temporarily-allowed dependencies below,
+  # and please do not introduce more #includes of these files.
+  '.*_[a-z]*test\.cc': [
+    "!chrome/browser/importer/firefox2_importer.h",
+  ]
+}

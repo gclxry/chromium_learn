@@ -1,0 +1,192 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// IPC messages for android media player.
+// Multiply-included message file, hence no include guard.
+
+#include <string>
+
+#include "base/time.h"
+#include "content/common/content_export.h"
+#include "googleurl/src/gurl.h"
+#include "ipc/ipc_message_macros.h"
+#include "ui/gfx/rect_f.h"
+
+#undef IPC_MESSAGE_EXPORT
+#define IPC_MESSAGE_EXPORT CONTENT_EXPORT
+#define IPC_MESSAGE_START MediaPlayerMsgStart
+
+#if defined(GOOGLE_TV)
+#include "media/base/android/demuxer_stream_player_params.h"
+
+IPC_ENUM_TRAITS(media::AudioCodec)
+IPC_ENUM_TRAITS(media::DemuxerStream::Status)
+IPC_ENUM_TRAITS(media::DemuxerStream::Type)
+IPC_ENUM_TRAITS(media::VideoCodec)
+
+IPC_STRUCT_TRAITS_BEGIN(media::MediaPlayerHostMsg_DemuxerReady_Params)
+  IPC_STRUCT_TRAITS_MEMBER(audio_codec)
+  IPC_STRUCT_TRAITS_MEMBER(audio_channels)
+  IPC_STRUCT_TRAITS_MEMBER(audio_sampling_rate)
+  IPC_STRUCT_TRAITS_MEMBER(is_audio_encrypted)
+
+  IPC_STRUCT_TRAITS_MEMBER(video_codec)
+  IPC_STRUCT_TRAITS_MEMBER(video_size)
+  IPC_STRUCT_TRAITS_MEMBER(is_video_encrypted)
+
+  IPC_STRUCT_TRAITS_MEMBER(duration_ms)
+  IPC_STRUCT_TRAITS_MEMBER(key_system)
+IPC_STRUCT_TRAITS_END()
+
+IPC_STRUCT_TRAITS_BEGIN(media::MediaPlayerHostMsg_ReadFromDemuxerAck_Params)
+  IPC_STRUCT_TRAITS_MEMBER(type)
+  IPC_STRUCT_TRAITS_MEMBER(access_units)
+IPC_STRUCT_TRAITS_END()
+
+IPC_STRUCT_TRAITS_BEGIN(
+    media::MediaPlayerHostMsg_ReadFromDemuxerAck_Params::AccessUnit)
+  IPC_STRUCT_TRAITS_MEMBER(status)
+  IPC_STRUCT_TRAITS_MEMBER(end_of_stream)
+  IPC_STRUCT_TRAITS_MEMBER(data)
+  IPC_STRUCT_TRAITS_MEMBER(timestamp)
+  IPC_STRUCT_TRAITS_MEMBER(key_id)
+  IPC_STRUCT_TRAITS_MEMBER(iv)
+  IPC_STRUCT_TRAITS_MEMBER(subsamples)
+IPC_STRUCT_TRAITS_END()
+
+IPC_STRUCT_TRAITS_BEGIN(media::SubsampleEntry)
+  IPC_STRUCT_TRAITS_MEMBER(clear_bytes)
+  IPC_STRUCT_TRAITS_MEMBER(cypher_bytes)
+IPC_STRUCT_TRAITS_END()
+#endif
+
+// Messages for notifying the render process of media playback status -------
+
+// Media buffering has updated.
+IPC_MESSAGE_ROUTED2(MediaPlayerMsg_MediaBufferingUpdate,
+                    int /* player_id */,
+                    int /* percent */)
+
+// A media playback error has occured.
+IPC_MESSAGE_ROUTED2(MediaPlayerMsg_MediaError,
+                    int /* player_id */,
+                    int /* error */)
+
+// Playback is completed.
+IPC_MESSAGE_ROUTED1(MediaPlayerMsg_MediaPlaybackCompleted,
+                    int /* player_id */)
+
+// Media metadata has changed.
+IPC_MESSAGE_ROUTED5(MediaPlayerMsg_MediaMetadataChanged,
+                    int /* player_id */,
+                    base::TimeDelta /* duration */,
+                    int /* width */,
+                    int /* height */,
+                    bool /* success */)
+
+// Media seek is completed.
+IPC_MESSAGE_ROUTED2(MediaPlayerMsg_MediaSeekCompleted,
+                    int /* player_id */,
+                    base::TimeDelta /* current_time */)
+
+// Video size has changed.
+IPC_MESSAGE_ROUTED3(MediaPlayerMsg_MediaVideoSizeChanged,
+                    int /* player_id */,
+                    int /* width */,
+                    int /* height */)
+
+// The current play time has updated.
+IPC_MESSAGE_ROUTED2(MediaPlayerMsg_MediaTimeUpdate,
+                    int /* player_id */,
+                    base::TimeDelta /* current_time */)
+
+// The player has been released.
+IPC_MESSAGE_ROUTED1(MediaPlayerMsg_MediaPlayerReleased,
+                    int /* player_id */)
+
+// The player has entered fullscreen mode.
+IPC_MESSAGE_ROUTED1(MediaPlayerMsg_DidEnterFullscreen,
+                    int /* player_id */)
+
+// The player exited fullscreen.
+IPC_MESSAGE_ROUTED1(MediaPlayerMsg_DidExitFullscreen,
+                    int /* player_id */)
+
+// The player started playing.
+IPC_MESSAGE_ROUTED1(MediaPlayerMsg_DidMediaPlayerPlay,
+                    int /* player_id */)
+
+// The player was paused.
+IPC_MESSAGE_ROUTED1(MediaPlayerMsg_DidMediaPlayerPause,
+                    int /* player_id */)
+
+#if defined(GOOGLE_TV)
+// The media source player reads data from demuxer
+IPC_MESSAGE_ROUTED3(MediaPlayerMsg_ReadFromDemuxer,
+                    int /* player_id */,
+                    media::DemuxerStream::Type /* type */,
+                    bool /* seek_done */)
+#endif
+
+// Messages for controllering the media playback in browser process ----------
+
+// Destroy the media player object.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_DestroyMediaPlayer,
+                    int /* player_id */)
+
+// Destroy all the players.
+IPC_MESSAGE_ROUTED0(MediaPlayerHostMsg_DestroyAllMediaPlayers)
+
+// Initialize a media player object with the given player_id.
+IPC_MESSAGE_ROUTED4(MediaPlayerHostMsg_MediaPlayerInitialize,
+                    int /* player_id */,
+                    GURL /* url */,
+                    bool /* is_media_source */,
+                    GURL /* first_party_for_cookies */)
+
+// Pause the player.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_MediaPlayerPause,
+                    int /* player_id */)
+
+// Release player resources, but keep the object for future usage.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_MediaPlayerRelease,
+                    int /* player_id */)
+
+// Perform a seek.
+IPC_MESSAGE_ROUTED2(MediaPlayerHostMsg_MediaPlayerSeek,
+                    int /* player_id */,
+                    base::TimeDelta /* time */)
+
+// Start the player for playback.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_MediaPlayerStart,
+                    int /* player_id */)
+
+// Request the player to enter fullscreen.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_EnterFullscreen,
+                    int /* player_id */)
+
+// Request the player to exit fullscreen.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_ExitFullscreen,
+                    int /* player_id */)
+
+#if defined(GOOGLE_TV)
+// Request the player to use external surface for rendering.
+IPC_MESSAGE_ROUTED1(MediaPlayerHostMsg_RequestExternalSurface,
+                    int /* player_id */)
+
+// Request the player to use external surface for rendering.
+IPC_MESSAGE_ROUTED2(MediaPlayerHostMsg_NotifyGeometryChange,
+                    int /* player_id */,
+                    gfx::RectF /* rect */)
+
+// Inform the media source player that the demuxer is ready.
+IPC_MESSAGE_ROUTED2(MediaPlayerHostMsg_DemuxerReady,
+                    int /* player_id */,
+                    media::MediaPlayerHostMsg_DemuxerReady_Params)
+
+// Sent when the data was read from the ChunkDemuxer.
+IPC_MESSAGE_ROUTED2(MediaPlayerHostMsg_ReadFromDemuxerAck,
+                    int /* player_id */,
+                    media::MediaPlayerHostMsg_ReadFromDemuxerAck_Params)
+#endif

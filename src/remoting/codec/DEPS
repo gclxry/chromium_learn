@@ -1,0 +1,8 @@
+include_rules = [
+  "+media/video/capture/screen",
+  "+remoting/protocol",
+
+  "+google/protobuf",
+  "+third_party/opus",
+  "+third_party/speex",
+]

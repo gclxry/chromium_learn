@@ -1,0 +1,90 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef NET_QUIC_CRYPTO_CRYPTO_PROTOCOL_H_
+#define NET_QUIC_CRYPTO_CRYPTO_PROTOCOL_H_
+
+#include <map>
+#include <string>
+#include <vector>
+
+#include "base/basictypes.h"
+#include "net/base/net_export.h"
+
+// Version and Crypto tags are written to the wire with a big-endian
+// representation of the name of the tag.  For example
+// the client hello tag (CHLO) will be written as the
+// following 4 bytes: 'C' 'H' 'L' 'O'.  Since it is
+// stored in memory as a little endian uint32, we need
+// to reverse the order of the bytes.
+//
+// We use a macro to ensure that no static initialisers are created. Use the
+// QuicTag function in normal code.
+#define TAG(a, b, c, d) ((d << 24) + (c << 16) + (b << 8) + a)
+
+namespace net {
+
+// CryptoTag is the type of a tag in the wire protocol.
+typedef uint32 CryptoTag;
+typedef std::string ServerConfigID;
+typedef std::map<CryptoTag, std::string> CryptoTagValueMap;
+typedef std::vector<CryptoTag> CryptoTagVector;
+
+const CryptoTag kCHLO = TAG('C', 'H', 'L', 'O');  // Client hello
+const CryptoTag kSHLO = TAG('S', 'H', 'L', 'O');  // Server hello
+const CryptoTag kSCFG = TAG('S', 'C', 'F', 'G');  // Server config
+const CryptoTag kREJ  = TAG('R', 'E', 'J', '\0'); // Reject
+
+// Key exchange methods
+const CryptoTag kP256 = TAG('P', '2', '5', '6');  // ECDH, Curve P-256
+const CryptoTag kC255 = TAG('C', '2', '5', '5');  // ECDH, Curve25519
+
+// AEAD algorithms
+const CryptoTag kNULL = TAG('N', 'U', 'L', 'L');  // null algorithm
+const CryptoTag kAESG = TAG('A', 'E', 'S', 'G');  // AES128 + GCM
+
+// Congestion control feedback types
+const CryptoTag kQBIC = TAG('Q', 'B', 'I', 'C');  // TCP cubic
+const CryptoTag kINAR = TAG('I', 'N', 'A', 'R');  // Inter arrival
+
+// Proof types (i.e. certificate types)
+const CryptoTag kX509 = TAG('X', '5', '0', '9');  // X.509 certificate
+
+// Client hello tags
+const CryptoTag kVERS = TAG('V', 'E', 'R', 'S');  // Version
+const CryptoTag kNONC = TAG('N', 'O', 'N', 'C');  // The connection nonce
+const CryptoTag kSSID = TAG('S', 'S', 'I', 'D');  // Session ID
+const CryptoTag kKEXS = TAG('K', 'E', 'X', 'S');  // Key exchange methods
+const CryptoTag kAEAD = TAG('A', 'E', 'A', 'D');  // Authenticated
+                                                  // encryption algorithms
+const CryptoTag kCGST = TAG('C', 'G', 'S', 'T');  // Congestion control
+                                                  // feedback types
+const CryptoTag kICSL = TAG('I', 'C', 'S', 'L');  // Idle connection state
+                                                  // lifetime
+const CryptoTag kKATO = TAG('K', 'A', 'T', 'O');  // Keepalive timeout
+const CryptoTag kSNI  = TAG('S', 'N', 'I', '\0'); // Server name
+                                                  // indication
+const CryptoTag kPUBS = TAG('P', 'U', 'B', 'S');  // Public key values
+const CryptoTag kSCID = TAG('S', 'C', 'I', 'D');  // Server config id
+const CryptoTag kSRCT = TAG('S', 'R', 'C', 'T');  // Source-address token
+const CryptoTag kORBT = TAG('O', 'B', 'I', 'T');  // Server orbit.
+const CryptoTag kPDMD = TAG('P', 'D', 'M', 'D');  // Proof demand.
+const CryptoTag kCERT = TAG('C', 'E', 'R', 'T');  // Certificate chain
+const CryptoTag kPROF = TAG('P', 'R', 'O', 'F');  // Proof (signature).
+
+#undef TAG
+
+const size_t kMaxEntries = 16;  // Max number of entries in a message.
+
+const size_t kNonceSize = 32;  // Size in bytes of the connection nonce.
+
+const size_t kOrbitSize = 8;  // Number of bytes in an orbit value.
+
+// kProofSignatureLabel is prepended to server configs before signing to avoid
+// any cross-protocol attacks on the signature.
+const char kProofSignatureLabel[] = "QUIC server config signature";
+
+}  // namespace net
+
+#endif  // NET_QUIC_CRYPTO_CRYPTO_PROTOCOL_H_

@@ -1,0 +1,20 @@
+joi@chromium.org
+
+per-file autofill.gypi=dhollowa@chromium.org
+per-file autofill.gypi=isherman@chromium.org
+per-file autofill.gypi=kaiwang@chromium.org
+
+per-file tracing*=jbauman@chromium.org
+per-file tracing*=nduca@chromium.org
+
+per-file navigation_interception.gypi=jknotten@chromium.org
+per-file navigation_interception.gypi=joth@chromium.org
+per-file navigation_interception.gypi=mkosiba@chromium.org
+
+per-file sessions.gypi=marja@chromium.org
+per-file sessions.gypi=sky@chromium.org
+
+per-file user_prefs.gypi=battre@chromium.org
+per-file user_prefs.gypi=bauerb@chromium.org
+per-file user_prefs.gypi=mnissler@chromium.org
+per-file user_prefs.gypi=pam@chromium.org

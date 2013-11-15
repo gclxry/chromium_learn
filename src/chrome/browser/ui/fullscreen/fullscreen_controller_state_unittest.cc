@@ -1,0 +1,595 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "build/build_config.h"
+#include "chrome/browser/ui/browser.h"
+#include "chrome/browser/ui/browser_tabstrip.h"
+#include "chrome/browser/ui/fullscreen/fullscreen_controller.h"
+#include "chrome/browser/ui/fullscreen/fullscreen_controller_state_test.h"
+#include "chrome/test/base/browser_with_test_window_test.h"
+#include "content/public/browser/web_contents.h"
+#include "content/public/common/url_constants.h"
+#include "testing/gtest/include/gtest/gtest.h"
+
+// The FullscreenControllerStateUnitTest unit test suite exhastively tests
+// the FullscreenController through all permutations of events. The behavior
+// of the BrowserWindow is mocked via FullscreenControllerTestWindow.
+//
+// FullscreenControllerStateInteractiveTest is an interactive test suite
+// used to verify that the FullscreenControllerTestWindow models the behavior
+// of actual windows accurately. The interactive tests are too flaky to run
+// on infrastructure, and so those tests are disabled. Run them with:
+//     interactive_ui_tests
+//         --gtest_filter="FullscreenControllerStateInteractiveTest.*"
+//         --gtest_also_run_disabled_tests
+
+// A BrowserWindow used for testing FullscreenController. ----------------------
+class FullscreenControllerTestWindow : public TestBrowserWindow {
+ public:
+  // Simulate the window state with an enumeration.
+  enum WindowState {
+    NORMAL,
+    FULLSCREEN,
+    // No TO_ state for METRO_SNAP, the windows implementation is synchronous.
+    METRO_SNAP,
+    TO_NORMAL,
+    TO_FULLSCREEN,
+  };
+
+  FullscreenControllerTestWindow();
+  virtual ~FullscreenControllerTestWindow() {}
+
+  // BrowserWindow Interface:
+  virtual void EnterFullscreen(const GURL& url,
+                               FullscreenExitBubbleType type) OVERRIDE;
+  virtual void ExitFullscreen() OVERRIDE;
+  virtual bool ShouldHideUIForFullscreen() const OVERRIDE;
+  virtual bool IsFullscreen() const OVERRIDE;
+#if defined(OS_WIN)
+  virtual void SetMetroSnapMode(bool enable) OVERRIDE;
+  virtual bool IsInMetroSnapMode() const OVERRIDE;
+#endif
+#if defined(OS_MACOSX)
+  virtual void EnterFullscreenWithChrome() OVERRIDE;
+  virtual bool IsFullscreenWithChrome() OVERRIDE;
+  virtual bool IsFullscreenWithoutChrome() OVERRIDE;
+#endif
+
+  static const char* GetWindowStateString(WindowState state);
+  WindowState state() const { return state_; }
+  void set_browser(Browser* browser) { browser_ = browser; }
+
+  // Simulates the window changing state.
+  void ChangeWindowFullscreenState();
+
+ private:
+  // Enters fullscreen with |new_mac_with_chrome_mode|.
+  void EnterFullscreen(bool new_mac_with_chrome_mode);
+
+  // Returns true if ChangeWindowFullscreenState() should be called as a result
+  // of updating the current fullscreen state to the passed in state.
+  bool IsTransitionReentrant(bool new_fullscreen,
+                             bool new_mac_with_chrome_mode);
+
+  WindowState state_;
+  bool mac_with_chrome_mode_;
+  Browser* browser_;
+};
+
+FullscreenControllerTestWindow::FullscreenControllerTestWindow()
+    : state_(NORMAL),
+      mac_with_chrome_mode_(false),
+      browser_(NULL) {
+}
+
+void FullscreenControllerTestWindow::EnterFullscreen(
+    const GURL& url, FullscreenExitBubbleType type) {
+  EnterFullscreen(false);
+}
+
+void FullscreenControllerTestWindow::ExitFullscreen() {
+  if (IsFullscreen()) {
+    state_ = TO_NORMAL;
+    mac_with_chrome_mode_ = false;
+
+    if (IsTransitionReentrant(false, false))
+      ChangeWindowFullscreenState();
+  }
+}
+
+bool FullscreenControllerTestWindow::ShouldHideUIForFullscreen() const {
+  return IsFullscreen();
+}
+
+bool FullscreenControllerTestWindow::IsFullscreen() const {
+#if defined(OS_MACOSX)
+  return state_ == FULLSCREEN || state_ == TO_FULLSCREEN;
+#else
+  return state_ == FULLSCREEN || state_ == TO_NORMAL;
+#endif
+}
+
+#if defined(OS_WIN)
+void FullscreenControllerTestWindow::SetMetroSnapMode(bool enable) {
+  if (enable != IsInMetroSnapMode()) {
+    if (enable)
+      state_ = METRO_SNAP;
+    else
+      state_ = NORMAL;
+  }
+  if (FullscreenControllerStateTest::IsReentrant())
+    ChangeWindowFullscreenState();
+}
+
+bool FullscreenControllerTestWindow::IsInMetroSnapMode() const {
+  return state_ == METRO_SNAP;
+}
+#endif
+
+#if defined(OS_MACOSX)
+void FullscreenControllerTestWindow::EnterFullscreenWithChrome() {
+  EnterFullscreen(true);
+}
+
+bool FullscreenControllerTestWindow::IsFullscreenWithChrome() {
+  return IsFullscreen() && mac_with_chrome_mode_;
+}
+
+bool FullscreenControllerTestWindow::IsFullscreenWithoutChrome() {
+  return IsFullscreen() && !mac_with_chrome_mode_;
+}
+#endif
+
+// static
+const char* FullscreenControllerTestWindow::GetWindowStateString(
+    WindowState state) {
+  switch (state) {
+    case NORMAL:
+      return "NORMAL";
+    case FULLSCREEN:
+      return "FULLSCREEN";
+    case METRO_SNAP:
+      return "METRO_SNAP";
+    case TO_FULLSCREEN:
+      return "TO_FULLSCREEN";
+    case TO_NORMAL:
+      return "TO_NORMAL";
+    default:
+      NOTREACHED() << "No string for state " << state;
+      return "WindowState-Unknown";
+  }
+}
+
+void FullscreenControllerTestWindow::ChangeWindowFullscreenState() {
+  // Several states result in "no operation" intentionally. The tests
+  // assume that all possible states and event pairs can be tested, even
+  // though window managers will not generate all of these.
+  switch (state_) {
+    case NORMAL:
+      break;
+    case FULLSCREEN:
+      break;
+    case METRO_SNAP:
+      break;
+    case TO_FULLSCREEN:
+      state_ = FULLSCREEN;
+      break;
+    case TO_NORMAL:
+      state_ = NORMAL;
+      break;
+    default:
+      NOTREACHED();
+  }
+  // Emit a change event from every state to ensure the Fullscreen Controller
+  // handles it in all circumstances.
+  browser_->WindowFullscreenStateChanged();
+}
+
+void FullscreenControllerTestWindow::EnterFullscreen(
+    bool new_mac_with_chrome_mode) {
+  bool reentrant = IsTransitionReentrant(true, new_mac_with_chrome_mode);
+
+  mac_with_chrome_mode_ = new_mac_with_chrome_mode;
+  if (!IsFullscreen())
+    state_ = TO_FULLSCREEN;
+
+  if (reentrant)
+    ChangeWindowFullscreenState();
+}
+
+bool FullscreenControllerTestWindow::IsTransitionReentrant(
+    bool new_fullscreen,
+    bool new_mac_with_chrome_mode) {
+#if defined(OS_MACOSX)
+  bool mac_with_chrome_mode_changed = new_mac_with_chrome_mode ?
+      IsFullscreenWithoutChrome() : IsFullscreenWithChrome();
+#else
+  bool mac_with_chrome_mode_changed = false;
+#endif
+  bool fullscreen_changed = (new_fullscreen != IsFullscreen());
+
+  if (!fullscreen_changed && !mac_with_chrome_mode_changed)
+    return false;
+
+  if (FullscreenControllerStateTest::IsReentrant())
+    return true;
+
+  // BrowserWindowCocoa::EnterFullscreen() and
+  // BrowserWindowCocoa::EnterFullscreenWithChrome() are reentrant when
+  // switching between fullscreen with chrome and fullscreen without chrome.
+  return state_ == FULLSCREEN &&
+      !fullscreen_changed &&
+      mac_with_chrome_mode_changed;
+}
+
+// Unit test fixture testing Fullscreen Controller through its states. ---------
+class FullscreenControllerStateUnitTest : public BrowserWithTestWindowTest,
+                                          public FullscreenControllerStateTest {
+ public:
+  FullscreenControllerStateUnitTest();
+
+  // FullscreenControllerStateTest:
+  virtual void SetUp() OVERRIDE;
+  virtual void ChangeWindowFullscreenState() OVERRIDE;
+  virtual const char* GetWindowStateString() OVERRIDE;
+  virtual void VerifyWindowState() OVERRIDE;
+
+ protected:
+  // FullscreenControllerStateTest:
+  virtual bool ShouldSkipStateAndEventPair(State state, Event event) OVERRIDE;
+  virtual Browser* GetBrowser() OVERRIDE;
+  FullscreenControllerTestWindow* window_;
+};
+
+FullscreenControllerStateUnitTest::FullscreenControllerStateUnitTest ()
+    : window_(NULL) {
+}
+
+void FullscreenControllerStateUnitTest::SetUp() {
+  window_ = new FullscreenControllerTestWindow();
+  set_window(window_);  // BrowserWithTestWindowTest takes ownership.
+  BrowserWithTestWindowTest::SetUp();
+  window_->set_browser(browser());
+}
+
+void FullscreenControllerStateUnitTest::ChangeWindowFullscreenState() {
+  window_->ChangeWindowFullscreenState();
+}
+
+const char* FullscreenControllerStateUnitTest::GetWindowStateString() {
+  return FullscreenControllerTestWindow::GetWindowStateString(window_->state());
+}
+
+void FullscreenControllerStateUnitTest::VerifyWindowState() {
+  switch (state_) {
+    case STATE_NORMAL:
+      EXPECT_EQ(FullscreenControllerTestWindow::NORMAL,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_BROWSER_FULLSCREEN_NO_CHROME:
+      EXPECT_EQ(FullscreenControllerTestWindow::FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_BROWSER_FULLSCREEN_WITH_CHROME:
+      EXPECT_EQ(FullscreenControllerTestWindow::FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+#if defined(OS_WIN)
+    case STATE_METRO_SNAP:
+      EXPECT_EQ(FullscreenControllerTestWindow::METRO_SNAP,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+#endif
+    case STATE_TAB_FULLSCREEN:
+      EXPECT_EQ(FullscreenControllerTestWindow::FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_TAB_BROWSER_FULLSCREEN:
+      EXPECT_EQ(FullscreenControllerTestWindow::FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_TAB_BROWSER_FULLSCREEN_CHROME:
+      EXPECT_EQ(FullscreenControllerTestWindow::FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_TO_NORMAL:
+      EXPECT_EQ(FullscreenControllerTestWindow::TO_NORMAL,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_TO_BROWSER_FULLSCREEN_NO_CHROME:
+      EXPECT_EQ(FullscreenControllerTestWindow::TO_FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME:
+      EXPECT_EQ(FullscreenControllerTestWindow::TO_FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    case STATE_TO_TAB_FULLSCREEN:
+      EXPECT_EQ(FullscreenControllerTestWindow::TO_FULLSCREEN,
+                window_->state()) << GetAndClearDebugLog();
+      break;
+    default:
+      NOTREACHED() << GetAndClearDebugLog();
+  }
+
+  FullscreenControllerStateTest::VerifyWindowState();
+}
+
+bool FullscreenControllerStateUnitTest::ShouldSkipStateAndEventPair(
+    State state, Event event) {
+#if defined(OS_MACOSX)
+  // TODO(scheib) Toggle, Window Event, Toggle, Toggle on Mac as exposed by
+  // test *.STATE_TO_NORMAL__TOGGLE_FULLSCREEN runs interactively and exits to
+  // Normal. This doesn't appear to be the desired result, and would add
+  // too much complexity to mimic in our simple FullscreenControllerTestWindow.
+  // http://crbug.com/156968
+  if ((state == STATE_TO_NORMAL ||
+       state == STATE_TO_BROWSER_FULLSCREEN_NO_CHROME ||
+       state == STATE_TO_TAB_FULLSCREEN) &&
+      event == TOGGLE_FULLSCREEN)
+    return true;
+#endif
+
+  return FullscreenControllerStateTest::ShouldSkipStateAndEventPair(state,
+                                                                    event);
+}
+
+Browser* FullscreenControllerStateUnitTest::GetBrowser() {
+  return BrowserWithTestWindowTest::browser();
+}
+
+// Tests -----------------------------------------------------------------------
+
+#define TEST_EVENT(state, event) \
+    TEST_F(FullscreenControllerStateUnitTest, state##__##event) { \
+      AddTab(browser(), GURL(chrome::kAboutBlankURL)); \
+      ASSERT_NO_FATAL_FAILURE(TestStateAndEvent(state, event)) \
+          << GetAndClearDebugLog(); \
+    }
+    // Progress of tests can be examined by inserting the following line:
+    // LOG(INFO) << GetAndClearDebugLog(); }
+
+// Soak tests:
+
+// Tests all states with all permutations of multiple events to detect lingering
+// state issues that would bleed over to other states.
+// I.E. for each state test all combinations of events E1, E2, E3.
+//
+// This produces coverage for event sequences that may happen normally but
+// would not be exposed by traversing to each state via TransitionToState().
+// TransitionToState() always takes the same path even when multiple paths
+// exist.
+TEST_F(FullscreenControllerStateUnitTest, TransitionsForEachState) {
+  // A tab is needed for tab fullscreen.
+  AddTab(browser(), GURL(chrome::kAboutBlankURL));
+  TestTransitionsForEachState();
+  // Progress of test can be examined via LOG(INFO) << GetAndClearDebugLog();
+}
+
+
+// Individual tests for each pair of state and event:
+
+TEST_EVENT(STATE_NORMAL, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_NORMAL, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_NORMAL, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_NORMAL, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_NORMAL, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_NORMAL, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_NORMAL, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_NORMAL, BUBBLE_ALLOW);
+TEST_EVENT(STATE_NORMAL, BUBBLE_DENY);
+TEST_EVENT(STATE_NORMAL, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, BUBBLE_ALLOW);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, BUBBLE_DENY);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_NO_CHROME, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, BUBBLE_ALLOW);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, BUBBLE_DENY);
+TEST_EVENT(STATE_BROWSER_FULLSCREEN_WITH_CHROME, WINDOW_CHANGE);
+
+#if defined(OS_WIN)
+TEST_EVENT(STATE_METRO_SNAP, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_METRO_SNAP, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_METRO_SNAP, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_METRO_SNAP, TAB_FULLSCREEN_FALSE);
+TEST_EVENT(STATE_METRO_SNAP, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_METRO_SNAP, METRO_SNAP_FALSE);
+TEST_EVENT(STATE_METRO_SNAP, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_METRO_SNAP, BUBBLE_ALLOW);
+TEST_EVENT(STATE_METRO_SNAP, BUBBLE_DENY);
+TEST_EVENT(STATE_METRO_SNAP, WINDOW_CHANGE);
+#endif
+
+TEST_EVENT(STATE_TAB_FULLSCREEN, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TAB_FULLSCREEN, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TAB_FULLSCREEN, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TAB_FULLSCREEN, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TAB_FULLSCREEN, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TAB_FULLSCREEN, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TAB_FULLSCREEN, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TAB_FULLSCREEN, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TAB_FULLSCREEN, BUBBLE_DENY);
+TEST_EVENT(STATE_TAB_FULLSCREEN, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, BUBBLE_DENY);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, BUBBLE_DENY);
+TEST_EVENT(STATE_TAB_BROWSER_FULLSCREEN_CHROME, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_TO_NORMAL, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TO_NORMAL, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TO_NORMAL, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TO_NORMAL, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TO_NORMAL, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TO_NORMAL, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TO_NORMAL, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TO_NORMAL, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TO_NORMAL, BUBBLE_DENY);
+TEST_EVENT(STATE_TO_NORMAL, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, BUBBLE_DENY);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, BUBBLE_DENY);
+TEST_EVENT(STATE_TO_BROWSER_FULLSCREEN_WITH_CHROME, WINDOW_CHANGE);
+
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, TOGGLE_FULLSCREEN);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, TOGGLE_FULLSCREEN_CHROME);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, TAB_FULLSCREEN_TRUE);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, TAB_FULLSCREEN_FALSE);
+#if defined(OS_WIN)
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, METRO_SNAP_TRUE);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, METRO_SNAP_FALSE);
+#endif
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, BUBBLE_EXIT_LINK);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, BUBBLE_ALLOW);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, BUBBLE_DENY);
+TEST_EVENT(STATE_TO_TAB_FULLSCREEN, WINDOW_CHANGE);
+
+
+// Specific one-off tests for known issues:
+
+// TODO(scheib) Toggling Tab fullscreen while pending Tab or
+// Browser fullscreen is broken currently http://crbug.com/154196
+TEST_F(FullscreenControllerStateUnitTest,
+       DISABLED_ToggleTabWhenPendingBrowser) {
+#if !defined(OS_WIN)  // Only possible without reentrancy
+  AddTab(browser(), GURL(chrome::kAboutBlankURL));
+  ASSERT_NO_FATAL_FAILURE(
+      TransitionToState(STATE_TO_BROWSER_FULLSCREEN_NO_CHROME))
+      << GetAndClearDebugLog();
+
+  ASSERT_TRUE(InvokeEvent(TAB_FULLSCREEN_TRUE)) << GetAndClearDebugLog();
+  ASSERT_TRUE(InvokeEvent(TAB_FULLSCREEN_FALSE)) << GetAndClearDebugLog();
+  ASSERT_TRUE(InvokeEvent(WINDOW_CHANGE)) << GetAndClearDebugLog();
+#endif
+}
+
+// TODO(scheib) Toggling Tab fullscreen while pending Tab or
+// Browser fullscreen is broken currently http://crbug.com/154196
+TEST_F(FullscreenControllerStateUnitTest, DISABLED_ToggleTabWhenPendingTab) {
+#if !defined(OS_WIN)  // Only possible without reentrancy
+  AddTab(browser(), GURL(chrome::kAboutBlankURL));
+  ASSERT_NO_FATAL_FAILURE(
+      TransitionToState(STATE_TO_TAB_FULLSCREEN))
+      << GetAndClearDebugLog();
+
+  ASSERT_TRUE(InvokeEvent(TAB_FULLSCREEN_TRUE)) << GetAndClearDebugLog();
+  ASSERT_TRUE(InvokeEvent(TAB_FULLSCREEN_FALSE)) << GetAndClearDebugLog();
+  ASSERT_TRUE(InvokeEvent(WINDOW_CHANGE)) << GetAndClearDebugLog();
+#endif
+}
+
+// Debugging utility: Display the transition tables. Intentionally disabled
+TEST_F(FullscreenControllerStateUnitTest, DISABLED_DebugLogStateTables) {
+  std::ostringstream output;
+  output << "\n\nTransition Table:";
+  output << GetTransitionTableAsString();
+
+  output << "\n\nInitial transitions:";
+  output << GetStateTransitionsAsString();
+
+  // Calculate all transition pairs.
+  for (int state1_int = 0; state1_int < NUM_STATES; state1_int++) {
+    State state1 = static_cast<State>(state1_int);
+    for (int state2_int = 0; state2_int < NUM_STATES; state2_int++) {
+      State state2 = static_cast<State>(state2_int);
+      if (ShouldSkipStateAndEventPair(state1, EVENT_INVALID) ||
+          ShouldSkipStateAndEventPair(state2, EVENT_INVALID))
+        continue;
+      // Compute the transition
+      if (NextTransitionInShortestPath(state1, state2, NUM_STATES).state ==
+          STATE_INVALID) {
+        LOG(ERROR) << "Should be skipping state transitions for: "
+            << GetStateString(state1) << " " << GetStateString(state2);
+      }
+    }
+  }
+
+  output << "\n\nAll transitions:";
+  output << GetStateTransitionsAsString();
+  LOG(INFO) << output.str();
+}
+
+// Test that the fullscreen exit bubble is closed by
+// WindowFullscreenStateChanged() if fullscreen is exited via BrowserWindow.
+// This currently occurs when an extension exits fullscreen via changing the
+// browser bounds.
+TEST_F(FullscreenControllerStateUnitTest, ExitFullscreenViaBrowserWindow) {
+  AddTab(browser(), GURL(chrome::kAboutBlankURL));
+  ASSERT_TRUE(InvokeEvent(TOGGLE_FULLSCREEN));
+  ASSERT_TRUE(InvokeEvent(WINDOW_CHANGE));
+  ASSERT_TRUE(browser()->window()->IsFullscreen());
+  // Exit fullscreen without going through fullscreen controller.
+  browser()->window()->ExitFullscreen();
+  ChangeWindowFullscreenState();
+  EXPECT_EQ(FEB_TYPE_NONE,
+            browser()->fullscreen_controller()->GetFullscreenExitBubbleType());
+}

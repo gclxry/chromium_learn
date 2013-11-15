@@ -1,0 +1,26 @@
+include_rules = [
+  "+components/tracing",
+  "+content/gpu",  # For gpu_info_collector.h and in-process GPU
+  "+content/port/browser",
+  "+content/public/browser",
+  "+media/audio",  # For audio input for speech input feature.
+  "+media/base",  # For Android JNI registration and kDisableEncryptedMedia.
+  "+sql",
+  "+ui/webui",
+  "+win8/util",
+
+  # Other libraries.
+  "+third_party/iaccessible2",
+  "+third_party/isimpledom",
+  "+third_party/khronos",   # For enum definitions only
+  "+third_party/speex",
+  "+third_party/re2",
+
+  # Allow non-browser Chrome OS code to be used.
+  "+chromeos",
+  "+third_party/cros_system_api",
+
+  # DO NOT ADD ANY CHROME INCLUDES HERE!!!
+  # See https://sites.google.com/a/chromium.org/dev/developers/content-module
+  # for more information.
+]

@@ -1,0 +1,218 @@
+[
+  {
+    "title": "Getting Started",
+    "items": [
+      {
+        "title": "What Are Packaged Apps?",
+        "fileName": "about_apps.html"
+      },
+      {
+        "title": "Understand the Architecture",
+        "fileName": "app_architecture.html"
+      },
+      {
+        "title": "Create Your First App",
+        "fileName": "first_app.html"
+      }
+    ]
+  },
+  {
+    "title": "Developing",
+    "items": [
+      {
+        "title": "Before You Start",
+        "fileName": "develop_apps.html"
+      },
+      {
+        "title": "The Fundamentals",
+        "toggleable": true,
+        "items": [
+          {
+            "title": "Manage App Lifecycle",
+            "fileName": "app_lifecycle.html"
+          },
+          {
+            "title": "Manage Data",
+            "fileName": "app_storage.html"
+          },
+          {
+            "title": "Offline First",
+            "fileName": "offline_apps.html"
+          },
+          {
+            "title": "Embed Content",
+            "fileName": "app_external.html"
+          }
+        ]
+      },
+      {
+	"title": "Learn with a Codelab",
+	"toggleable": true,
+	"items": [
+	  {
+	    "title": "About this Codelab",
+	    "fileName": "app_codelab.html"
+	  },
+	  {
+	    "title": "1 - Set Up Development Environment",
+	    "fileName": "app_codelab1_setup.html"
+	  },
+	  {
+	    "title": "2 -  Create Basic App",
+	    "fileName": "app_codelab2_basic.html"
+	  },
+	  {
+	    "title": "3 - Create MVC",
+	    "fileName": "app_codelab3_mvc.html"
+	  },
+	  {
+	    "title": "4 - Save and Fetch Data",
+	    "fileName": "app_codelab5_data.html"
+	  },
+	  {
+	    "title": "5 - Manage App Lifecycle",
+	    "fileName": "app_codelab6_lifecycle.html"
+	  },
+	   
+	  {
+            "title": "6 - Access User's Data",
+	    "fileName": "app_codelab7_useridentification.html"
+	  },
+	  {
+	    "title": "7 - Access Web Resources",
+	    "fileName": "app_codelab8_webresources.html"
+	  },
+	  {
+	    "title": "8 - Publish App",
+	    "fileName": "app_codelab_10_publishing.html"
+	  }
+	]
+      },
+      {
+        "title": "Security & Privacy",
+        "toggleable": true,
+        "items": [
+          {
+            "title": "Identify User",
+            "fileName": "app_identity.html"
+          },
+          {
+            "title": "Comply with CSP",
+            "fileName": "app_csp.html"
+          }
+        ]
+      },
+      {
+        "title": "Notifications",
+        "toggleable": true,
+        "items": [
+            {
+            "title": "Cloud Messaging",
+            "toggleable": true,
+            "items": [
+              {
+                "title": "About Cloud Messaging",
+                "fileName": "cloudMessaging.html"
+              },
+              {
+                "title": "Client Reference",
+                "fileName": "pushMessaging.html"
+              },
+              {
+                "title": "Service Reference",
+                "fileName": "gcm_server.html"
+              },
+              {
+                "title": "Terms of Service",
+                "fileName": "gcm_tos.html"
+              }
+            ]
+          },
+          {
+            "title": "Desktop Notifications",
+            "fileName": "desktop_notifications.html"
+          }
+        ]
+      },
+      {
+        "title": "Advanced Technologies",
+        "toggleable": true,
+        "items": [
+          {
+            "title": "Network Communications",
+            "fileName": "app_network.html"
+          },
+          {
+            "title": "Access Hardware Devices",
+            "fileName": "app_hardware.html"
+          }
+        ]
+      },
+      {
+        "title": "MVC Architecture",
+        "toggleable": true,
+        "items": [
+	  {
+	    "title": "About MVC Architecture",
+	    "fileName": "app_frameworks.html"
+	  },
+	  {
+            "title": "Build Apps with AngularJS",
+            "fileName": "angular_framework.html"
+          },
+          {
+            "title": "Build Apps with Sencha Ext JS",
+            "fileName": "sencha_framework.html"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "title": "Deploying",
+    "items": [
+      {
+        "title": "Publish",
+        "fileName": "publish_app.html"
+      }
+    ]
+  },
+  {
+    "title": "Reference",
+    "items": [
+      {
+        "title": "Manifest Files",
+        "fileName": "manifest.html"
+      },
+      {
+        "title": "Chrome JavaScript APIs",
+        "fileName": "api_index.html"
+      },
+      {
+        "title": "Webview Tag API",
+        "fileName": "webview_tag.html"
+      },
+      {
+        "title": "Supported Libraries",
+        "fileName": "api_other.html"
+      },
+      {
+        "title": "Disabled Web Features",
+        "fileName": "app_deprecated.html"
+      }
+    ]
+  },
+  {
+    "title": "More",
+    "items": [
+      {
+        "title": "FAQ",
+        "fileName": "faq.html"
+      },
+      {
+        "title": "Samples",
+        "fileName": "samples.html"
+      }
+    ]
+  }
+]

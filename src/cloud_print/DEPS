@@ -1,0 +1,8 @@
+include_rules = [
+  "+chrome/common",
+  "+chrome/installer/launcher_support",
+  "+google_apis/gaia/gaia_urls.h",
+  "+grit",
+  "+net",
+  "+printing",
+]

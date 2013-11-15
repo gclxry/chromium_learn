@@ -1,0 +1,160 @@
+// Copyright (c) 2013 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#ifndef COMPONENTS_AUTOFILL_BROWSER_AUTOCHECKOUT_MANAGER_H_
+#define COMPONENTS_AUTOFILL_BROWSER_AUTOCHECKOUT_MANAGER_H_
+
+#include <string>
+
+#include "base/callback_forward.h"
+#include "base/memory/scoped_ptr.h"
+#include "base/memory/weak_ptr.h"
+#include "base/string16.h"
+#include "base/threading/thread_checker.h"
+#include "components/autofill/browser/autocheckout_page_meta_data.h"
+#include "components/autofill/common/autocheckout_status.h"
+
+class GURL;
+
+namespace content {
+struct SSLStatus;
+}
+
+namespace gfx {
+class RectF;
+}
+
+namespace net {
+class URLRequestContextGetter;
+}
+
+namespace autofill {
+
+class AutofillField;
+class AutofillManager;
+class AutofillMetrics;
+class AutofillProfile;
+class CreditCard;
+class FormStructure;
+
+struct FormData;
+struct FormFieldData;
+
+class AutocheckoutManager {
+ public:
+  explicit AutocheckoutManager(AutofillManager* autofill_manager);
+  virtual ~AutocheckoutManager();
+
+  // Fill all the forms seen by the Autofill manager with the information
+  // gathered from the requestAutocomplete dialog.
+  void FillForms();
+
+  // Called when clicking a proceed element in an Autocheckout flow fails.
+  // |status| is the reason for the failure.
+  void OnClickFailed(AutocheckoutStatus status);
+
+  // Sets |page_meta_data_| with the meta data for the current page.
+  void OnLoadedPageMetaData(
+      scoped_ptr<AutocheckoutPageMetaData> page_meta_data);
+
+  // Called when a page containing forms is loaded.
+  void OnFormsSeen();
+
+  // Causes the Autocheckout bubble to be displayed if the user hasn't seen it
+  // yet for the current page. |frame_url| is the page where Autocheckout is
+  // being initiated. |ssl_status| is the SSL status of the page. |bounding_box|
+  // is the bounding box of the input field in focus.
+  virtual void MaybeShowAutocheckoutBubble(const GURL& frame_url,
+                                           const content::SSLStatus& ssl_status,
+                                           const gfx::RectF& bounding_box);
+
+  bool is_autocheckout_bubble_showing() const {
+    return is_autocheckout_bubble_showing_;
+  }
+
+ protected:
+  // Exposed for testing.
+  bool in_autocheckout_flow() const { return in_autocheckout_flow_; }
+
+  // Exposed for testing.
+  bool autocheckout_offered() const { return autocheckout_offered_; }
+
+  // Show the requestAutocomplete dialog if |show_dialog| is true. Also, does
+  // bookkeeping for whether or not the bubble is showing.
+  virtual void MaybeShowAutocheckoutDialog(const GURL& frame_url,
+                                           const content::SSLStatus& ssl_status,
+                                           bool show_dialog);
+
+  const AutofillMetrics& metric_logger() const { return *metric_logger_; }
+  void set_metric_logger(scoped_ptr<AutofillMetrics> metric_logger);
+
+ private:
+  // Shows the Autocheckout bubble. Must be called on the UI thread. |frame_url|
+  // is the page where Autocheckout is being initiated. |ssl_status| is the SSL
+  // status of the page. |bounding_box| is the bounding box of the input field
+  // in focus. |cookies| is any Google Account cookies.
+  void ShowAutocheckoutBubble(const GURL& frame_url,
+                              const content::SSLStatus& ssl_status,
+                              const gfx::RectF& bounding_box,
+                              const std::string& cookies);
+
+  // Whether or not the current page is the start of a multipage Autofill flow.
+  bool IsStartOfAutofillableFlow() const;
+
+  // Whether or not the current page is part of a multipage Autofill flow.
+  bool IsInAutofillableFlow() const;
+
+  // Callback called from AutofillDialogController on filling up the UI form.
+  void ReturnAutocheckoutData(const FormStructure* result,
+                              const std::string& google_transaction_id);
+
+  // Sends |status| to Online Wallet using AutocheckoutRequestManager.
+  void SendAutocheckoutStatus(AutocheckoutStatus status);
+
+  // Sets value of form field data |field_to_fill| based on the Autofill
+  // field type specified by |field|.
+  void SetValue(const AutofillField& field, FormFieldData* field_to_fill);
+
+  AutofillManager* autofill_manager_;  // WEAK; owns us
+
+  // Credit card verification code.
+  base::string16 cvv_;
+
+  // Profile built using the data supplied by requestAutocomplete dialog.
+  scoped_ptr<AutofillProfile> profile_;
+
+  // Credit card built using the data supplied by requestAutocomplete dialog.
+  scoped_ptr<CreditCard> credit_card_;
+
+  // Billing address built using data supplied by requestAutocomplete dialog.
+  scoped_ptr<AutofillProfile> billing_address_;
+
+  // Autocheckout specific page meta data.
+  scoped_ptr<AutocheckoutPageMetaData> page_meta_data_;
+
+  scoped_ptr<AutofillMetrics> metric_logger_;
+
+  // Whether or not the Autocheckout bubble has been displayed to the user for
+  // the current forms. Ensures the Autocheckout bubble is only shown to a
+  // user once per pageview.
+  bool autocheckout_offered_;
+
+  // Whether or not the Autocheckout bubble is being displayed to the user.
+  bool is_autocheckout_bubble_showing_;
+
+  // Whether or not the user is in an Autocheckout flow.
+  bool in_autocheckout_flow_;
+
+  std::string google_transaction_id_;
+
+  base::WeakPtrFactory<AutocheckoutManager> weak_ptr_factory_;
+
+  base::ThreadChecker thread_checker_;
+
+  DISALLOW_COPY_AND_ASSIGN(AutocheckoutManager);
+};
+
+}  // namespace autofill
+
+#endif  // COMPONENTS_AUTOFILL_BROWSER_AUTOCHECKOUT_MANAGER_H_

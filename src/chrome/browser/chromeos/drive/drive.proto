@@ -1,0 +1,118 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+//
+// Protocol buffer definitions for serializing Drive files and directories.
+
+syntax = "proto2";
+
+option optimize_for = LITE_RUNTIME;
+
+package drive;
+
+// Represents base::PlatformFileInfo.
+message PlatformFileInfoProto {
+  optional int64 size = 1;
+  optional bool is_directory = 2;
+  optional bool is_symbolic_link = 3;
+  optional int64 last_modified = 4;
+  optional int64 last_accessed = 5;
+  optional int64 creation_time = 6;
+}
+
+// File specific info, which is a part of DriveEntryProto.
+message DriveFileSpecificInfo {
+  // This URL points to a thumbnail image. The thumbnail URL is not permanent
+  // as it's not protected by authentication. See crbug.com/127697 for how
+  // stale thumbnail URLs are handled.
+  optional string thumbnail_url = 1;
+
+  // This URL is used for opening hosted documents with Google Docs's web
+  // interface.
+  optional string alternate_url = 2;
+
+  // Content mime type like "text/plain".
+  optional string content_mime_type = 3;
+
+  // The MD5 of contents of a regular file.
+  optional string file_md5 = 4;
+
+  // File extension, including the dot, used for hosted documents
+  // (ex. ".gsheet" for hosted spreadsheet documents).
+  optional string document_extension = 5;
+
+  // True if the file is a hosted document.
+  optional bool is_hosted_document = 6;
+
+  // This URL points to a page containing Share UI for this document.
+  optional string share_url = 7;
+}
+
+message DriveDirectorySpecificInfo {
+  // The changestamp of this directory. This value can be larger than the
+  // changestamp of DriveResourceMetadata, if this directory was
+  // "fast-fetched". See crbug.com/178348 for details about the "fast-fetch"
+  // feature.
+  optional int64 changestamp = 1;
+}
+
+// Represents DriveEntry, DriveFile, and DriveDirectory without children.
+message DriveEntryProto {
+  optional PlatformFileInfoProto file_info = 1;
+  optional string base_name = 2;
+  optional string title = 3;
+  optional string resource_id = 4;
+  optional string edit_url = 5;
+  // For a file, this is URL to download the file content. It is transient and
+  // can be stale. For a directory, this is URL to edit its contents on GData
+  // WAPI, or empty on Drive API v2. (Thus, this shouldn't be used for a
+  // directory.)
+  optional string download_url = 6;
+  optional string parent_resource_id = 7;
+  // This field is used for processing the feeds from the server. Deleted
+  // entries won't be stored in the metadata storage.
+  optional bool deleted = 11;
+  // True if the entry is labeled with "shared-with-me".
+  optional bool shared_with_me = 14;
+
+  // File specific information, such as MD5.
+  optional DriveFileSpecificInfo file_specific_info = 9;
+
+  // Directory specific information, such as changestamp.
+  optional DriveDirectorySpecificInfo directory_specific_info = 13;
+}
+
+// Container for the header part of ResourceMetadata.
+message ResourceMetadataHeader {
+  // Monotonically increasing version number, which is changed when
+  // incompatible change is made to the DB format. kDBVersion in
+  // drive_resource_metadata_storage.h defines the current version.
+  optional int32 version = 1;
+  optional int64 largest_changestamp = 2;
+}
+
+// Message to store information of an existing cache file.
+// Cache files are stored in 'tmp' or 'persistent' directory under the
+// root cache directory. See DriveCache::GetCacheRootPath().
+message CacheEntry {
+  // MD5 of the cache file. "local" if the file is locally modified.
+  optional string md5 = 1;
+
+  // True if the file is present locally.
+  optional bool is_present = 2;
+
+  // True if the file is pinned (i.e. available offline).
+  optional bool is_pinned = 3;
+
+  // True if the file is dirty (i.e. modified locally).
+  optional bool is_dirty = 4;
+
+  // True if the file is a mounted archive file.
+  optional bool is_mounted = 5;
+
+  // True if the file is in the persistent directory.
+  optional bool is_persistent = 6;
+
+  // When adding a new state, be sure to update TestDriveCacheState and test
+  // functions defined in drive_test_util.cc.
+}

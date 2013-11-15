@@ -1,0 +1,42 @@
+include_rules = [
+  "+apps/app_shim",  # For app shim messages.
+  "+breakpad",  # For Breakpad constants.
+  "+chrome/plugin",  # For checking whether we're a plugin process.
+  "+chromeos",  # For chromeos_switches.h
+  "+components/autofill/common",
+  "+device/bluetooth",  # For BluetoothDevicePermission
+  "+device/media_transfer_protocol",  # For MediaTransferProtocolManager
+  "+device/usb",  # For UsbDevicePermission
+  "+extensions/common",
+  "+grit",  # For generated headers
+  "+libxml",
+  "+ppapi/c",  # For various types.
+  "+ppapi/proxy",
+  "+ppapi/shared_impl",
+  "+remoting/client/plugin",
+  "+sandbox/win/src",
+  "+skia",
+  "+webkit/glue",
+  "+webkit/plugins",
+  "+webkit/user_agent",
+
+  # TODO(jam): remove me once chrome_notifcation_types.h moves to browser
+  "+content/public/browser/notification_types.h",
+
+  # Other libraries.
+  "+chrome/third_party/xdg_user_dirs",
+  "+third_party/bzip2",
+  "+third_party/mt19937ar",
+  "+third_party/npapi",
+  "+third_party/re2",
+  "+third_party/sqlite",
+  "+third_party/zlib",
+
+  # This is required by all_messages.h to allow logging of all messages. It
+  # can't be moved to chrome/common/ because it has so many dependencies in
+  # chrome/browser/.
+  "+chrome/browser/importer/profile_import_process_messages.h",
+
+  # FIXME - refactor code and remove these dependencies
+  "+chrome/installer",
+]

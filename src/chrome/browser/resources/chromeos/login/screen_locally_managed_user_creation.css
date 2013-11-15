@@ -1,0 +1,143 @@
+/* Copyright (c) 2013 The Chromium Authors. All rights reserved.
+ * Use of this source code is governed by a BSD-style license that can be
+ * found in the LICENSE file.
+ *
+ * This is the stylesheet used by the Locally managed user creation flow screen.
+ */
+
+.screen-horizontal-splitter {
+  background: -webkit-linear-gradient(rgba(128,128,128,0),
+                                      rgba(128,128,128,0.3));
+  height: 10px;
+  width: 100%;
+}
+
+#managed-user-creation-flow {
+  height: 488px;
+  padding: 70px 17px 50px;
+  width: 704px;
+}
+
+#managed-user-creation-flow-intro-title {
+  font-size: x-large;
+  text-align: center;
+}
+
+#managed-user-creation-flow-intro-placeholder {
+  background-color: gray;
+  font-size: x-large;
+  height: 150px;
+  text-align: center;
+}
+
+#managed-user-creation-flow-intro-text-1,
+#managed-user-creation-flow-intro-text-2 {
+  margin-top: 25px;
+}
+
+#managed-user-creation-flow-tutorial-created-text {
+  font-size: x-large;
+  text-align: center;
+}
+
+#managed-user-creation-flow-tutorial-instructions-text {
+  font-size: large;
+}
+
+#managed-user-creation-flow-tutorial-placeholder {
+  background-color: gray;
+  font-size: x-large;
+  height: 150px;
+  text-align: center;
+}
+
+#managed-user-creation-flow-name-block,
+#managed-user-creation-flow-password-block,
+#managed-user-creation-flow-password-title {
+  margin-top: 10px;
+}
+
+#managed-user-creation-flow-password {
+  padding: 4px 6px;
+}
+#managed-user-creation-flow-password-confirm {
+  margin-top: 12px;
+  padding: 4px 6px;
+}
+
+#managed-user-creation-flow-password-error {
+  height: 16px;
+  margin-top: 10px;
+}
+
+#managed-user-creation-flow-name-error,
+#managed-user-creation-flow-password-error {
+  visibility: hidden;
+}
+
+#managed-user-creation-flow-name-error.error,
+#managed-user-creation-flow-password-error.error {
+  background: url('chrome://theme/IDR_WARNING') left top /24px no-repeat;
+  color: red;
+  padding-left: 28px;
+  visibility: visible;
+}
+
+#managed-user-creation-flow-managers-pane {
+  border: 1px solid #f0f0f0;
+  height: 140px;
+  margin-top: 6px;
+  overflow-y: auto;
+  width: 645px;
+}
+
+.manager-pod {
+  opacity: 0.8;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-top: 10px;
+  width: 635px;
+}
+
+#managed-user-creation-flow-managers-pane .focused {
+  background-color: #f0f0f0;
+  opacity: 1;
+}
+
+.manager-pod .managed-user-creation-flow-manager-info-block {
+  min-height: 40px;
+}
+
+.manager-pod .managed-user-creation-flow-manager-image {
+  border: 1px solid gray;
+  display: inline-block;
+  height: 30px;
+  width: 30px;
+}
+
+.manager-pod .managed-user-creation-flow-manager-info {
+  display: inline-block;
+  margin: 0 8px;
+  min-height: 30px;
+}
+
+.manager-pod .managed-user-creation-flow-manager-info-text {
+  display: inline-block;
+  min-height: 30px;
+  vertical-align: top;
+}
+
+.manager-pod .managed-user-creation-flow-manager-email {
+  color: #666;
+  font-size: small;
+}
+
+.manager-pod .managed-user-creation-flow-manager-name {
+  color: #000;
+  font-size: small;
+}
+.manager-pod .managed-user-creation-flow-manager-wrong-password {
+  background: url('chrome://theme/IDR_WARNING') left top /24px no-repeat;
+  color: red;
+  padding-left: 28px;
+}

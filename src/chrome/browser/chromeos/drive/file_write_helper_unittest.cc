@@ -1,0 +1,124 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+#include "chrome/browser/chromeos/drive/file_write_helper.h"
+
+#include "base/bind.h"
+#include "base/message_loop.h"
+#include "base/threading/thread_restrictions.h"
+#include "chrome/browser/chromeos/drive/mock_drive_file_system.h"
+#include "chrome/browser/chromeos/drive/test_util.h"
+#include "content/public/browser/browser_thread.h"
+#include "content/public/test/test_browser_thread.h"
+#include "testing/gmock/include/gmock/gmock.h"
+#include "testing/gtest/include/gtest/gtest.h"
+
+using ::testing::StrictMock;
+using ::testing::_;
+
+namespace drive {
+
+namespace {
+
+ACTION_P(MockCreateFile, error) {
+  DCHECK(!arg2.is_null());
+  arg2.Run(error);
+}
+
+ACTION_P2(MockOpenFile, error, local_path) {
+  DCHECK(!arg1.is_null());
+  arg1.Run(error, local_path);
+}
+
+ACTION_P(MockCloseFile, error) {
+  DCHECK(!arg1.is_null());
+  arg1.Run(error);
+}
+
+void RecordOpenFileCallbackArguments(FileError* error,
+                                     base::FilePath* path,
+                                     FileError error_arg,
+                                     const base::FilePath& path_arg) {
+  base::ThreadRestrictions::AssertIOAllowed();
+  *error = error_arg;
+  *path = path_arg;
+}
+
+}  // namespace
+
+class FileWriteHelperTest : public testing::Test {
+ public:
+  FileWriteHelperTest()
+      : ui_thread_(content::BrowserThread::UI, &message_loop_),
+        mock_file_system_(new StrictMock<MockDriveFileSystem>) {
+  }
+
+ protected:
+  MessageLoopForUI message_loop_;
+  content::TestBrowserThread ui_thread_;
+  scoped_ptr< StrictMock<MockDriveFileSystem> > mock_file_system_;
+};
+
+TEST_F(FileWriteHelperTest, PrepareFileForWritingSuccess) {
+  const base::FilePath kDrivePath(FILE_PATH_LITERAL("/drive/file.txt"));
+  const base::FilePath kLocalPath(FILE_PATH_LITERAL("/tmp/dummy.txt"));
+
+  EXPECT_CALL(*mock_file_system_, CreateFile(kDrivePath, false, _))
+      .WillOnce(MockCreateFile(FILE_ERROR_OK));
+  EXPECT_CALL(*mock_file_system_, OpenFile(kDrivePath, _))
+      .WillOnce(MockOpenFile(FILE_ERROR_OK, kLocalPath));
+  EXPECT_CALL(*mock_file_system_, CloseFile(kDrivePath, _))
+      .WillOnce(MockCloseFile(FILE_ERROR_OK));
+
+  FileWriteHelper file_write_helper(mock_file_system_.get());
+  FileError error = FILE_ERROR_FAILED;
+  base::FilePath path;
+  file_write_helper.PrepareWritableFileAndRun(
+      kDrivePath, base::Bind(&RecordOpenFileCallbackArguments, &error, &path));
+  google_apis::test_util::RunBlockingPoolTask();
+
+  EXPECT_EQ(FILE_ERROR_OK, error);
+  EXPECT_EQ(kLocalPath, path);
+}
+
+TEST_F(FileWriteHelperTest, PrepareFileForWritingCreateFail) {
+  const base::FilePath kDrivePath(FILE_PATH_LITERAL("/drive/file.txt"));
+
+  EXPECT_CALL(*mock_file_system_, CreateFile(kDrivePath, false, _))
+      .WillOnce(MockCreateFile(FILE_ERROR_ACCESS_DENIED));
+  EXPECT_CALL(*mock_file_system_, OpenFile(_, _)).Times(0);
+  EXPECT_CALL(*mock_file_system_, CloseFile(_, _)).Times(0);
+
+  FileWriteHelper file_write_helper(mock_file_system_.get());
+  FileError error = FILE_ERROR_FAILED;
+  base::FilePath path;
+  file_write_helper.PrepareWritableFileAndRun(
+      kDrivePath, base::Bind(&RecordOpenFileCallbackArguments, &error, &path));
+  google_apis::test_util::RunBlockingPoolTask();
+
+  EXPECT_EQ(FILE_ERROR_ACCESS_DENIED, error);
+  EXPECT_EQ(base::FilePath(), path);
+}
+
+TEST_F(FileWriteHelperTest, PrepareFileForWritingOpenFail) {
+  const base::FilePath kDrivePath(FILE_PATH_LITERAL("/drive/file.txt"));
+
+  EXPECT_CALL(*mock_file_system_, CreateFile(kDrivePath, false, _))
+      .WillOnce(MockCreateFile(FILE_ERROR_OK));
+  EXPECT_CALL(*mock_file_system_, OpenFile(kDrivePath, _))
+      .WillOnce(MockOpenFile(FILE_ERROR_IN_USE, base::FilePath()));
+  EXPECT_CALL(*mock_file_system_, CloseFile(_, _)).Times(0);
+
+  FileWriteHelper file_write_helper(mock_file_system_.get());
+  FileError error = FILE_ERROR_FAILED;
+  base::FilePath path;
+  file_write_helper.PrepareWritableFileAndRun(
+      kDrivePath, base::Bind(&RecordOpenFileCallbackArguments, &error, &path));
+  google_apis::test_util::RunBlockingPoolTask();
+
+  EXPECT_EQ(FILE_ERROR_IN_USE, error);
+  EXPECT_EQ(base::FilePath(), path);
+}
+
+}   // namespace drive

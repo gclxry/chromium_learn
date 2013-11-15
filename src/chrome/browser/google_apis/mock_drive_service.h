@@ -1,0 +1,213 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+// This file contains mocks for classes in drive_service_interface.h
+
+#ifndef CHROME_BROWSER_GOOGLE_APIS_MOCK_DRIVE_SERVICE_H_
+#define CHROME_BROWSER_GOOGLE_APIS_MOCK_DRIVE_SERVICE_H_
+
+#include <string>
+
+#include "base/memory/scoped_ptr.h"
+#include "chrome/browser/google_apis/drive_service_interface.h"
+#include "net/base/io_buffer.h"
+#include "testing/gmock/include/gmock/gmock.h"
+
+namespace base {
+class FilePath;
+}
+
+namespace google_apis {
+
+class MockDriveService : public DriveServiceInterface {
+ public:
+  // DriveService is usually owned and created by DriveFileSystem.
+  MockDriveService();
+  virtual ~MockDriveService();
+
+  // DriveServiceInterface overrides.
+  MOCK_METHOD1(Initialize, void(Profile* profile));
+  MOCK_METHOD1(AddObserver, void(DriveServiceObserver* observer));
+  MOCK_METHOD1(RemoveObserver,
+      void(DriveServiceObserver* observer));
+  MOCK_CONST_METHOD0(CanStartOperation, bool());
+  MOCK_METHOD0(CancelAll, void(void));
+  MOCK_METHOD1(CancelForFilePath, bool(const base::FilePath& file_path));
+  MOCK_CONST_METHOD0(GetRootResourceId, std::string());
+  MOCK_METHOD1(GetAllResourceList,
+      void(const GetResourceListCallback& callback));
+  MOCK_METHOD2(GetResourceListInDirectory,
+      void(const std::string& directory_resource_id,
+          const GetResourceListCallback& callback));
+  MOCK_METHOD2(Search,
+      void(const std::string& search_query,
+          const GetResourceListCallback& callback));
+  MOCK_METHOD3(SearchByTitle,
+      void(const std::string& title,
+          const std::string& directory_resource_id,
+          const GetResourceListCallback& callback));
+  MOCK_METHOD2(GetChangeList,
+      void(int64 start_changestamp,
+          const GetResourceListCallback& callback));
+  MOCK_METHOD2(ContinueGetResourceList,
+      void(const GURL& override_url,
+          const GetResourceListCallback& callback));
+  MOCK_METHOD2(GetResourceEntry,
+      void(const std::string& resource_id,
+          const GetResourceEntryCallback& callback));
+  MOCK_METHOD1(GetAccountMetadata,
+      void(const GetAccountMetadataCallback& callback));
+  MOCK_METHOD1(GetAboutResource,
+      void(const GetAboutResourceCallback& callback));
+  MOCK_METHOD1(GetAppList, void(const GetAppListCallback& callback));
+  MOCK_METHOD3(DeleteResource,
+      void(const std::string& resource_id,
+          const std::string& etag,
+          const EntryActionCallback& callback));
+  MOCK_METHOD3(CopyHostedDocument,
+      void(const std::string& resource_id,
+          const std::string& new_name,
+          const GetResourceEntryCallback& callback));
+  MOCK_METHOD3(RenameResource,
+      void(const std::string& resource_id,
+          const std::string& new_name,
+          const EntryActionCallback& callback));
+  MOCK_METHOD3(AddResourceToDirectory,
+      void(const std::string& parent_resource_id,
+          const std::string& resource_id,
+          const EntryActionCallback& callback));
+  MOCK_METHOD3(RemoveResourceFromDirectory,
+      void(const std::string& parent_resource_id,
+          const std::string& resource_id,
+          const EntryActionCallback& callback));
+  MOCK_METHOD3(AddNewDirectory,
+      void(const std::string& parent_resource_id,
+          const std::string& directory_name,
+          const GetResourceEntryCallback& callback));
+  MOCK_METHOD6(
+      DownloadFile,
+      void(const base::FilePath& virtual_path,
+          const base::FilePath& local_cache_path,
+          const GURL& download_url,
+          const DownloadActionCallback& donwload_action_callback,
+          const GetContentCallback& get_content_callback,
+          const ProgressCallback& progress_callback));
+  MOCK_METHOD6(InitiateUploadNewFile,
+      void(const base::FilePath& drive_file_path,
+          const std::string& content_type,
+          int64 content_length,
+          const std::string& parent_resource_id,
+          const std::string& title,
+          const InitiateUploadCallback& callback));
+  MOCK_METHOD6(InitiateUploadExistingFile,
+      void(const base::FilePath& drive_file_path,
+          const std::string& content_type,
+          int64 content_length,
+          const std::string& resource_id,
+          const std::string& etag,
+          const InitiateUploadCallback& callback));
+  MOCK_METHOD10(ResumeUpload,
+      void(UploadMode upload_mode,
+          const base::FilePath& drive_file_path,
+          const GURL& upload_url,
+          int64 start_position,
+          int64 end_position,
+          int64 content_length,
+          const std::string& content_type,
+          const scoped_refptr<net::IOBuffer>& buf,
+          const UploadRangeCallback& callback,
+          const ProgressCallback& progress_callback));
+  MOCK_METHOD5(GetUploadStatus,
+      void(UploadMode upload_mode,
+          const base::FilePath& drive_file_path,
+          const GURL& upload_url,
+          int64 content_length,
+          const UploadRangeCallback& callback));
+  MOCK_METHOD3(AuthorizeApp,
+      void(const std::string& resource_id,
+          const std::string& app_id,
+          const AuthorizeAppCallback& callback));
+  MOCK_CONST_METHOD0(HasAccessToken, bool());
+  MOCK_CONST_METHOD0(HasRefreshToken, bool());
+  MOCK_METHOD0(ClearAccessToken, void());
+  MOCK_METHOD0(ClearRefreshToken, void());
+
+  void set_file_data(std::string* file_data) {
+    file_data_.reset(file_data);
+  }
+
+ private:
+  // Helper stub methods for functions which take callbacks, so that
+  // the callbacks get called with testable results.
+
+  // Will call |callback| with HTTP_SUCCESS and a empty ResourceList.
+  void GetChangeListStub(int64 start_changestamp,
+                         const GetResourceListCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS and a StringValue with the current
+  // value of |account_metadata_|.
+  void GetAccountMetadataStub(const GetAccountMetadataCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS.
+  void DeleteResourceStub(const std::string& resource_id,
+                          const std::string& etag,
+                          const EntryActionCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS and the current value of
+  // |document_data_|.
+  void CopyHostedDocumentStub(const std::string& resource_id,
+                              const std::string& new_name,
+                              const GetResourceEntryCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS.
+  void RenameResourceStub(const std::string& resource_id,
+                          const std::string& new_name,
+                          const EntryActionCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS.
+  void AddResourceToDirectoryStub(
+      const std::string& parent_resource_id,
+      const std::string& resource_id,
+      const EntryActionCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS.
+  void RemoveResourceFromDirectoryStub(
+      const std::string& parent_resource_id,
+      const std::string& resource_id,
+      const EntryActionCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS and the current value of
+  // |directory_data_|.
+  void CreateDirectoryStub(const std::string& parent_resource_id,
+                           const std::string& directory_name,
+                           const GetResourceEntryCallback& callback);
+
+  // Will call |callback| with HTTP_SUCCESS, the given URL, and the host+path
+  // portion of the URL as the temporary file path. If |file_data_| is not null,
+  // |file_data_| is written to the temporary file.
+  void DownloadFileStub(
+      const base::FilePath& virtual_path,
+      const base::FilePath& local_tmp_path,
+      const GURL& download_url,
+      const DownloadActionCallback& download_action_callback,
+      const GetContentCallback& get_content_callback,
+      const ProgressCallback& progress_callback);
+
+  // Account meta data to be returned from GetAccountMetadata.
+  scoped_ptr<base::Value> account_metadata_data_;
+
+  // JSON data to be returned from CreateDirectory.
+  scoped_ptr<base::Value> directory_data_;
+
+  // JSON data to be returned from CopyHostedDocument.
+  scoped_ptr<base::Value> document_data_;
+
+  // File data to be written to the local temporary file when
+  // DownloadFileStub is called.
+  scoped_ptr<std::string> file_data_;
+};
+
+}  // namespace google_apis
+
+#endif  // CHROME_BROWSER_GOOGLE_APIS_MOCK_DRIVE_SERVICE_H_

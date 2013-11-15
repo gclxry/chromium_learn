@@ -1,0 +1,14 @@
+include_rules = [
+  "-android_webview",
+  "+android_webview/common",
+  "+android_webview/renderer",
+
+  "+components/visitedlink/renderer",
+
+  "+content/public/renderer",
+
+  "+third_party/WebKit/Source/WebKit/chromium/public",
+  "+third_party/WebKit/Source/Platform/chromium/public",
+
+  "+ui/gl/gpu_memory_buffer.h",
+]

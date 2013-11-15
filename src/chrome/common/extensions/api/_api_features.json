@@ -1,0 +1,67 @@
+// Copyright (c) 2012 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+{
+  "app": {
+    "channel": "stable",
+    "extension_types": ["hosted_app", "extension", "packaged_app"],
+    "contexts": [
+      "blessed_extension", "unblessed_extension", "content_script", "web_page"
+    ],
+    "matches": [
+      "http://*/*", "https://*/*", "chrome-extension://*/*", "file://*/*"
+    ]
+  },
+  "app.runtime": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"],
+    "dependencies": ["permission:app.runtime"]
+  },
+  "app.window": {
+    "channel": "stable",
+    "contexts": ["blessed_extension"],
+    "dependencies": ["permission:app.window"]
+  },
+  "app.currentWindowInternal": {
+    "internal": true,
+    "channel": "stable",
+    "contexts": ["blessed_extension", "unblessed_extension", "content_script"]
+  },
+  "bookmarks": {
+    "channel": "stable",
+    "dependencies": ["permission:bookmarks"],
+    "contexts": ["blessed_extension"]
+  },
+  "downloadsInternal": {
+    "internal": true,
+    "channel": "stable",
+    "contexts": ["blessed_extension", "unblessed_extension", "content_script"]
+  },
+  "events": {
+    "internal": true,
+    "channel": "stable",
+    "contexts": [
+      "blessed_extension", "unblessed_extension", "content_script", "web_page"
+    ],
+    "matches": ["<all_urls>"]
+  },
+  "fileBrowserHandlerInternal": {
+    "internal": true,
+    "channel": "stable",
+    "contexts": ["blessed_extension", "unblessed_extension", "content_script"]
+  },
+  "webRequestInternal": {
+    "internal": true,
+    "channel": "stable",
+    "contexts": ["blessed_extension", "unblessed_extension", "content_script"]
+  },
+  "webstore": {
+    // Hosted apps can use the webstore API from within a blessed context.
+    "channel": "stable",
+    "extension_types": ["hosted_app"],
+    "contexts": ["blessed_extension", "web_page"],
+    // Any webpage can use the webstore API.
+    "matches": ["http://*/*", "https://*/*"]
+  }
+}
