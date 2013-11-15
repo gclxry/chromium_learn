@@ -28,6 +28,7 @@
 #include "chrome/browser/ui/webui/feedback_ui.h"
 #include "chrome/browser/ui/webui/flags_ui.h"
 #include "chrome/browser/ui/webui/flash_ui.h"
+#include "chrome/browser/ui/webui/hello_world_ui.h"
 #include "chrome/browser/ui/webui/help/help_ui.h"
 #include "chrome/browser/ui/webui/history_ui.h"
 #include "chrome/browser/ui/webui/inspect_ui.h"
@@ -219,6 +220,9 @@ WebUIFactoryFunction GetWebUIFactoryFunction(WebUI* web_ui,
           switches::kEnableMemoryInternalsUI)) {
     return &NewWebUI<MemoryInternalsUI>;
   }
+  if (url.host() == chrome::kChromeUIHelloWorldHost)
+	  return &NewWebUI<HelloWorldUI>;
+
 #if !defined(DISABLE_NACL)
   if (url.host() == chrome::kChromeUINaClHost)
     return &NewWebUI<NaClUI>;

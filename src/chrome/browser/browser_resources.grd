@@ -346,6 +346,9 @@
       <include name="IDR_PROFILE_SIGNIN_CONFIRMATION_HTML" file="resources\profile_signin_confirmation.html" type="BINDATA" />
       <include name="IDR_PROFILE_SIGNIN_CONFIRMATION_JS" file="resources\profile_signin_confirmation.js" type="BINDATA" />
       <include name="IDR_PROFILE_SIGNIN_CONFIRMATION_CSS" file="resources\profile_signin_confirmation.css" type="BINDATA" />
+	  <include name="IDR_HELLO_WORLD_HTML" file="resources\hello_world.html" type="BINDATA" />
+	  <include name="IDR_HELLO_WORLD_CSS" file="resources\hello_world.css" type="BINDATA" />
+	  <include name="IDR_HELLO_WORLD_JS" file="resources\hello_world.js" type="BINDATA" />
     </includes>
   </release>
 </grit>

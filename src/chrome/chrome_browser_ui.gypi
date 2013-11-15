@@ -2001,6 +2001,8 @@
         'browser/ui/webui/flash_ui.h',
         'browser/ui/webui/gesture_config_ui.cc',
         'browser/ui/webui/gesture_config_ui.h',
+		'browser/ui/webui/hello_world_ui.cc',
+		'browser/ui/webui/hello_world_ui.h',
         'browser/ui/webui/help/help_handler.cc',
         'browser/ui/webui/help/help_handler.h',
         'browser/ui/webui/help/help_ui.cc',

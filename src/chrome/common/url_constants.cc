@@ -78,6 +78,7 @@ const char kChromeUIUberURL[] = "chrome://chrome/";
 const char kChromeUIUberFrameURL[] = "chrome://uber-frame/";
 const char kChromeUIUserActionsURL[] = "chrome://user-actions/";
 const char kChromeUIVersionURL[] = "chrome://version/";
+const char kChromeUIHelloWorldURL[] = "chrome://hello-world/";
 
 #if defined(OS_ANDROID)
 const char kChromeUIWelcomeURL[] = "chrome://welcome/";
@@ -210,6 +211,7 @@ const char kChromeUIUberHost[] = "chrome";
 const char kChromeUIUserActionsHost[] = "user-actions";
 const char kChromeUIVersionHost[] = "version";
 const char kChromeUIWorkersHost[] = "workers";
+const char kChromeUIHelloWorldHost[] = "hello-world";
 
 const char kChromeUIScreenshotPath[] = "screenshots";
 const char kChromeUIThemePath[] = "theme";

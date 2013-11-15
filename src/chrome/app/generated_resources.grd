@@ -15368,6 +15368,12 @@ Some features may be unavailable.  Please check that the profile exists and you 
     <message name="IDS_PASSWORD_GENERATION_BUTTON_TEXT" desc="The text on the button that users click to accept the generated password">
       Try it
     </message>
+	<message name="IDS_HELLO_WORLD_TITLE" desc="A happy message saying hello to the world">
+	Hello World!
+	</message>
+	<message name="IDS_HELLO_WORLD_WELCOME_TEXT" desc="Message welcoming the user to the hello world page">
+	Welcome to this fancy Hello World page <ph name="WELCOME_NAME">$1<ex>Chromium User</ex></ph>!
+	</message>
 
     </messages>
 
