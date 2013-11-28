@@ -743,7 +743,20 @@ WARN_LOGFILE           =
 # spaces.
 # Note: If this tag is empty the current directory is searched.
 
-INPUT                  = E:\chromium\src\content\browser\web_contents\web_contents_view_win.h
+INPUT                  = content\port\browser\web_contents_view_port.h \
+                         content\port\browser\render_view_host_delegate_view.h \
+                         ui\base\win\window_impl.h \
+                         content\public\browser\web_contents_view.h \
+                         content\browser\web_contents\web_contents_impl.h \
+                         content\public\browser\web_contents.h \
+                         content\public\browser\page_navigator.h \
+                         ipc\ipc_sender.h \
+                         base\supports_user_data.h \
+                         content\browser\renderer_host\render_view_host_delegate.h \
+                         content\browser\renderer_host\render_widget_host_delegate.h \
+                         content\public\browser\notification_observer.h \
+                         content\public\browser\web_contents_view_delegate.h \
+                         content\browser\web_contents\web_contents_view_win.h
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses
@@ -752,7 +765,7 @@ INPUT                  = E:\chromium\src\content\browser\web_contents\web_conten
 # possible encodings.
 # The default value is: UTF-8.
 
-INPUT_ENCODING         = UTF-8
+INPUT_ENCODING         = gb2312
 
 # If the value of the INPUT tag contains directories, you can use the
 # FILE_PATTERNS tag to specify one or more wildcard patterns (like *.cpp and
