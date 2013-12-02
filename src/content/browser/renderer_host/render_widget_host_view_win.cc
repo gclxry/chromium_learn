@@ -409,6 +409,7 @@ RenderWidgetHostViewWin::RenderWidgetHostViewWin(RenderWidgetHost* widget)
       touch_state_(new WebTouchState(this)),
       pointer_down_context_(false),
       last_touch_location_(-1, -1),
+	  right_button_down_(false),
       touch_events_enabled_(false),
       gesture_recognizer_(ui::GestureRecognizer::Create(this)) {
   render_widget_host_->SetView(this);
@@ -552,6 +553,27 @@ void RenderWidgetHostViewWin::CreateBrowserAccessibilityManagerIfNeeded() {
           BrowserAccessibilityManagerWin::GetEmptyDocument(),
           this));
 }
+
+void RenderWidgetHostViewWin::MouseGesture(CPaintDC& paint_dc)
+{
+	if (right_button_down_)
+	{
+		int nSize = mouse_point_.size(); 
+		if (nSize > 6)
+		{
+			CPen pen;
+			pen.CreatePen(PS_SOLID, 5, RGB(0, 0, 0));
+			HGDIOBJ old_pen = SelectObject(paint_dc.m_hDC, (HGDIOBJ)pen.m_hPen);
+			paint_dc.MoveTo(mouse_point_[0]);
+			for (int ia = 0; ia < nSize; ia++)
+			{
+				paint_dc.LineTo(mouse_point_[ia]);
+			}
+			SelectObject(paint_dc.m_hDC, (HGDIOBJ)old_pen);
+		}
+	}
+}
+
 
 void RenderWidgetHostViewWin::MovePluginWindows(
     const gfx::Vector2d& scroll_offset,
@@ -1255,6 +1277,7 @@ void RenderWidgetHostViewWin::OnPaint(HDC unused_dc) {
 
   CPaintDC paint_dc(m_hWnd);
 
+  
   if (!render_widget_host_)
     return;
 
@@ -1347,6 +1370,7 @@ void RenderWidgetHostViewWin::OnPaint(HDC unused_dc) {
       }
     }
 
+	
     if (manage_colors)
       SetICMMode(paint_dc.m_hDC, ICM_OFF);
 
@@ -1389,6 +1413,7 @@ void RenderWidgetHostViewWin::OnPaint(HDC unused_dc) {
     if (whiteout_start_time_.is_null())
       whiteout_start_time_ = TimeTicks::Now();
   }
+  MouseGesture(paint_dc);
 }
 
 void RenderWidgetHostViewWin::DrawBackground(const RECT& dirty_rect,
@@ -1735,6 +1760,41 @@ LRESULT RenderWidgetHostViewWin::OnImeRequest(
   }
 }
 
+RECT Point2Rect(std::vector<POINT> points)
+{
+	int nSize = points.size();
+	RECT rc;
+	rc.left = points[0].x;
+	rc.right = points[0].x;
+	rc.top = points[0].y;
+	rc.bottom = points[0].y;
+
+	for (int ia = 0; ia < nSize; ia++)
+	{
+		if (points[ia].x > rc.right)
+		{
+			rc.right = points[ia].x;
+		}
+
+		if (points[ia].x < rc.left)
+		{
+			rc.left = points[ia].x;
+		}
+
+		if (points[ia].y > rc.bottom)
+		{
+			rc.bottom = points[ia].y;
+		}
+
+		if (points[ia].y < rc.top)
+		{
+			rc.top = points[ia].y;
+		}
+	}
+	
+	return rc;
+}
+
 LRESULT RenderWidgetHostViewWin::OnMouseEvent(UINT message, WPARAM wparam,
                                               LPARAM lparam, BOOL& handled) {
   TRACE_EVENT0("browser", "RenderWidgetHostViewWin::OnMouseEvent");
@@ -1774,7 +1834,7 @@ LRESULT RenderWidgetHostViewWin::OnMouseEvent(UINT message, WPARAM wparam,
   // Don't forward if the container is a popup or fullscreen widget.
   if (!is_fullscreen_ && !close_on_deactivate_) {
     switch (message) {
-      case WM_LBUTTONDOWN:
+      case WM_LBUTTONDOWN:		  
       case WM_MBUTTONDOWN:
       case WM_RBUTTONDOWN:
         // Finish the ongoing composition whenever a mouse click happens.
@@ -1784,8 +1844,33 @@ LRESULT RenderWidgetHostViewWin::OnMouseEvent(UINT message, WPARAM wparam,
         } else {
           ime_input_.CleanupComposition(m_hWnd);
         }
+
+		if (WM_RBUTTONDOWN == message)
+		{
+			right_button_down_ = true;
+			//mouse_point_.clear();
+			POINT pt;
+			pt.x =  ((int)(short)LOWORD(lparam));
+			pt.y = ((int)(short)HIWORD(lparam));
+
+			mouse_point_.push_back(pt);
+		}
         // Fall through.
       case WM_MOUSEMOVE:
+		  {
+			  if (right_button_down_ && WM_MOUSEMOVE == message)
+			  {
+				  POINT pt;
+				  pt.x =  ((int)(short)LOWORD(lparam));
+				  pt.y = ((int)(short)HIWORD(lparam));
+
+				  mouse_point_.push_back(pt);
+				  //MouseGesture();
+				  RECT rc = Point2Rect(mouse_point_);
+
+				  InvalidateRect(&rc);
+			  }
+		  }
       case WM_MOUSELEAVE: {
         // Give the WebContentsImpl first crack at the message. It may want to
         // prevent forwarding to the renderer if some higher level browser
@@ -1806,6 +1891,13 @@ LRESULT RenderWidgetHostViewWin::OnMouseEvent(UINT message, WPARAM wparam,
           return 1;
         }
       }
+	  case WM_RBUTTONUP:
+		  if(WM_RBUTTONUP == message)
+		  {
+			  right_button_down_ = false;
+			  mouse_point_.clear();
+			  Invalidate();
+		  }
     }
   }
 

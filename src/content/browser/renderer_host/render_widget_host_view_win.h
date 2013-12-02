@@ -444,6 +444,9 @@ class RenderWidgetHostViewWin
   // doesn't already exist.
   void CreateBrowserAccessibilityManagerIfNeeded();
 
+
+  void MouseGesture(CPaintDC& paint_dc);
+
   // The associated Model.  While |this| is being Destroyed,
   // |render_widget_host_| is NULL and the Windows message loop is run one last
   // time. Message handlers must check for a NULL |render_widget_host_|.
@@ -593,6 +596,11 @@ class RenderWidgetHostViewWin
 
   // The OS-provided default IAccessible instance for our hwnd.
   base::win::ScopedComPtr<IAccessible> window_iaccessible_;
+
+  // mouse right button down
+  bool right_button_down_;
+
+  std::vector<POINT> mouse_point_;
 
   DISALLOW_COPY_AND_ASSIGN(RenderWidgetHostViewWin);
 };
