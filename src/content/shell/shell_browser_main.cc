@@ -96,6 +96,7 @@ bool GetNextTest(const CommandLine::StringVector& args,
 
 }  // namespace
 
+// 运行浏览器进程的主程序
 // Main routine for running as the Browser process.
 int ShellBrowserMain(const content::MainFunctionParams& parameters) {
   bool layout_test_mode =

@@ -46,6 +46,7 @@ class ShellJavaScriptDialogManager;
 class SiteInstance;
 class WebContents;
 
+// 代表这一个浏览器窗口
 // This represents one window of the Content Shell, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
 class Shell : public WebContentsDelegate,

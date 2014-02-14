@@ -18,6 +18,7 @@ class ShellContentRendererClient;
 class BrowserMainRunner;
 #endif
 
+// 为浏览器的启动做一些准备工作
 class ShellMainDelegate : public ContentMainDelegate {
  public:
   ShellMainDelegate();

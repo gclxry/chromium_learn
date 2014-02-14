@@ -47,6 +47,7 @@ class ShellBrowserMainParts : public BrowserMainParts {
   const MainFunctionParams& parameters_;
   bool run_message_loop_;
 
+  // 开发者工具
   ShellDevToolsDelegate* devtools_delegate_;
 
   DISALLOW_COPY_AND_ASSIGN(ShellBrowserMainParts);

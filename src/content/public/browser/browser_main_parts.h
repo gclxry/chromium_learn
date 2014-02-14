@@ -47,6 +47,8 @@ namespace content {
 //    existing chunk which makes it longer than one or two lines, please move
 //    the code out into a separate method.)
 //
+
+// 做一些事情跟BrowserMain有很紧密关系的类
 class CONTENT_EXPORT BrowserMainParts {
  public:
   BrowserMainParts() {}

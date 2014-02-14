@@ -18,8 +18,11 @@
 #if defined(OS_WIN)
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
+  // Initialize the sandbox services. 初始化沙箱服务
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
+
+  // 
   content::ShellMainDelegate delegate;
   return content::ContentMain(instance, &sandbox_info, &delegate);
 }

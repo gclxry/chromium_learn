@@ -20,6 +20,7 @@ class ResourceContext;
 class ShellDownloadManagerDelegate;
 class ShellURLRequestContextGetter;
 
+// 浏览器上下文信息，资源，下载，url有关
 class ShellBrowserContext : public BrowserContext {
  public:
   explicit ShellBrowserContext(bool off_the_record);

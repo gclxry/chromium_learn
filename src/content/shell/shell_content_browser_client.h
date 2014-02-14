@@ -21,6 +21,7 @@ class ShellBrowserContext;
 class ShellBrowserMainParts;
 class ShellResourceDispatcherHostDelegate;
 
+// 创建一些重要的浏览器对象
 class ShellContentBrowserClient : public ContentBrowserClient,
                                   public NotificationObserver {
  public:
