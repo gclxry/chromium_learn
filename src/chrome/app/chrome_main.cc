@@ -24,7 +24,11 @@ int ChromeMain(int argc, const char** argv);
 #if defined(OS_WIN)
 DLLEXPORT int __cdecl ChromeMain(HINSTANCE instance,
                                  sandbox::SandboxInterfaceInfo* sandbox_info) {
+
+  // 浏览器外围功能，一般在这里面修改界面，功能
   ChromeMainDelegate chrome_main_delegate;
+
+  // 浏览器内部实现功能，一般不要改动
   return content::ContentMain(instance, sandbox_info, &chrome_main_delegate);
 #elif defined(OS_POSIX)
 int ChromeMain(int argc, const char** argv) {

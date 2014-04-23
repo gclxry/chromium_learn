@@ -10,6 +10,8 @@
 #include "chrome/common/chrome_content_client.h"
 #include "content/public/app/content_main_delegate.h"
 
+// 要定制自己的浏览器，需要实现content::ContentMainDelegate，做自己的处理
+// 为浏览器的启动做一些准备工作
 // Chrome implementation of ContentMainDelegate.
 class ChromeMainDelegate : public content::ContentMainDelegate {
  public:

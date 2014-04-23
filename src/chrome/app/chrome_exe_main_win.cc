@@ -17,12 +17,13 @@
 int RunChrome(HINSTANCE instance) {
   bool exit_now = true;
   // We restarted because of a previous crash. Ask user if we should relaunch.
+  // 先前的崩溃，是否需要恢复
   if (ShowRestartDialogIfCrashed(&exit_now)) {
     if (exit_now)
       return content::RESULT_CODE_NORMAL_EXIT;
   }
 
-  // Initialize the sandbox services.
+  // Initialize the sandbox services. 初始化沙箱服务
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
 
@@ -34,6 +35,7 @@ int RunChrome(HINSTANCE instance) {
   return rc;
 }
 
+// chrome.exe 的总入口
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t*, int) {
   // Initialize the commandline singleton from the environment.
   CommandLine::Init(0, NULL);

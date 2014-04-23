@@ -27,6 +27,7 @@ namespace base {
 class FilePath;
 }
 
+// 命令行参数有关的类
 class BASE_EXPORT CommandLine {
  public:
 #if defined(OS_WIN)

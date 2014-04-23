@@ -122,6 +122,7 @@ bool HasDeprecatedArguments(const std::wstring& command_line) {
   return (pos != std::wstring::npos);
 }
 
+// 设置windows错误模式，当发送某些错误时，不出现windows错误提示，去调用进程的处理方法
 // If we try to access a path that is not currently available, we want the call
 // to fail rather than show an error dialog.
 void SuppressWindowsErrorDialogs() {
@@ -191,6 +192,7 @@ static void AdjustLinuxOOMScore(const std::string& process_type) {
 }
 #endif  // defined(OS_LINUX)
 
+// 启用堆分析器 命令行 memory-profile
 // Enable the heap profiler if the appropriate command-line switch is
 // present, bailing out of the app we can't.
 void EnableHeapProfiler(const CommandLine& command_line) {
