@@ -4,14 +4,8 @@
 
 #include "content/simple/simple_download_manager_delegate.h"
 
-#if defined(TOOLKIT_GTK)
-#include <gtk/gtk.h>
-#endif
-
-#if defined(OS_WIN)
 #include <windows.h>
 #include <commdlg.h>
-#endif
 
 #include "base/bind.h"
 #include "base/command_line.h"
@@ -90,10 +84,10 @@ bool SimpleDownloadManagerDelegate::DetermineDownloadTarget(
 bool SimpleDownloadManagerDelegate::ShouldOpenDownload(
       DownloadItem* item,
       const DownloadOpenDelayedCallback& callback) {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    WebKitTestController::Get()->OpenURL(
-        net::FilePathToFileURL(item->GetFullPath()));
-  }
+  //if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
+  //  WebKitTestController::Get()->OpenURL(
+  //      net::FilePathToFileURL(item->GetFullPath()));
+  //}
   return true;
 }
 
