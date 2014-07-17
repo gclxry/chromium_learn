@@ -883,6 +883,7 @@
             '../chrome_frame/chrome_frame.gyp:chrome_frame_net_tests',
             '../content/content.gyp:content_browsertests',
             '../content/content.gyp:content_shell',
+			'../content/content.gyp:content_simple',
             '../content/content.gyp:content_unittests',
             '../net/net.gyp:net_unittests',
             '../ui/ui.gyp:ui_unittests',
