@@ -107,7 +107,7 @@ bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
     //  return true;
     //}
   }
-  // SetContentClient(&content_client_);
+  SetContentClient(&content_client_);
   return false;
 }
 

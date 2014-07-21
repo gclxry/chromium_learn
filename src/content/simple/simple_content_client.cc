@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell_content_client.h"
+#include "content/simple/simple_content_client.h"
 
 #include "base/command_line.h"
 #include "base/strings/string_piece.h"
@@ -18,18 +18,18 @@
 
 namespace content {
 
-ShellContentClient::~ShellContentClient() {
+SimpleContentClient::~SimpleContentClient() {
 }
 
-std::string ShellContentClient::GetUserAgent() const {
-  std::string product = "Chrome/" CONTENT_SHELL_VERSION;
+std::string SimpleContentClient::GetUserAgent() const {
+  std::string product = "Chrome/";
   CommandLine* command_line = CommandLine::ForCurrentProcess();
   if (command_line->HasSwitch(switches::kUseMobileUserAgent))
     product += " Mobile";
   return webkit_glue::BuildUserAgentFromProduct(product);
 }
 
-string16 ShellContentClient::GetLocalizedString(int message_id) const {
+string16 SimpleContentClient::GetLocalizedString(int message_id) const {
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
     switch (message_id) {
       case IDS_FORM_VALIDATION_VALUE_MISSING:
@@ -75,17 +75,13 @@ string16 ShellContentClient::GetLocalizedString(int message_id) const {
   return l10n_util::GetStringUTF16(message_id);
 }
 
-base::StringPiece ShellContentClient::GetDataResource(
+base::StringPiece SimpleContentClient::GetDataResource(
     int resource_id,
     ui::ScaleFactor scale_factor) const {
   if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
     switch (resource_id) {
       case IDR_BROKENIMAGE:
-#if defined(OS_MACOSX)
-        resource_id = IDR_CONTENT_SHELL_MISSING_IMAGE_PNG;
-#else
         resource_id = IDR_CONTENT_SHELL_MISSING_IMAGE_GIF;
-#endif
         break;
 
       case IDR_TEXTAREA_RESIZER:
@@ -97,12 +93,12 @@ base::StringPiece ShellContentClient::GetDataResource(
       resource_id, scale_factor);
 }
 
-base::RefCountedStaticMemory* ShellContentClient::GetDataResourceBytes(
+base::RefCountedStaticMemory* SimpleContentClient::GetDataResourceBytes(
     int resource_id) const {
   return ResourceBundle::GetSharedInstance().LoadDataResourceBytes(resource_id);
 }
 
-gfx::Image& ShellContentClient::GetNativeImageNamed(int resource_id) const {
+gfx::Image& SimpleContentClient::GetNativeImageNamed(int resource_id) const {
   return ResourceBundle::GetSharedInstance().GetNativeImageNamed(resource_id);
 }
 

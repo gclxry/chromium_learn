@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef CONTENT_SHELL_SHELL_CONTENT_CLIENT_H_
-#define CONTENT_SHELL_SHELL_CONTENT_CLIENT_H_
+#ifndef CONTENT_SIMPLE_SIMPLE_CONTENT_CLIENT_H_
+#define CONTENT_SIMPLE_SIMPLE_CONTENT_CLIENT_H_
 
 #include <string>
 #include <vector>
@@ -13,9 +13,9 @@
 
 namespace content {
 
-class ShellContentClient : public ContentClient {
+class SimpleContentClient : public ContentClient {
  public:
-  virtual ~ShellContentClient();
+  virtual ~SimpleContentClient();
 
   virtual std::string GetUserAgent() const OVERRIDE;
   virtual string16 GetLocalizedString(int message_id) const OVERRIDE;
@@ -29,4 +29,4 @@ class ShellContentClient : public ContentClient {
 
 }  // namespace content
 
-#endif  // CONTENT_SHELL_SHELL_CONTENT_CLIENT_H_
+#endif  // CONTENT_SIMPLE_SIMPLE_CONTENT_CLIENT_H_

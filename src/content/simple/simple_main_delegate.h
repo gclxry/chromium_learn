@@ -7,7 +7,7 @@
 
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
-// #include "content/simple/simple_content_client.h"
+#include "content/simple/simple_content_client.h"
 #include "content/public/app/content_main_delegate.h"
 
 namespace content {
@@ -36,7 +36,7 @@ class SimpleMainDelegate : public ContentMainDelegate {
  private:
   //scoped_ptr<ShellContentBrowserClient> browser_client_;
   //scoped_ptr<ShellContentRendererClient> renderer_client_;
-  //ShellContentClient content_client_;
+  SimpleContentClient content_client_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleMainDelegate);
 };
