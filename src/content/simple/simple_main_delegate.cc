@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell_main_delegate.h"
+#include "content/simple/simple_main_delegate.h"
 
 #include "base/command_line.h"
 #include "base/files/file_path.h"
@@ -11,11 +11,11 @@
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
-#include "content/shell/shell_browser_main.h"
-#include "content/shell/shell_content_browser_client.h"
-#include "content/shell/shell_content_renderer_client.h"
-#include "content/shell/shell_switches.h"
-#include "content/shell/webkit_test_platform_support.h"
+// #include "content/simple/simple_browser_main.h"
+//#include "content/simple/simple_content_browser_client.h"
+//#include "content/simple/simple_content_renderer_client.h"
+#include "content/simple/simple_switches.h"
+// #include "content/simple/webkit_test_platform_support.h"
 #include "content/public/test/layouttest_support.h"
 #include "net/cookies/cookie_monster.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -25,31 +25,22 @@
 
 #include "ipc/ipc_message.h"  // For IPC_MESSAGE_LOG_ENABLED.
 
-#if defined(IPC_MESSAGE_LOG_ENABLED)
-#define IPC_MESSAGE_MACROS_LOG_ENABLED
-#include "content/public/common/content_ipc_logging.h"
-#define IPC_LOG_TABLE_ADD_ENTRY(msg_id, logger) \
-    content::RegisterIPCLogger(msg_id, logger)
-#include "content/shell/shell_messages.h"
-#endif
+//#if defined(IPC_MESSAGE_LOG_ENABLED)
+//#define IPC_MESSAGE_MACROS_LOG_ENABLED
+//#include "content/public/common/content_ipc_logging.h"
+//#define IPC_LOG_TABLE_ADD_ENTRY(msg_id, logger) \
+//    content::RegisterIPCLogger(msg_id, logger)
+//#include "content/simple/simple_messages.h"
+//#endif
 
-#if defined(OS_ANDROID)
-#include "base/posix/global_descriptors.h"
-#include "content/shell/android/shell_descriptors.h"
-#endif
 
-#if defined(OS_MACOSX)
-#include "content/shell/paths_mac.h"
-#endif  // OS_MACOSX
 
-#if defined(OS_WIN)
 #include <initguid.h>
 #include "base/logging_win.h"
-#endif
+
 
 namespace {
 
-#if defined(OS_WIN)
 // If "Content Shell" doesn't show up in your list of trace providers in
 // Sawbuck, add these registry entries to your machine (NOTE the optional
 // Wow6432Node key for x64 machines):
@@ -64,7 +55,6 @@ namespace {
 const GUID kContentShellProviderName = {
     0x6a3e50a4, 0x7e15, 0x4099,
         { 0x84, 0x13, 0xec, 0x94, 0xd8, 0xc2, 0xa4, 0xb6 } };
-#endif
 
 void InitLogging() {
   base::FilePath log_filename;
@@ -83,23 +73,15 @@ void InitLogging() {
 
 namespace content {
 
-ShellMainDelegate::ShellMainDelegate() {
+SimpleMainDelegate::SimpleMainDelegate() {
 }
 
-ShellMainDelegate::~ShellMainDelegate() {
+SimpleMainDelegate::~SimpleMainDelegate() {
 }
 
-bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
-#if defined(OS_WIN)
+bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
   // Enable trace control and transport through event tracing for Windows.
   logging::LogEventProvider::Initialize(kContentShellProviderName);
-#endif
-#if defined(OS_MACOSX)
-  // Needs to happen before InitializeResourceBundle() and before
-  // WebKitTestPlatformInitialize() are called.
-  OverrideFrameworkBundlePath();
-  OverrideChildProcessPath();
-#endif  // OS_MACOSX
 
   InitLogging();
   CommandLine& command_line = *CommandLine::ForCurrentProcess();
@@ -119,81 +101,47 @@ bool ShellMainDelegate::BasicStartupComplete(int* exit_code) {
       command_line.AppendSwitch(switches::kEnableSoftwareCompositingGLAdapter);
 
     net::CookieMonster::EnableFileScheme();
-    if (!WebKitTestPlatformInitialize()) {
-      if (exit_code)
-        *exit_code = 1;
-      return true;
-    }
+    //if (!WebKitTestPlatformInitialize()) {
+    //  if (exit_code)
+    //    *exit_code = 1;
+    //  return true;
+    //}
   }
-  SetContentClient(&content_client_);
+  // SetContentClient(&content_client_);
   return false;
 }
 
-void ShellMainDelegate::PreSandboxStartup() {
+void SimpleMainDelegate::PreSandboxStartup() {
   InitializeResourceBundle();
 }
 
-int ShellMainDelegate::RunProcess(
+int SimpleMainDelegate::RunProcess(
     const std::string& process_type,
     const MainFunctionParams& main_function_params) {
   if (!process_type.empty())
     return -1;
 
-#if !defined(OS_ANDROID)
-  return ShellBrowserMain(main_function_params);
-#else
-  // If no process type is specified, we are creating the main browser process.
-  browser_runner_.reset(BrowserMainRunner::Create());
-  int exit_code = browser_runner_->Initialize(main_function_params);
-  DCHECK(exit_code < 0)
-      << "BrowserRunner::Initialize failed in ShellMainDelegate";
-
-  return exit_code;
-#endif
+  // return ShellBrowserMain(main_function_params);
+  return 0;
 }
 
-void ShellMainDelegate::InitializeResourceBundle() {
-#if defined(OS_ANDROID)
-  // In the Android case, the renderer runs with a different UID and can never
-  // access the file system.  So we are passed a file descriptor to the
-  // ResourceBundle pak at launch time.
-  int pak_fd =
-      base::GlobalDescriptors::GetInstance()->MaybeGet(kShellPakDescriptor);
-  if (pak_fd != base::kInvalidPlatformFileValue) {
-    ui::ResourceBundle::InitSharedInstanceWithPakFile(pak_fd, false);
-    ResourceBundle::GetSharedInstance().AddDataPackFromFile(
-        pak_fd, ui::SCALE_FACTOR_100P);
-    return;
-  }
-#endif
-
+void SimpleMainDelegate::InitializeResourceBundle() {
   base::FilePath pak_file;
-#if defined(OS_MACOSX)
-  pak_file = GetResourcesPakFilePath();
-#else
   base::FilePath pak_dir;
-
-#if defined(OS_ANDROID)
-  bool got_path = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_dir);
-  DCHECK(got_path);
-  pak_dir = pak_dir.Append(FILE_PATH_LITERAL("paks"));
-#else
   PathService::Get(base::DIR_MODULE, &pak_dir);
-#endif
 
   pak_file = pak_dir.Append(FILE_PATH_LITERAL("content_shell.pak"));
-#endif
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }
 
-ContentBrowserClient* ShellMainDelegate::CreateContentBrowserClient() {
-  browser_client_.reset(new ShellContentBrowserClient);
-  return browser_client_.get();
-}
-
-ContentRendererClient* ShellMainDelegate::CreateContentRendererClient() {
-  renderer_client_.reset(new ShellContentRendererClient);
-  return renderer_client_.get();
-}
+//ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
+//  browser_client_.reset(new ShellContentBrowserClient);
+//  return browser_client_.get();
+//}
+//
+//ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
+//  renderer_client_.reset(new ShellContentRendererClient);
+//  return renderer_client_.get();
+//}
 
 }  // namespace content
