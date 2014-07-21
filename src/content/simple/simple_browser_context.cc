@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "content/shell/shell_browser_context.h"
+#include "content/simple/simple_browser_context.h"
 
 #include "base/bind.h"
 #include "base/command_line.h"
@@ -15,9 +15,9 @@
 #include "content/public/browser/resource_context.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
-#include "content/shell/shell_download_manager_delegate.h"
-#include "content/shell/shell_switches.h"
-#include "content/shell/shell_url_request_context_getter.h"
+#include "content/simple/simple_download_manager_delegate.h"
+#include "content/simple/simple_switches.h"
+#include "content/simple/simple_url_request_context_getter.h"
 
 #if defined(OS_WIN)
 #include "base/base_paths_win.h"
@@ -29,10 +29,10 @@
 
 namespace content {
 
-class ShellBrowserContext::ShellResourceContext : public ResourceContext {
+class SimpleBrowserContext::SimpleResourceContext : public ResourceContext {
  public:
-  ShellResourceContext() : getter_(NULL) {}
-  virtual ~ShellResourceContext() {}
+  SimpleResourceContext() : getter_(NULL) {}
+  virtual ~SimpleResourceContext() {}
 
   // ResourceContext implementation:
   virtual net::HostResolver* GetHostResolver() OVERRIDE {
@@ -44,31 +44,31 @@ class ShellBrowserContext::ShellResourceContext : public ResourceContext {
     return getter_->GetURLRequestContext();
   }
 
-  void set_url_request_context_getter(ShellURLRequestContextGetter* getter) {
+  void set_url_request_context_getter(SimpleURLRequestContextGetter* getter) {
     getter_ = getter;
   }
 
  private:
-  ShellURLRequestContextGetter* getter_;
+  SimpleURLRequestContextGetter* getter_;
 
-  DISALLOW_COPY_AND_ASSIGN(ShellResourceContext);
+  DISALLOW_COPY_AND_ASSIGN(SimpleResourceContext);
 };
 
-ShellBrowserContext::ShellBrowserContext(bool off_the_record)
+SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
     : off_the_record_(off_the_record),
       ignore_certificate_errors_(false),
-      resource_context_(new ShellResourceContext) {
+      resource_context_(new SimpleResourceContext) {
   InitWhileIOAllowed();
 }
 
-ShellBrowserContext::~ShellBrowserContext() {
+SimpleBrowserContext::~SimpleBrowserContext() {
   if (resource_context_) {
     BrowserThread::DeleteSoon(
       BrowserThread::IO, FROM_HERE, resource_context_.release());
   }
 }
 
-void ShellBrowserContext::InitWhileIOAllowed() {
+void SimpleBrowserContext::InitWhileIOAllowed() {
   CommandLine* cmd_line = CommandLine::ForCurrentProcess();
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors) ||
       cmd_line->HasSwitch(switches::kDumpRenderTree)) {
@@ -102,19 +102,19 @@ void ShellBrowserContext::InitWhileIOAllowed() {
     file_util::CreateDirectory(path_);
 }
 
-base::FilePath ShellBrowserContext::GetPath() {
+base::FilePath SimpleBrowserContext::GetPath() {
   return path_;
 }
 
-bool ShellBrowserContext::IsOffTheRecord() const {
+bool SimpleBrowserContext::IsOffTheRecord() const {
   return off_the_record_;
 }
 
-DownloadManagerDelegate* ShellBrowserContext::GetDownloadManagerDelegate()  {
+DownloadManagerDelegate* SimpleBrowserContext::GetDownloadManagerDelegate()  {
   DownloadManager* manager = BrowserContext::GetDownloadManager(this);
 
   if (!download_manager_delegate_) {
-    download_manager_delegate_ = new ShellDownloadManagerDelegate();
+    download_manager_delegate_ = new SimpleDownloadManagerDelegate();
     download_manager_delegate_->SetDownloadManager(manager);
     CommandLine* cmd_line = CommandLine::ForCurrentProcess();
     if (cmd_line->HasSwitch(switches::kDumpRenderTree)) {
@@ -126,14 +126,14 @@ DownloadManagerDelegate* ShellBrowserContext::GetDownloadManagerDelegate()  {
   return download_manager_delegate_.get();
 }
 
-net::URLRequestContextGetter* ShellBrowserContext::GetRequestContext()  {
+net::URLRequestContextGetter* SimpleBrowserContext::GetRequestContext()  {
   return GetDefaultStoragePartition(this)->GetURLRequestContext();
 }
 
-net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
+net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContext(
     ProtocolHandlerMap* protocol_handlers) {
   DCHECK(!url_request_getter_);
-  url_request_getter_ = new ShellURLRequestContextGetter(
+  url_request_getter_ = new SimpleURLRequestContextGetter(
       ignore_certificate_errors_,
       GetPath(),
       BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
@@ -144,52 +144,52 @@ net::URLRequestContextGetter* ShellBrowserContext::CreateRequestContext(
 }
 
 net::URLRequestContextGetter*
-    ShellBrowserContext::GetRequestContextForRenderProcess(
+    SimpleBrowserContext::GetRequestContextForRenderProcess(
         int renderer_child_id)  {
   return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-    ShellBrowserContext::GetMediaRequestContext()  {
+    SimpleBrowserContext::GetMediaRequestContext()  {
   return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-    ShellBrowserContext::GetMediaRequestContextForRenderProcess(
+    SimpleBrowserContext::GetMediaRequestContextForRenderProcess(
         int renderer_child_id)  {
   return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-    ShellBrowserContext::GetMediaRequestContextForStoragePartition(
+    SimpleBrowserContext::GetMediaRequestContextForStoragePartition(
         const base::FilePath& partition_path,
         bool in_memory) {
   return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-    ShellBrowserContext::CreateRequestContextForStoragePartition(
+    SimpleBrowserContext::CreateRequestContextForStoragePartition(
         const base::FilePath& partition_path,
         bool in_memory,
         ProtocolHandlerMap* protocol_handlers) {
   return NULL;
 }
 
-ResourceContext* ShellBrowserContext::GetResourceContext()  {
+ResourceContext* SimpleBrowserContext::GetResourceContext()  {
   return resource_context_.get();
 }
 
 GeolocationPermissionContext*
-    ShellBrowserContext::GetGeolocationPermissionContext()  {
+    SimpleBrowserContext::GetGeolocationPermissionContext()  {
   return NULL;
 }
 
 SpeechRecognitionPreferences*
-    ShellBrowserContext::GetSpeechRecognitionPreferences() {
+    SimpleBrowserContext::GetSpeechRecognitionPreferences() {
   return NULL;
 }
 
-quota::SpecialStoragePolicy* ShellBrowserContext::GetSpecialStoragePolicy() {
+quota::SpecialStoragePolicy* SimpleBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
 

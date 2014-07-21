@@ -15,7 +15,7 @@
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
 // #include "content/shell/shell.h"
-// #include "content/shell/shell_browser_context.h"
+#include "content/simple/simple_browser_context.h"
 // #include "content/shell/shell_devtools_delegate.h"
 #include "content/shell/shell_switches.h"
 #include "googleurl/src/gurl.h"
@@ -64,8 +64,8 @@ base::StringPiece PlatformResourceProvider(int key) {
 SimpleBrowserMainParts::SimpleBrowserMainParts(
     const MainFunctionParams& parameters)
     : BrowserMainParts(),
-      parameters_(parameters)/*,
-      run_message_loop_(true),
+      parameters_(parameters),
+      run_message_loop_(true)/*,
       devtools_delegate_(NULL)*/ {
 }
 
