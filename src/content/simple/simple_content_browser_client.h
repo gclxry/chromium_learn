@@ -18,7 +18,7 @@
 namespace content {
 
 //class ShellBrowserContext;
-//class ShellBrowserMainParts;
+class SimpleBrowserMainParts;
 //class ShellResourceDispatcherHostDelegate;
 
 class SimpleContentBrowserClient : public ContentBrowserClient,
@@ -31,29 +31,29 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
   virtual ~SimpleContentBrowserClient();
 
   // ContentBrowserClient overrides.
-  //virtual BrowserMainParts* CreateBrowserMainParts(
-  //    const MainFunctionParams& parameters) OVERRIDE;
+  virtual BrowserMainParts* CreateBrowserMainParts(
+    const MainFunctionParams& parameters) OVERRIDE;
   //virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
   //virtual net::URLRequestContextGetter* CreateRequestContext(
-  //    BrowserContext* browser_context,
-  //    ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+  //  BrowserContext* browser_context,
+  //  ProtocolHandlerMap* protocol_handlers) OVERRIDE;
   //virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
-  //    BrowserContext* browser_context,
-  //    const base::FilePath& partition_path,
-  //    bool in_memory,
-  //    ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+  //  BrowserContext* browser_context,
+  //  const base::FilePath& partition_path,
+  //  bool in_memory,
+  //  ProtocolHandlerMap* protocol_handlers) OVERRIDE;
   //virtual void AppendExtraCommandLineSwitches(CommandLine* command_line,
-  //                                            int child_process_id) OVERRIDE;
+  //  int child_process_id) OVERRIDE;
   //virtual void OverrideWebkitPrefs(RenderViewHost* render_view_host,
-  //                                 const GURL& url,
-  //                                 webkit_glue::WebPreferences* prefs) OVERRIDE;
+  //  const GURL& url,
+  //  webkit_glue::WebPreferences* prefs) OVERRIDE;
   //virtual void ResourceDispatcherHostCreated() OVERRIDE;
   //virtual AccessTokenStore* CreateAccessTokenStore() OVERRIDE;
   //virtual std::string GetDefaultDownloadName() OVERRIDE;
   //virtual bool SupportsBrowserPlugin(content::BrowserContext* browser_context,
-  //                                   const GURL& url) OVERRIDE;
+  //  const GURL& url) OVERRIDE;
   //virtual WebContentsViewDelegate* GetWebContentsViewDelegate(
-  //    WebContents* web_contents) OVERRIDE;
+  //  WebContents* web_contents) OVERRIDE;
   //virtual QuotaPermissionContext* CreateQuotaPermissionContext() OVERRIDE;
 
 
@@ -82,7 +82,7 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
 
   //base::PlatformFile hyphen_dictionary_file_;
 
-  //ShellBrowserMainParts* shell_browser_main_parts_;
+  SimpleBrowserMainParts* shell_browser_main_parts_;
 
   //NotificationRegistrar registrar_;
 };

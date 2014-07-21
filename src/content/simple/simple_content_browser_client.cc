@@ -16,7 +16,7 @@
 //#include "content/shell/geolocation/shell_access_token_store.h"
 //#include "content/shell/shell.h"
 //#include "content/shell/shell_browser_context.h"
-//#include "content/shell/shell_browser_main_parts.h"
+#include "content/simple/simple_browser_main_parts.h"
 //#include "content/shell/shell_devtools_delegate.h"
 //#include "content/shell/shell_message_filter.h"
 //#include "content/shell/shell_messages.h"
@@ -70,13 +70,13 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
   g_browser_client = NULL;
 }
 
-//BrowserMainParts* ShellContentBrowserClient::CreateBrowserMainParts(
-//    const MainFunctionParams& parameters) {
-//  shell_browser_main_parts_ = new ShellBrowserMainParts(parameters);
-//  return shell_browser_main_parts_;
-//}
-//
-//void ShellContentBrowserClient::RenderProcessHostCreated(
+BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
+  const MainFunctionParams& parameters) {
+    shell_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
+    return shell_browser_main_parts_;
+}
+
+//void SimpleContentBrowserClient::RenderProcessHostCreated(
 //    RenderProcessHost* host) {
 //  if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
 //    return;
@@ -92,7 +92,7 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
 //                 Source<RenderProcessHost>(host));
 //}
 //
-//net::URLRequestContextGetter* ShellContentBrowserClient::CreateRequestContext(
+//net::URLRequestContextGetter* SimpleContentBrowserClient::CreateRequestContext(
 //    BrowserContext* content_browser_context,
 //    ProtocolHandlerMap* protocol_handlers) {
 //  ShellBrowserContext* shell_browser_context =
@@ -101,7 +101,7 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
 //}
 //
 //net::URLRequestContextGetter*
-//ShellContentBrowserClient::CreateRequestContextForStoragePartition(
+//SimpleContentBrowserClient::CreateRequestContextForStoragePartition(
 //    BrowserContext* content_browser_context,
 //    const base::FilePath& partition_path,
 //    bool in_memory,
@@ -112,13 +112,13 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
 //      partition_path, in_memory, protocol_handlers);
 //}
 //
-//void ShellContentBrowserClient::AppendExtraCommandLineSwitches(
+//void SimpleContentBrowserClient::AppendExtraCommandLineSwitches(
 //    CommandLine* command_line, int child_process_id) {
 //  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
 //    command_line->AppendSwitch(switches::kDumpRenderTree);
 //}
 //
-//void ShellContentBrowserClient::OverrideWebkitPrefs(
+//void SimpleContentBrowserClient::OverrideWebkitPrefs(
 //    RenderViewHost* render_view_host,
 //    const GURL& url,
 //    webkit_glue::WebPreferences* prefs) {
@@ -127,24 +127,24 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
 //  WebKitTestController::Get()->OverrideWebkitPrefs(prefs);
 //}
 //
-//void ShellContentBrowserClient::ResourceDispatcherHostCreated() {
+//void SimpleContentBrowserClient::ResourceDispatcherHostCreated() {
 //  resource_dispatcher_host_delegate_.reset(
 //      new ShellResourceDispatcherHostDelegate());
 //  ResourceDispatcherHost::Get()->SetDelegate(
 //      resource_dispatcher_host_delegate_.get());
 //}
 //
-//std::string ShellContentBrowserClient::GetDefaultDownloadName() {
+//std::string SimpleContentBrowserClient::GetDefaultDownloadName() {
 //  return "download";
 //}
 //
-//bool ShellContentBrowserClient::SupportsBrowserPlugin(
+//bool SimpleContentBrowserClient::SupportsBrowserPlugin(
 //    content::BrowserContext* browser_context, const GURL& url) {
 //  return CommandLine::ForCurrentProcess()->HasSwitch(
 //      switches::kEnableBrowserPluginForAllViewTypes);
 //}
 //
-//WebContentsViewDelegate* ShellContentBrowserClient::GetWebContentsViewDelegate(
+//WebContentsViewDelegate* SimpleContentBrowserClient::GetWebContentsViewDelegate(
 //    WebContents* web_contents) {
 //#if !defined(USE_AURA)
 //  return CreateShellWebContentsViewDelegate(web_contents);
@@ -154,7 +154,7 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
 //}
 //
 //QuotaPermissionContext*
-//ShellContentBrowserClient::CreateQuotaPermissionContext() {
+//SimpleContentBrowserClient::CreateQuotaPermissionContext() {
 //  return new ShellQuotaPermissionContext();
 //}
 
@@ -180,21 +180,21 @@ void SimpleContentBrowserClient::Observe(int type,
     //}
 }
 
-//ShellBrowserContext* ShellContentBrowserClient::browser_context() {
+//ShellBrowserContext* SimpleContentBrowserClient::browser_context() {
 //  return shell_browser_main_parts_->browser_context();
 //}
 //
 //ShellBrowserContext*
-//    ShellContentBrowserClient::off_the_record_browser_context() {
+//    SimpleContentBrowserClient::off_the_record_browser_context() {
 //  return shell_browser_main_parts_->off_the_record_browser_context();
 //}
 //
-//AccessTokenStore* ShellContentBrowserClient::CreateAccessTokenStore() {
+//AccessTokenStore* SimpleContentBrowserClient::CreateAccessTokenStore() {
 //  return new ShellAccessTokenStore(browser_context()->GetRequestContext());
 //}
 //
 //ShellBrowserContext*
-//ShellContentBrowserClient::ShellBrowserContextForBrowserContext(
+//SimpleContentBrowserClient::ShellBrowserContextForBrowserContext(
 //    BrowserContext* content_browser_context) {
 //  if (content_browser_context == browser_context())
 //    return browser_context();
