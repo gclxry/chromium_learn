@@ -13,7 +13,7 @@
 #include "content/public/common/url_constants.h"
 #include "content/simple/simple_browser_main.h"
 #include "content/simple/simple_content_browser_client.h"
-//#include "content/simple/simple_content_renderer_client.h"
+#include "content/simple/simple_content_renderer_client.h"
 #include "content/simple/simple_switches.h"
 // #include "content/simple/webkit_test_platform_support.h"
 #include "content/public/test/layouttest_support.h"
@@ -138,9 +138,9 @@ ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
   return browser_client_.get();
 }
 
-//ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
-//  renderer_client_.reset(new ShellContentRendererClient);
-//  return renderer_client_.get();
-//}
+ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
+  renderer_client_.reset(new SimpleContentRendererClient);
+  return renderer_client_.get();
+}
 
 }  // namespace content
