@@ -12,7 +12,7 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 #include "content/simple/simple_browser_main.h"
-//#include "content/simple/simple_content_browser_client.h"
+#include "content/simple/simple_content_browser_client.h"
 //#include "content/simple/simple_content_renderer_client.h"
 #include "content/simple/simple_switches.h"
 // #include "content/simple/webkit_test_platform_support.h"
@@ -133,11 +133,11 @@ void SimpleMainDelegate::InitializeResourceBundle() {
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }
 
-//ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
-//  browser_client_.reset(new ShellContentBrowserClient);
-//  return browser_client_.get();
-//}
-//
+ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
+  browser_client_.reset(new SimpleContentBrowserClient);
+  return browser_client_.get();
+}
+
 //ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
 //  renderer_client_.reset(new ShellContentRendererClient);
 //  return renderer_client_.get();
