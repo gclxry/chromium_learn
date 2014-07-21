@@ -11,7 +11,7 @@
 #include "content/public/browser/browser_main_runner.h"
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
-// #include "content/simple/simple_browser_main.h"
+#include "content/simple/simple_browser_main.h"
 //#include "content/simple/simple_content_browser_client.h"
 //#include "content/simple/simple_content_renderer_client.h"
 #include "content/simple/simple_switches.h"
@@ -121,8 +121,7 @@ int SimpleMainDelegate::RunProcess(
   if (!process_type.empty())
     return -1;
 
-  // return ShellBrowserMain(main_function_params);
-  return 0;
+  return SimpleBrowserMain(main_function_params);
 }
 
 void SimpleMainDelegate::InitializeResourceBundle() {
