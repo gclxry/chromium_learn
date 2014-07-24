@@ -84,63 +84,58 @@ bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 
   InitLogging();
-  CommandLine& command_line = *CommandLine::ForCurrentProcess();
-  if (command_line.HasSwitch(switches::kDumpRenderTree)) {
-    command_line.AppendSwitch(switches::kProcessPerTab);
-    command_line.AppendSwitch(switches::kAllowFileAccessFromFiles);
-    command_line.AppendSwitchASCII(
-        switches::kUseGL, gfx::kGLImplementationOSMesaName);
-    SetAllowOSMesaImageTransportForTesting();
-    DisableSystemDragDrop();
-    command_line.AppendSwitch(switches::kSkipGpuDataLoading);
-    command_line.AppendSwitch(switches::kEnableExperimentalWebKitFeatures);
-    command_line.AppendSwitch(switches::kEnableCssShaders);
-    command_line.AppendSwitchASCII(switches::kTouchEvents,
-                                   switches::kTouchEventsEnabled);
-    if (command_line.HasSwitch(switches::kEnableSoftwareCompositing))
-      command_line.AppendSwitch(switches::kEnableSoftwareCompositingGLAdapter);
+  //CommandLine& command_line = *CommandLine::ForCurrentProcess();
+  //if (command_line.HasSwitch(switches::kDumpRenderTree)) {
+  //  command_line.AppendSwitch(switches::kProcessPerTab);
+  //  command_line.AppendSwitch(switches::kAllowFileAccessFromFiles);
+  //  command_line.AppendSwitchASCII(
+  //      switches::kUseGL, gfx::kGLImplementationOSMesaName);
+  //  SetAllowOSMesaImageTransportForTesting();
+  //  DisableSystemDragDrop();
+  //  command_line.AppendSwitch(switches::kSkipGpuDataLoading);
+  //  command_line.AppendSwitch(switches::kEnableExperimentalWebKitFeatures);
+  //  command_line.AppendSwitch(switches::kEnableCssShaders);
+  //  command_line.AppendSwitchASCII(switches::kTouchEvents,
+  //                                 switches::kTouchEventsEnabled);
+  //  if (command_line.HasSwitch(switches::kEnableSoftwareCompositing))
+  //    command_line.AppendSwitch(switches::kEnableSoftwareCompositingGLAdapter);
 
-    net::CookieMonster::EnableFileScheme();
-    //if (!WebKitTestPlatformInitialize()) {
-    //  if (exit_code)
-    //    *exit_code = 1;
-    //  return true;
-    //}
-  }
-  SetContentClient(&content_client_);
+  //  net::CookieMonster::EnableFileScheme();
+  //}
+  // SetContentClient(&content_client_);
   return false;
 }
 
 void SimpleMainDelegate::PreSandboxStartup() {
-  InitializeResourceBundle();
+  // InitializeResourceBundle();
 }
 
-int SimpleMainDelegate::RunProcess(
-    const std::string& process_type,
-    const MainFunctionParams& main_function_params) {
-  if (!process_type.empty())
-    return -1;
+//int SimpleMainDelegate::RunProcess(
+//    const std::string& process_type,
+//    const MainFunctionParams& main_function_params) {
+//  if (!process_type.empty())
+//    return -1;
+//
+//  return SimpleBrowserMain(main_function_params);
+//}
 
-  return SimpleBrowserMain(main_function_params);
-}
+//void SimpleMainDelegate::InitializeResourceBundle() {
+//  base::FilePath pak_file;
+//  base::FilePath pak_dir;
+//  PathService::Get(base::DIR_MODULE, &pak_dir);
+//
+//  pak_file = pak_dir.Append(FILE_PATH_LITERAL("content_shell.pak"));
+//  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+//}
 
-void SimpleMainDelegate::InitializeResourceBundle() {
-  base::FilePath pak_file;
-  base::FilePath pak_dir;
-  PathService::Get(base::DIR_MODULE, &pak_dir);
-
-  pak_file = pak_dir.Append(FILE_PATH_LITERAL("content_shell.pak"));
-  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
-}
-
-ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
-  browser_client_.reset(new SimpleContentBrowserClient);
-  return browser_client_.get();
-}
-
-ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
-  renderer_client_.reset(new SimpleContentRendererClient);
-  return renderer_client_.get();
-}
+//ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
+//  browser_client_.reset(new SimpleContentBrowserClient);
+//  return browser_client_.get();
+//}
+//
+//ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
+//  renderer_client_.reset(new SimpleContentRendererClient);
+//  return renderer_client_.get();
+//}
 
 }  // namespace content

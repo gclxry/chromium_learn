@@ -9,10 +9,17 @@
 #include "aboutdlg.h"
 #include "MainFrm.h"
 
+
+#include "content/public/app/content_main.h"
+#include "content/simple/simple_main_delegate.h"
+#include "sandbox/win/src/sandbox_types.h"
+#include "content/public/app/startup_helper_win.h"
+
 CAppModule _Module;
 
 int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 {
+
 	CMessageLoop theLoop;
 	_Module.AddMessageLoop(&theLoop);
 
@@ -34,6 +41,14 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int nCmdShow)
 {
+
+  // «∂»Îchromium
+  sandbox::SandboxInterfaceInfo sandbox_info = {0};
+  content::InitializeSandboxInfo(&sandbox_info);
+  content::SimpleMainDelegate delegate;
+  return content::ContentMain(hInstance, &sandbox_info, &delegate);
+
+
 	HRESULT hRes = ::CoInitialize(NULL);
 // If you are running on NT 4.0 or higher you can use the following call instead to 
 // make the EXE free threaded. This means that calls come in on a random RPC thread.
