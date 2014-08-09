@@ -18,7 +18,7 @@
 #include "base/utf_string_conversions.h"
 #include "content/public/browser/browser_main_runner.h"
 // #include "content/shell/shell.h"
-#include "content/shell/shell_switches.h"
+#include "content/simple/simple_switches.h"
 #include "net/base/net_util.h"
 #include "webkit/support/webkit_support.h"
 

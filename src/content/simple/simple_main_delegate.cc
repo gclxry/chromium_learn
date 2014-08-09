@@ -110,14 +110,14 @@ void SimpleMainDelegate::PreSandboxStartup() {
   // InitializeResourceBundle();
 }
 
-//int SimpleMainDelegate::RunProcess(
-//    const std::string& process_type,
-//    const MainFunctionParams& main_function_params) {
-//  if (!process_type.empty())
-//    return -1;
-//
-//  return SimpleBrowserMain(main_function_params);
-//}
+int SimpleMainDelegate::RunProcess(
+  const std::string& process_type,
+  const MainFunctionParams& main_function_params) {
+    if (!process_type.empty())
+      return -1;
+
+    return SimpleBrowserMain(main_function_params);
+}
 
 //void SimpleMainDelegate::InitializeResourceBundle() {
 //  base::FilePath pak_file;
