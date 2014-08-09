@@ -11,7 +11,7 @@
 #include "content/public/app/content_main_delegate.h"
 
 namespace content {
-// class SimpleContentBrowserClient;
+class SimpleContentBrowserClient;
 class SimpleContentRendererClient;
 
 
@@ -28,13 +28,13 @@ class SimpleMainDelegate : public ContentMainDelegate {
   //virtual int RunProcess(
   //    const std::string& process_type,
   //    const MainFunctionParams& main_function_params) OVERRIDE;
-  // virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
+  virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
   virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
 
   //static void InitializeResourceBundle();
 
  private:
-  // scoped_ptr<SimpleContentBrowserClient> browser_client_;
+  scoped_ptr<SimpleContentBrowserClient> browser_client_;
   scoped_ptr<SimpleContentRendererClient> renderer_client_;
   SimpleContentClient content_client_;
 

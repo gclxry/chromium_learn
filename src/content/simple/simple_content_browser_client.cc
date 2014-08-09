@@ -15,8 +15,8 @@
 #include "content/public/common/content_switches.h"
 //#include "content/shell/geolocation/shell_access_token_store.h"
 //#include "content/shell/shell.h"
-#include "content/simple/simple_browser_context.h"
-#include "content/simple/simple_browser_main_parts.h"
+//#include "content/simple/simple_browser_context.h"
+//#include "content/simple/simple_browser_main_parts.h"
 //#include "content/shell/shell_devtools_delegate.h"
 //#include "content/shell/shell_message_filter.h"
 //#include "content/shell/shell_messages.h"
@@ -29,12 +29,6 @@
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
 
-#if defined(OS_ANDROID)
-#include "base/android/path_utils.h"
-#include "base/path_service.h"
-#include "base/platform_file.h"
-#include "content/shell/android/shell_descriptors.h"
-#endif
 
 namespace content {
 
@@ -49,8 +43,8 @@ SimpleContentBrowserClient* SimpleContentBrowserClient::Get() {
 }
 
 SimpleContentBrowserClient::SimpleContentBrowserClient()
-  : hyphen_dictionary_file_(base::kInvalidPlatformFileValue),
-    simple_browser_main_parts_(NULL) {
+  : hyphen_dictionary_file_(base::kInvalidPlatformFileValue){
+    //simple_browser_main_parts_(NULL) {
       DCHECK(!g_browser_client);
       g_browser_client = this;
       //if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
@@ -70,14 +64,14 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
   g_browser_client = NULL;
 }
 
-BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
-  const MainFunctionParams& parameters) {
-    simple_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
-    return simple_browser_main_parts_;
-}
+//BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
+//  const MainFunctionParams& parameters) {
+//    simple_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
+//    return simple_browser_main_parts_;
+//}
 
-void SimpleContentBrowserClient::RenderProcessHostCreated(
-  RenderProcessHost* host) {
+//void SimpleContentBrowserClient::RenderProcessHostCreated(
+//  RenderProcessHost* host) {
     //if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
     //  return;
     //host->GetChannel()->AddFilter(new ShellMessageFilter(
@@ -90,33 +84,33 @@ void SimpleContentBrowserClient::RenderProcessHostCreated(
     //registrar_.Add(this,
     //  NOTIFICATION_RENDERER_PROCESS_CREATED,
     //  Source<RenderProcessHost>(host));
-}
+//}
 
-net::URLRequestContextGetter* SimpleContentBrowserClient::CreateRequestContext(
-  BrowserContext* content_browser_context,
-  ProtocolHandlerMap* protocol_handlers) {
-    SimpleBrowserContext* shell_browser_context =
-      SimpleBrowserContextForBrowserContext(content_browser_context);
-    return shell_browser_context->CreateRequestContext(protocol_handlers);
-}
-
-net::URLRequestContextGetter*
-  SimpleContentBrowserClient::CreateRequestContextForStoragePartition(
-  BrowserContext* content_browser_context,
-  const base::FilePath& partition_path,
-  bool in_memory,
-  ProtocolHandlerMap* protocol_handlers) {
-    SimpleBrowserContext* shell_browser_context =
-      SimpleBrowserContextForBrowserContext(content_browser_context);
-    return shell_browser_context->CreateRequestContextForStoragePartition(
-      partition_path, in_memory, protocol_handlers);
-}
-
-void SimpleContentBrowserClient::AppendExtraCommandLineSwitches(
-  CommandLine* command_line, int child_process_id) {
-    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
-      command_line->AppendSwitch(switches::kDumpRenderTree);
-}
+//net::URLRequestContextGetter* SimpleContentBrowserClient::CreateRequestContext(
+//  BrowserContext* content_browser_context,
+//  ProtocolHandlerMap* protocol_handlers) {
+//    SimpleBrowserContext* shell_browser_context =
+//      SimpleBrowserContextForBrowserContext(content_browser_context);
+//    return shell_browser_context->CreateRequestContext(protocol_handlers);
+//}
+//
+//net::URLRequestContextGetter*
+//  SimpleContentBrowserClient::CreateRequestContextForStoragePartition(
+//  BrowserContext* content_browser_context,
+//  const base::FilePath& partition_path,
+//  bool in_memory,
+//  ProtocolHandlerMap* protocol_handlers) {
+//    SimpleBrowserContext* shell_browser_context =
+//      SimpleBrowserContextForBrowserContext(content_browser_context);
+//    return shell_browser_context->CreateRequestContextForStoragePartition(
+//      partition_path, in_memory, protocol_handlers);
+//}
+//
+//void SimpleContentBrowserClient::AppendExtraCommandLineSwitches(
+//  CommandLine* command_line, int child_process_id) {
+//    if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
+//      command_line->AppendSwitch(switches::kDumpRenderTree);
+//}
 
 //void SimpleContentBrowserClient::OverrideWebkitPrefs(
 //  RenderViewHost* render_view_host,
@@ -127,22 +121,22 @@ void SimpleContentBrowserClient::AppendExtraCommandLineSwitches(
 //    WebKitTestController::Get()->OverrideWebkitPrefs(prefs);
 //}
 
-void SimpleContentBrowserClient::ResourceDispatcherHostCreated() {
+//void SimpleContentBrowserClient::ResourceDispatcherHostCreated() {
   //resource_dispatcher_host_delegate_.reset(
   //  new ShellResourceDispatcherHostDelegate());
   //ResourceDispatcherHost::Get()->SetDelegate(
   //  resource_dispatcher_host_delegate_.get());
-}
+//}
 
-std::string SimpleContentBrowserClient::GetDefaultDownloadName() {
-  return "download";
-}
-
-bool SimpleContentBrowserClient::SupportsBrowserPlugin(
-  content::BrowserContext* browser_context, const GURL& url) {
-    return CommandLine::ForCurrentProcess()->HasSwitch(
-      switches::kEnableBrowserPluginForAllViewTypes);
-}
+//std::string SimpleContentBrowserClient::GetDefaultDownloadName() {
+//  return "download";
+//}
+//
+//bool SimpleContentBrowserClient::SupportsBrowserPlugin(
+//  content::BrowserContext* browser_context, const GURL& url) {
+//    return CommandLine::ForCurrentProcess()->HasSwitch(
+//      switches::kEnableBrowserPluginForAllViewTypes);
+//}
 
 //WebContentsViewDelegate* SimpleContentBrowserClient::GetWebContentsViewDelegate(
 //    WebContents* web_contents) {
@@ -158,48 +152,54 @@ bool SimpleContentBrowserClient::SupportsBrowserPlugin(
 //  return new ShellQuotaPermissionContext();
 //}
 
+
 void SimpleContentBrowserClient::Observe(int type,
   const NotificationSource& source,
-  const NotificationDetails& details) {
-    //switch (type) {
-    //case NOTIFICATION_RENDERER_PROCESS_CREATED: {
-    //  registrar_.Remove(this,
-    //    NOTIFICATION_RENDERER_PROCESS_CREATED,
-    //    source);
-    //  if (hyphen_dictionary_file_ != base::kInvalidPlatformFileValue) {
-    //    RenderProcessHost* host = Source<RenderProcessHost>(source).ptr();
-    //    IPC::PlatformFileForTransit file = IPC::GetFileHandleForProcess(
-    //      hyphen_dictionary_file_, host->GetHandle(), false);
-    //    host->Send(new ShellViewMsg_LoadHyphenDictionary(file));
-    //  }
-    //  break;
-    //                                            }
+  const NotificationDetails& details) 
+{
+    switch (type) 
+    {
+      case NOTIFICATION_RENDERER_PROCESS_CREATED: 
+      {
+        registrar_.Remove(this,
+          NOTIFICATION_RENDERER_PROCESS_CREATED,
+          source);
+        if (hyphen_dictionary_file_ != base::kInvalidPlatformFileValue) 
+        {
+          //RenderProcessHost* host = Source<RenderProcessHost>(source).ptr();
+          //IPC::PlatformFileForTransit file = IPC::GetFileHandleForProcess(
+          //  hyphen_dictionary_file_, host->GetHandle(), false);
+          //host->Send(new ShellViewMsg_LoadHyphenDictionary(file));
+        }
+        break;
+      }
 
-    //default:
-    //  NOTREACHED();
-    //}
+    default:
+      NOTREACHED();
+    }
 }
 
-SimpleBrowserContext* SimpleContentBrowserClient::browser_context() {
-  return simple_browser_main_parts_->browser_context();
-}
 
-SimpleBrowserContext*
-  SimpleContentBrowserClient::off_the_record_browser_context() {
-    return simple_browser_main_parts_->off_the_record_browser_context();
-}
+//SimpleBrowserContext* SimpleContentBrowserClient::browser_context() {
+//  return simple_browser_main_parts_->browser_context();
+//}
+//
+//SimpleBrowserContext*
+//  SimpleContentBrowserClient::off_the_record_browser_context() {
+//    return simple_browser_main_parts_->off_the_record_browser_context();
+//}
 //
 //AccessTokenStore* SimpleContentBrowserClient::CreateAccessTokenStore() {
 //  return new ShellAccessTokenStore(browser_context()->GetRequestContext());
 //}
 
-SimpleBrowserContext*
-  SimpleContentBrowserClient::SimpleBrowserContextForBrowserContext(
-  BrowserContext* content_browser_context) {
-    if (content_browser_context == browser_context())
-      return browser_context();
-    DCHECK_EQ(content_browser_context, off_the_record_browser_context());
-    return off_the_record_browser_context();
-}
+//SimpleBrowserContext*
+//  SimpleContentBrowserClient::SimpleBrowserContextForBrowserContext(
+//  BrowserContext* content_browser_context) {
+//    if (content_browser_context == browser_context())
+//      return browser_context();
+//    DCHECK_EQ(content_browser_context, off_the_record_browser_context());
+//    return off_the_record_browser_context();
+//}
 
 }  // namespace content

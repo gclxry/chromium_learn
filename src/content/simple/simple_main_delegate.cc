@@ -128,10 +128,10 @@ void SimpleMainDelegate::PreSandboxStartup() {
 //  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 //}
 
-//ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
-//  browser_client_.reset(new SimpleContentBrowserClient);
-//  return browser_client_.get();
-//}
+ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
+  browser_client_.reset(new SimpleContentBrowserClient);
+  return browser_client_.get();
+}
 
 ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
   renderer_client_.reset(new SimpleContentRendererClient);
