@@ -133,9 +133,9 @@ void SimpleMainDelegate::PreSandboxStartup() {
 //  return browser_client_.get();
 //}
 
-//ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
-//  renderer_client_.reset(new SimpleContentRendererClient);
-//  return renderer_client_.get();
-//}
+ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
+  renderer_client_.reset(new SimpleContentRendererClient);
+  return renderer_client_.get();
+}
 
 }  // namespace content
