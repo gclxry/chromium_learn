@@ -33,7 +33,7 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(
     const MainFunctionParams& parameters) OVERRIDE;
-  //virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
+  virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
   //virtual net::URLRequestContextGetter* CreateRequestContext(
   //  BrowserContext* browser_context,
   //  ProtocolHandlerMap* protocol_handlers) OVERRIDE;
@@ -68,9 +68,9 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
   //ShellResourceDispatcherHostDelegate* resource_dispatcher_host_delegate() {
   //  return resource_dispatcher_host_delegate_.get();
   //}
-  //SimpleBrowserMainParts* simple_browser_main_parts() {
-  //  return simple_browser_main_parts_;
-  //}
+  SimpleBrowserMainParts* simple_browser_main_parts() {
+    return simple_browser_main_parts_;
+  }
 
  private:
    //SimpleBrowserContext* SimpleBrowserContextForBrowserContext(

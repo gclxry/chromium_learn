@@ -70,8 +70,8 @@ BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
     return simple_browser_main_parts_;
 }
 
-//void SimpleContentBrowserClient::RenderProcessHostCreated(
-//  RenderProcessHost* host) {
+void SimpleContentBrowserClient::RenderProcessHostCreated(
+  RenderProcessHost* host) {
     //if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))
     //  return;
     //host->GetChannel()->AddFilter(new ShellMessageFilter(
@@ -84,7 +84,7 @@ BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
     //registrar_.Add(this,
     //  NOTIFICATION_RENDERER_PROCESS_CREATED,
     //  Source<RenderProcessHost>(host));
-//}
+}
 
 //net::URLRequestContextGetter* SimpleContentBrowserClient::CreateRequestContext(
 //  BrowserContext* content_browser_context,
@@ -93,7 +93,7 @@ BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
 //      SimpleBrowserContextForBrowserContext(content_browser_context);
 //    return shell_browser_context->CreateRequestContext(protocol_handlers);
 //}
-//
+
 //net::URLRequestContextGetter*
 //  SimpleContentBrowserClient::CreateRequestContextForStoragePartition(
 //  BrowserContext* content_browser_context,

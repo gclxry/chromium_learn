@@ -56,16 +56,17 @@ class SimpleBrowserContext::SimpleResourceContext : public ResourceContext {
 
 SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
     : off_the_record_(off_the_record),
-      ignore_certificate_errors_(false),
-      resource_context_(new SimpleResourceContext) {
+      ignore_certificate_errors_(false){
+      //resource_context_(new SimpleResourceContext) {
   InitWhileIOAllowed();
 }
 
 SimpleBrowserContext::~SimpleBrowserContext() {
-  if (resource_context_) {
-    BrowserThread::DeleteSoon(
-      BrowserThread::IO, FROM_HERE, resource_context_.release());
-  }
+  //if (resource_context_) 
+  //{
+  //  BrowserThread::DeleteSoon(
+  //    BrowserThread::IO, FROM_HERE, resource_context_.release());
+  //}
 }
 
 void SimpleBrowserContext::InitWhileIOAllowed() {
@@ -110,38 +111,38 @@ bool SimpleBrowserContext::IsOffTheRecord() const {
   return off_the_record_;
 }
 
-DownloadManagerDelegate* SimpleBrowserContext::GetDownloadManagerDelegate()  {
-  DownloadManager* manager = BrowserContext::GetDownloadManager(this);
-
-  if (!download_manager_delegate_) {
-    download_manager_delegate_ = new SimpleDownloadManagerDelegate();
-    download_manager_delegate_->SetDownloadManager(manager);
-    CommandLine* cmd_line = CommandLine::ForCurrentProcess();
-    if (cmd_line->HasSwitch(switches::kDumpRenderTree)) {
-      download_manager_delegate_->SetDownloadBehaviorForTesting(
-          path_.Append(FILE_PATH_LITERAL("downloads")));
-    }
-  }
-
-  return download_manager_delegate_.get();
-}
+//DownloadManagerDelegate* SimpleBrowserContext::GetDownloadManagerDelegate()  {
+//  DownloadManager* manager = BrowserContext::GetDownloadManager(this);
+//
+//  if (!download_manager_delegate_) {
+//    download_manager_delegate_ = new SimpleDownloadManagerDelegate();
+//    download_manager_delegate_->SetDownloadManager(manager);
+//    CommandLine* cmd_line = CommandLine::ForCurrentProcess();
+//    if (cmd_line->HasSwitch(switches::kDumpRenderTree)) {
+//      download_manager_delegate_->SetDownloadBehaviorForTesting(
+//          path_.Append(FILE_PATH_LITERAL("downloads")));
+//    }
+//  }
+//
+//  return download_manager_delegate_.get();
+//}
 
 net::URLRequestContextGetter* SimpleBrowserContext::GetRequestContext()  {
   return GetDefaultStoragePartition(this)->GetURLRequestContext();
 }
 
-net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContext(
-    ProtocolHandlerMap* protocol_handlers) {
-  DCHECK(!url_request_getter_);
-  url_request_getter_ = new SimpleURLRequestContextGetter(
-      ignore_certificate_errors_,
-      GetPath(),
-      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
-      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
-      protocol_handlers);
-  resource_context_->set_url_request_context_getter(url_request_getter_.get());
-  return url_request_getter_.get();
-}
+//net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContext(
+//    ProtocolHandlerMap* protocol_handlers) {
+//  DCHECK(!url_request_getter_);
+//  url_request_getter_ = new SimpleURLRequestContextGetter(
+//      ignore_certificate_errors_,
+//      GetPath(),
+//      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
+//      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
+//      protocol_handlers);
+//  resource_context_->set_url_request_context_getter(url_request_getter_.get());
+//  return url_request_getter_.get();
+//}
 
 net::URLRequestContextGetter*
     SimpleBrowserContext::GetRequestContextForRenderProcess(
@@ -175,9 +176,9 @@ net::URLRequestContextGetter*
   return NULL;
 }
 
-ResourceContext* SimpleBrowserContext::GetResourceContext()  {
-  return resource_context_.get();
-}
+//ResourceContext* SimpleBrowserContext::GetResourceContext()  {
+//  return resource_context_.get();
+//}
 
 GeolocationPermissionContext*
     SimpleBrowserContext::GetGeolocationPermissionContext()  {

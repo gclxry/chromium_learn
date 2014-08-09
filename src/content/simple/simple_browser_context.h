@@ -16,7 +16,7 @@
 namespace content {
 
 //class DownloadManagerDelegate;
-//class ResourceContext;
+class ResourceContext;
 //class SimpleDownloadManagerDelegate;
 //class SimpleURLRequestContextGetter;
 
@@ -28,7 +28,7 @@ class SimpleBrowserContext : public BrowserContext {
   // BrowserContext implementation.
   virtual base::FilePath GetPath() OVERRIDE;
   virtual bool IsOffTheRecord() const OVERRIDE;
-  virtual DownloadManagerDelegate* GetDownloadManagerDelegate() OVERRIDE;
+  //virtual DownloadManagerDelegate* GetDownloadManagerDelegate() OVERRIDE;
   virtual net::URLRequestContextGetter* GetRequestContext() OVERRIDE;
   virtual net::URLRequestContextGetter* GetRequestContextForRenderProcess(
       int renderer_child_id) OVERRIDE;
@@ -39,7 +39,7 @@ class SimpleBrowserContext : public BrowserContext {
       GetMediaRequestContextForStoragePartition(
           const base::FilePath& partition_path,
           bool in_memory) OVERRIDE;
-  virtual ResourceContext* GetResourceContext() OVERRIDE;
+  //virtual ResourceContext* GetResourceContext() OVERRIDE;
   virtual GeolocationPermissionContext*
       GetGeolocationPermissionContext() OVERRIDE;
   virtual SpeechRecognitionPreferences*
@@ -63,9 +63,9 @@ class SimpleBrowserContext : public BrowserContext {
   bool off_the_record_;
   bool ignore_certificate_errors_;
   base::FilePath path_;
-  scoped_ptr<SimpleResourceContext> resource_context_;
-  scoped_refptr<SimpleDownloadManagerDelegate> download_manager_delegate_;
-  scoped_refptr<SimpleURLRequestContextGetter> url_request_getter_;
+  //scoped_ptr<SimpleResourceContext> resource_context_;
+  //scoped_refptr<SimpleDownloadManagerDelegate> download_manager_delegate_;
+  //scoped_refptr<SimpleURLRequestContextGetter> url_request_getter_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleBrowserContext);
 };
