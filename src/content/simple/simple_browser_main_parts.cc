@@ -15,7 +15,7 @@
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
 // #include "content/shell/shell.h"
-#include "content/simple/simple_browser_context.h"
+//#include "content/simple/simple_browser_context.h"
 // #include "content/shell/shell_devtools_delegate.h"
 #include "content/shell/shell_switches.h"
 #include "googleurl/src/gurl.h"
@@ -40,7 +40,7 @@ static GURL GetStartupURL() {
   const CommandLine::StringVector& args = command_line->GetArgs();
 
   if (args.empty())
-    return GURL("http://www.google.com/");
+    return GURL("http://www.baidu.com/");
 
   GURL url(args[0]);
   if (url.is_valid() && url.has_scheme())

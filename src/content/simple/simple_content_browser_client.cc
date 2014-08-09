@@ -43,8 +43,8 @@ SimpleContentBrowserClient* SimpleContentBrowserClient::Get() {
 }
 
 SimpleContentBrowserClient::SimpleContentBrowserClient()
-  : hyphen_dictionary_file_(base::kInvalidPlatformFileValue){
-    //simple_browser_main_parts_(NULL) {
+  : hyphen_dictionary_file_(base::kInvalidPlatformFileValue),
+    simple_browser_main_parts_(NULL) {
       DCHECK(!g_browser_client);
       g_browser_client = this;
       //if (!CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree))

@@ -18,7 +18,7 @@
 namespace content {
 
 // class SimpleBrowserContext;
-// class SimpleBrowserMainParts;
+class SimpleBrowserMainParts;
 //class ShellResourceDispatcherHostDelegate;
 
 class SimpleContentBrowserClient : public ContentBrowserClient,
@@ -83,7 +83,7 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
 
   base::PlatformFile hyphen_dictionary_file_;
 
-  //SimpleBrowserMainParts* simple_browser_main_parts_;
+  SimpleBrowserMainParts* simple_browser_main_parts_;
 
   NotificationRegistrar registrar_;
 };
