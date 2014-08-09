@@ -15,10 +15,10 @@
 
 namespace content {
 
-class DownloadManagerDelegate;
-class ResourceContext;
-class SimpleDownloadManagerDelegate;
-class SimpleURLRequestContextGetter;
+//class DownloadManagerDelegate;
+//class ResourceContext;
+//class SimpleDownloadManagerDelegate;
+//class SimpleURLRequestContextGetter;
 
 class SimpleBrowserContext : public BrowserContext {
  public:

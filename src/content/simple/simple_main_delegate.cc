@@ -102,7 +102,7 @@ bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
 
   //  net::CookieMonster::EnableFileScheme();
   //}
-  // SetContentClient(&content_client_);
+  SetContentClient(&content_client_);
   return false;
 }
 
@@ -132,7 +132,7 @@ void SimpleMainDelegate::PreSandboxStartup() {
 //  browser_client_.reset(new SimpleContentBrowserClient);
 //  return browser_client_.get();
 //}
-//
+
 //ContentRendererClient* SimpleMainDelegate::CreateContentRendererClient() {
 //  renderer_client_.reset(new SimpleContentRendererClient);
 //  return renderer_client_.get();

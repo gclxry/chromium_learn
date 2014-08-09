@@ -18,6 +18,7 @@
 #if defined(OS_WIN)
 
 int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE, wchar_t*, int) {
+  // MessageBox(NULL, L"a", L"a", 0);
   sandbox::SandboxInterfaceInfo sandbox_info = {0};
   content::InitializeSandboxInfo(&sandbox_info);
   content::ShellMainDelegate delegate;

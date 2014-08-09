@@ -29,77 +29,77 @@ std::string SimpleContentClient::GetUserAgent() const {
   return webkit_glue::BuildUserAgentFromProduct(product);
 }
 
-string16 SimpleContentClient::GetLocalizedString(int message_id) const {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    switch (message_id) {
-      case IDS_FORM_VALIDATION_VALUE_MISSING:
-      case IDS_FORM_VALIDATION_VALUE_MISSING_CHECKBOX:
-      case IDS_FORM_VALIDATION_VALUE_MISSING_FILE:
-      case IDS_FORM_VALIDATION_VALUE_MISSING_MULTIPLE_FILE:
-      case IDS_FORM_VALIDATION_VALUE_MISSING_RADIO:
-      case IDS_FORM_VALIDATION_VALUE_MISSING_SELECT:
-        return ASCIIToUTF16("value missing");
-      case IDS_FORM_VALIDATION_TYPE_MISMATCH:
-      case IDS_FORM_VALIDATION_TYPE_MISMATCH_EMAIL:
-      case IDS_FORM_VALIDATION_TYPE_MISMATCH_MULTIPLE_EMAIL:
-      case IDS_FORM_VALIDATION_TYPE_MISMATCH_URL:
-        return ASCIIToUTF16("type mismatch");
-      case IDS_FORM_VALIDATION_PATTERN_MISMATCH:
-        return ASCIIToUTF16("pattern mismatch");
-      case IDS_FORM_VALIDATION_TOO_LONG:
-        return ASCIIToUTF16("too long");
-      case IDS_FORM_VALIDATION_RANGE_UNDERFLOW:
-        return ASCIIToUTF16("range underflow");
-      case IDS_FORM_VALIDATION_RANGE_OVERFLOW:
-        return ASCIIToUTF16("range overflow");
-      case IDS_FORM_VALIDATION_STEP_MISMATCH:
-        return ASCIIToUTF16("step mismatch");
-      case IDS_FORM_OTHER_DATE_LABEL:
-        return ASCIIToUTF16("<<OtherDateLabel>>");
-      case IDS_FORM_OTHER_MONTH_LABEL:
-        return ASCIIToUTF16("<<OtherMonthLabel>>");
-      case IDS_FORM_OTHER_TIME_LABEL:
-        return ASCIIToUTF16("<<OtherTimeLabel>>");
-      case IDS_FORM_OTHER_WEEK_LABEL:
-        return ASCIIToUTF16("<<OtherWeekLabel>>");
-      case IDS_FORM_CALENDAR_CLEAR:
-        return ASCIIToUTF16("<<CalendarClear>>");
-      case IDS_FORM_CALENDAR_TODAY:
-        return ASCIIToUTF16("<<CalendarToday>>");
-      case IDS_FORM_THIS_MONTH_LABEL:
-        return ASCIIToUTF16("<<ThisMonthLabel>>");
-      case IDS_FORM_THIS_WEEK_LABEL:
-        return ASCIIToUTF16("<<ThisWeekLabel>>");
-    }
-  }
-  return l10n_util::GetStringUTF16(message_id);
-}
+//string16 SimpleContentClient::GetLocalizedString(int message_id) const {
+//  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
+//    switch (message_id) {
+//      case IDS_FORM_VALIDATION_VALUE_MISSING:
+//      case IDS_FORM_VALIDATION_VALUE_MISSING_CHECKBOX:
+//      case IDS_FORM_VALIDATION_VALUE_MISSING_FILE:
+//      case IDS_FORM_VALIDATION_VALUE_MISSING_MULTIPLE_FILE:
+//      case IDS_FORM_VALIDATION_VALUE_MISSING_RADIO:
+//      case IDS_FORM_VALIDATION_VALUE_MISSING_SELECT:
+//        return ASCIIToUTF16("value missing");
+//      case IDS_FORM_VALIDATION_TYPE_MISMATCH:
+//      case IDS_FORM_VALIDATION_TYPE_MISMATCH_EMAIL:
+//      case IDS_FORM_VALIDATION_TYPE_MISMATCH_MULTIPLE_EMAIL:
+//      case IDS_FORM_VALIDATION_TYPE_MISMATCH_URL:
+//        return ASCIIToUTF16("type mismatch");
+//      case IDS_FORM_VALIDATION_PATTERN_MISMATCH:
+//        return ASCIIToUTF16("pattern mismatch");
+//      case IDS_FORM_VALIDATION_TOO_LONG:
+//        return ASCIIToUTF16("too long");
+//      case IDS_FORM_VALIDATION_RANGE_UNDERFLOW:
+//        return ASCIIToUTF16("range underflow");
+//      case IDS_FORM_VALIDATION_RANGE_OVERFLOW:
+//        return ASCIIToUTF16("range overflow");
+//      case IDS_FORM_VALIDATION_STEP_MISMATCH:
+//        return ASCIIToUTF16("step mismatch");
+//      case IDS_FORM_OTHER_DATE_LABEL:
+//        return ASCIIToUTF16("<<OtherDateLabel>>");
+//      case IDS_FORM_OTHER_MONTH_LABEL:
+//        return ASCIIToUTF16("<<OtherMonthLabel>>");
+//      case IDS_FORM_OTHER_TIME_LABEL:
+//        return ASCIIToUTF16("<<OtherTimeLabel>>");
+//      case IDS_FORM_OTHER_WEEK_LABEL:
+//        return ASCIIToUTF16("<<OtherWeekLabel>>");
+//      case IDS_FORM_CALENDAR_CLEAR:
+//        return ASCIIToUTF16("<<CalendarClear>>");
+//      case IDS_FORM_CALENDAR_TODAY:
+//        return ASCIIToUTF16("<<CalendarToday>>");
+//      case IDS_FORM_THIS_MONTH_LABEL:
+//        return ASCIIToUTF16("<<ThisMonthLabel>>");
+//      case IDS_FORM_THIS_WEEK_LABEL:
+//        return ASCIIToUTF16("<<ThisWeekLabel>>");
+//    }
+//  }
+//  return l10n_util::GetStringUTF16(message_id);
+//}
 
-base::StringPiece SimpleContentClient::GetDataResource(
-    int resource_id,
-    ui::ScaleFactor scale_factor) const {
-  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
-    switch (resource_id) {
-      case IDR_BROKENIMAGE:
-        resource_id = IDR_CONTENT_SHELL_MISSING_IMAGE_GIF;
-        break;
-
-      case IDR_TEXTAREA_RESIZER:
-        resource_id = IDR_CONTENT_SHELL_TEXT_AREA_RESIZE_CORNER_PNG;
-        break;
-    }
-  }
-  return ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
-      resource_id, scale_factor);
-}
-
-base::RefCountedStaticMemory* SimpleContentClient::GetDataResourceBytes(
-    int resource_id) const {
-  return ResourceBundle::GetSharedInstance().LoadDataResourceBytes(resource_id);
-}
-
-gfx::Image& SimpleContentClient::GetNativeImageNamed(int resource_id) const {
-  return ResourceBundle::GetSharedInstance().GetNativeImageNamed(resource_id);
-}
+//base::StringPiece SimpleContentClient::GetDataResource(
+//    int resource_id,
+//    ui::ScaleFactor scale_factor) const {
+//  if (CommandLine::ForCurrentProcess()->HasSwitch(switches::kDumpRenderTree)) {
+//    switch (resource_id) {
+//      case IDR_BROKENIMAGE:
+//        resource_id = IDR_CONTENT_SHELL_MISSING_IMAGE_GIF;
+//        break;
+//
+//      case IDR_TEXTAREA_RESIZER:
+//        resource_id = IDR_CONTENT_SHELL_TEXT_AREA_RESIZE_CORNER_PNG;
+//        break;
+//    }
+//  }
+//  return ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
+//      resource_id, scale_factor);
+//}
+//
+//base::RefCountedStaticMemory* SimpleContentClient::GetDataResourceBytes(
+//    int resource_id) const {
+//  return ResourceBundle::GetSharedInstance().LoadDataResourceBytes(resource_id);
+//}
+//
+//gfx::Image& SimpleContentClient::GetNativeImageNamed(int resource_id) const {
+//  return ResourceBundle::GetSharedInstance().GetNativeImageNamed(resource_id);
+//}
 
 }  // namespace content
