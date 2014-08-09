@@ -31,8 +31,8 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
   virtual ~SimpleContentBrowserClient();
 
   // ContentBrowserClient overrides.
-  //virtual BrowserMainParts* CreateBrowserMainParts(
-  //  const MainFunctionParams& parameters) OVERRIDE;
+  virtual BrowserMainParts* CreateBrowserMainParts(
+    const MainFunctionParams& parameters) OVERRIDE;
   //virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
   //virtual net::URLRequestContextGetter* CreateRequestContext(
   //  BrowserContext* browser_context,

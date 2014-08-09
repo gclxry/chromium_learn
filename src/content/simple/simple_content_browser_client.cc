@@ -16,7 +16,7 @@
 //#include "content/shell/geolocation/shell_access_token_store.h"
 //#include "content/shell/shell.h"
 //#include "content/simple/simple_browser_context.h"
-//#include "content/simple/simple_browser_main_parts.h"
+#include "content/simple/simple_browser_main_parts.h"
 //#include "content/shell/shell_devtools_delegate.h"
 //#include "content/shell/shell_message_filter.h"
 //#include "content/shell/shell_messages.h"
@@ -64,11 +64,11 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
   g_browser_client = NULL;
 }
 
-//BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
-//  const MainFunctionParams& parameters) {
-//    simple_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
-//    return simple_browser_main_parts_;
-//}
+BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(
+  const MainFunctionParams& parameters) {
+    simple_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
+    return simple_browser_main_parts_;
+}
 
 //void SimpleContentBrowserClient::RenderProcessHostCreated(
 //  RenderProcessHost* host) {
