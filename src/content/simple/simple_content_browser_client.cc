@@ -15,7 +15,7 @@
 #include "content/public/common/content_switches.h"
 //#include "content/shell/geolocation/shell_access_token_store.h"
 //#include "content/shell/shell.h"
-//#include "content/simple/simple_browser_context.h"
+#include "content/simple/simple_browser_context.h"
 #include "content/simple/simple_browser_main_parts.h"
 //#include "content/shell/shell_devtools_delegate.h"
 //#include "content/shell/shell_message_filter.h"
@@ -86,13 +86,13 @@ void SimpleContentBrowserClient::RenderProcessHostCreated(
     //  Source<RenderProcessHost>(host));
 }
 
-//net::URLRequestContextGetter* SimpleContentBrowserClient::CreateRequestContext(
-//  BrowserContext* content_browser_context,
-//  ProtocolHandlerMap* protocol_handlers) {
-//    SimpleBrowserContext* shell_browser_context =
-//      SimpleBrowserContextForBrowserContext(content_browser_context);
-//    return shell_browser_context->CreateRequestContext(protocol_handlers);
-//}
+net::URLRequestContextGetter* SimpleContentBrowserClient::CreateRequestContext(
+  BrowserContext* content_browser_context,
+  ProtocolHandlerMap* protocol_handlers) {
+    SimpleBrowserContext* shell_browser_context =
+      SimpleBrowserContextForBrowserContext(content_browser_context);
+    return shell_browser_context->CreateRequestContext(protocol_handlers);
+}
 
 //net::URLRequestContextGetter*
 //  SimpleContentBrowserClient::CreateRequestContextForStoragePartition(
@@ -180,26 +180,26 @@ void SimpleContentBrowserClient::Observe(int type,
 }
 
 
-//SimpleBrowserContext* SimpleContentBrowserClient::browser_context() {
-//  return simple_browser_main_parts_->browser_context();
-//}
-//
-//SimpleBrowserContext*
-//  SimpleContentBrowserClient::off_the_record_browser_context() {
-//    return simple_browser_main_parts_->off_the_record_browser_context();
-//}
-//
+SimpleBrowserContext* SimpleContentBrowserClient::browser_context() {
+  return simple_browser_main_parts_->browser_context();
+}
+
+SimpleBrowserContext*
+  SimpleContentBrowserClient::off_the_record_browser_context() {
+    return simple_browser_main_parts_->off_the_record_browser_context();
+}
+
 //AccessTokenStore* SimpleContentBrowserClient::CreateAccessTokenStore() {
 //  return new ShellAccessTokenStore(browser_context()->GetRequestContext());
 //}
 
-//SimpleBrowserContext*
-//  SimpleContentBrowserClient::SimpleBrowserContextForBrowserContext(
-//  BrowserContext* content_browser_context) {
-//    if (content_browser_context == browser_context())
-//      return browser_context();
-//    DCHECK_EQ(content_browser_context, off_the_record_browser_context());
-//    return off_the_record_browser_context();
-//}
+SimpleBrowserContext*
+  SimpleContentBrowserClient::SimpleBrowserContextForBrowserContext(
+  BrowserContext* content_browser_context) {
+    if (content_browser_context == browser_context())
+      return browser_context();
+    DCHECK_EQ(content_browser_context, off_the_record_browser_context());
+    return off_the_record_browser_context();
+}
 
 }  // namespace content

@@ -131,18 +131,20 @@ net::URLRequestContextGetter* SimpleBrowserContext::GetRequestContext()  {
   return GetDefaultStoragePartition(this)->GetURLRequestContext();
 }
 
-//net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContext(
-//    ProtocolHandlerMap* protocol_handlers) {
-//  DCHECK(!url_request_getter_);
-//  url_request_getter_ = new SimpleURLRequestContextGetter(
-//      ignore_certificate_errors_,
-//      GetPath(),
-//      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
-//      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
-//      protocol_handlers);
-//  resource_context_->set_url_request_context_getter(url_request_getter_.get());
-//  return url_request_getter_.get();
-//}
+net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContext(
+  ProtocolHandlerMap* protocol_handlers) {
+    //DCHECK(!url_request_getter_);
+    //url_request_getter_ = new SimpleURLRequestContextGetter(
+    //  ignore_certificate_errors_,
+    //  GetPath(),
+    //  BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
+    //  BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
+    //  protocol_handlers);
+    //resource_context_->set_url_request_context_getter(url_request_getter_.get());
+    //return url_request_getter_.get();
+
+    return nullptr;
+}
 
 net::URLRequestContextGetter*
     SimpleBrowserContext::GetRequestContextForRenderProcess(

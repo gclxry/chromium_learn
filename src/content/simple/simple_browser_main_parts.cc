@@ -15,7 +15,7 @@
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
 // #include "content/shell/shell.h"
-//#include "content/simple/simple_browser_context.h"
+#include "content/simple/simple_browser_context.h"
 // #include "content/shell/shell_devtools_delegate.h"
 #include "content/shell/shell_switches.h"
 #include "googleurl/src/gurl.h"

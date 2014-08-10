@@ -17,7 +17,7 @@
 
 namespace content {
 
-// class SimpleBrowserContext;
+class SimpleBrowserContext;
 class SimpleBrowserMainParts;
 //class ShellResourceDispatcherHostDelegate;
 
@@ -34,9 +34,9 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
   virtual BrowserMainParts* CreateBrowserMainParts(
     const MainFunctionParams& parameters) OVERRIDE;
   virtual void RenderProcessHostCreated(RenderProcessHost* host) OVERRIDE;
-  //virtual net::URLRequestContextGetter* CreateRequestContext(
-  //  BrowserContext* browser_context,
-  //  ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+  virtual net::URLRequestContextGetter* CreateRequestContext(
+    BrowserContext* browser_context,
+    ProtocolHandlerMap* protocol_handlers) OVERRIDE;
   //virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
   //  BrowserContext* browser_context,
   //  const base::FilePath& partition_path,
@@ -63,8 +63,8 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
     const NotificationSource& source,
     const NotificationDetails& details) OVERRIDE;
 
-  //SimpleBrowserContext* browser_context();
-  //SimpleBrowserContext* off_the_record_browser_context();
+  SimpleBrowserContext* browser_context();
+  SimpleBrowserContext* off_the_record_browser_context();
   //ShellResourceDispatcherHostDelegate* resource_dispatcher_host_delegate() {
   //  return resource_dispatcher_host_delegate_.get();
   //}
@@ -73,8 +73,8 @@ class SimpleContentBrowserClient : public ContentBrowserClient,
   }
 
  private:
-   //SimpleBrowserContext* SimpleBrowserContextForBrowserContext(
-   //  BrowserContext* content_browser_context);
+   SimpleBrowserContext* SimpleBrowserContextForBrowserContext(
+     BrowserContext* content_browser_context);
 
   //scoped_ptr<ShellResourceDispatcherHostDelegate>
   //    resource_dispatcher_host_delegate_;

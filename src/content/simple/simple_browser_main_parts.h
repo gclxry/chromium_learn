@@ -15,7 +15,7 @@ class Thread;
 
 namespace content {
 
-//class SimpleBrowserContext;
+class SimpleBrowserContext;
 //class ShellDevToolsDelegate;
 struct MainFunctionParams;
 
@@ -34,14 +34,14 @@ class SimpleBrowserMainParts : public BrowserMainParts {
 
   //ShellDevToolsDelegate* devtools_delegate() { return devtools_delegate_; }
 
-  //SimpleBrowserContext* browser_context() { return browser_context_.get(); }
-  //SimpleBrowserContext* off_the_record_browser_context() {
-  //  return off_the_record_browser_context_.get();
-  //}
+  SimpleBrowserContext* browser_context() { return browser_context_.get(); }
+  SimpleBrowserContext* off_the_record_browser_context() {
+    return off_the_record_browser_context_.get();
+  }
 
  private:
-   //scoped_ptr<SimpleBrowserContext> browser_context_;
-   //scoped_ptr<SimpleBrowserContext> off_the_record_browser_context_;
+   scoped_ptr<SimpleBrowserContext> browser_context_;
+   scoped_ptr<SimpleBrowserContext> off_the_record_browser_context_;
 
   // For running content_browsertests.
   const MainFunctionParams& parameters_;
