@@ -84,24 +84,6 @@ bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
   logging::LogEventProvider::Initialize(kContentShellProviderName);
 
   InitLogging();
-  //CommandLine& command_line = *CommandLine::ForCurrentProcess();
-  //if (command_line.HasSwitch(switches::kDumpRenderTree)) {
-  //  command_line.AppendSwitch(switches::kProcessPerTab);
-  //  command_line.AppendSwitch(switches::kAllowFileAccessFromFiles);
-  //  command_line.AppendSwitchASCII(
-  //      switches::kUseGL, gfx::kGLImplementationOSMesaName);
-  //  SetAllowOSMesaImageTransportForTesting();
-  //  DisableSystemDragDrop();
-  //  command_line.AppendSwitch(switches::kSkipGpuDataLoading);
-  //  command_line.AppendSwitch(switches::kEnableExperimentalWebKitFeatures);
-  //  command_line.AppendSwitch(switches::kEnableCssShaders);
-  //  command_line.AppendSwitchASCII(switches::kTouchEvents,
-  //                                 switches::kTouchEventsEnabled);
-  //  if (command_line.HasSwitch(switches::kEnableSoftwareCompositing))
-  //    command_line.AppendSwitch(switches::kEnableSoftwareCompositingGLAdapter);
-
-  //  net::CookieMonster::EnableFileScheme();
-  //}
   SetContentClient(&content_client_);
   return false;
 }
@@ -119,14 +101,14 @@ int SimpleMainDelegate::RunProcess(
     return SimpleBrowserMain(main_function_params);
 }
 
-//void SimpleMainDelegate::InitializeResourceBundle() {
-//  base::FilePath pak_file;
-//  base::FilePath pak_dir;
-//  PathService::Get(base::DIR_MODULE, &pak_dir);
-//
-//  pak_file = pak_dir.Append(FILE_PATH_LITERAL("content_shell.pak"));
-//  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
-//}
+void SimpleMainDelegate::InitializeResourceBundle() {
+  base::FilePath pak_file;
+  base::FilePath pak_dir;
+  PathService::Get(base::DIR_MODULE, &pak_dir);
+
+  pak_file = pak_dir.Append(FILE_PATH_LITERAL("content_shell.pak"));
+  ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+}
 
 ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
   browser_client_.reset(new SimpleContentBrowserClient);

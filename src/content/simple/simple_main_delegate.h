@@ -31,7 +31,7 @@ class SimpleMainDelegate : public ContentMainDelegate {
   virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
   virtual ContentRendererClient* CreateContentRendererClient() OVERRIDE;
 
-  //static void InitializeResourceBundle();
+  static void InitializeResourceBundle();
 
  private:
   scoped_ptr<SimpleContentBrowserClient> browser_client_;

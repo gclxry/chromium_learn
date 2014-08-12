@@ -13,6 +13,7 @@
 
 namespace content {
 
+// 逻辑意义上的浏览器
 class SimpleContentClient : public ContentClient {
  public:
   virtual ~SimpleContentClient();

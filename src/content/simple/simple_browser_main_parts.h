@@ -19,6 +19,7 @@ class SimpleBrowserContext;
 //class ShellDevToolsDelegate;
 struct MainFunctionParams;
 
+// 在BrowserMain函数的各个阶段被调用执行
 class SimpleBrowserMainParts : public BrowserMainParts {
  public:
   explicit SimpleBrowserMainParts(const MainFunctionParams& parameters);

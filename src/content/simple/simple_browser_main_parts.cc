@@ -17,7 +17,7 @@
 // #include "content/shell/shell.h"
 #include "content/simple/simple_browser_context.h"
 // #include "content/shell/shell_devtools_delegate.h"
-#include "content/shell/shell_switches.h"
+#include "content/simple/simple_switches.h"
 #include "googleurl/src/gurl.h"
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
@@ -90,6 +90,7 @@ void SimpleBrowserMainParts::PreMainMessageLoopRun() {
   //browser_context_.reset(new ShellBrowserContext(false));
   //off_the_record_browser_context_.reset(new ShellBrowserContext(true));
 
+  // 界面创建初始化工作
   //Shell::Initialize();
   //net::NetModule::SetResourceProvider(PlatformResourceProvider);
 

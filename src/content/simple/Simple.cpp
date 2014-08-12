@@ -33,6 +33,8 @@ int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
 
 	wndMain.ShowWindow(nCmdShow);
 
+  
+
 	int nRet = theLoop.Run();
 
 	_Module.RemoveMessageLoop();
@@ -43,10 +45,10 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 {
 
   // «∂»Îchromium
-  sandbox::SandboxInterfaceInfo sandbox_info = {0};
-  content::InitializeSandboxInfo(&sandbox_info);
-  content::SimpleMainDelegate delegate;
-  return content::ContentMain(hInstance, &sandbox_info, &delegate);
+  //sandbox::SandboxInterfaceInfo sandbox_info = {0};
+  //content::InitializeSandboxInfo(&sandbox_info);
+  //content::SimpleMainDelegate delegate;
+  //return content::ContentMain(hInstance, &sandbox_info, &delegate);
 
 
 	HRESULT hRes = ::CoInitialize(NULL);

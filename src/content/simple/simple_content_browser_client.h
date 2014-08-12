@@ -21,6 +21,7 @@ class SimpleBrowserContext;
 class SimpleBrowserMainParts;
 //class ShellResourceDispatcherHostDelegate;
 
+// ä¯ÀÀÆ÷µÄbrowser¶ËÂß¼­
 class SimpleContentBrowserClient : public ContentBrowserClient,
                                   public NotificationObserver {
  public:
