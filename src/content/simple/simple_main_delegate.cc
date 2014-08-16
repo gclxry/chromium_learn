@@ -13,6 +13,7 @@
 #include "content/public/common/url_constants.h"
 #include "content/public/test/layouttest_support.h"
 #include "content/simple/simple_browser_main.h"
+#include "content/simple/simple_content_browser_client.h"
 #include "net/cookies/cookie_monster.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
@@ -45,6 +46,11 @@ int SimpleMainDelegate::RunProcess(const std::string& process_type, const MainFu
     if (!process_type.empty())
       return -1;
     return SimpleBrowserMain(main_function_params);
+}
+
+ContentBrowserClient* SimpleMainDelegate::CreateContentBrowserClient() {
+  browser_client_.reset(new SimpleContentBrowserClient);
+  return browser_client_.get();
 }
 
 }  // namespace content

@@ -12,6 +12,8 @@
 
 namespace content {
 
+class SimpleContentBrowserClient;
+
 // 自定义的浏览器从这里开始
 class SimpleMainDelegate : public ContentMainDelegate {
  public:
@@ -30,9 +32,11 @@ class SimpleMainDelegate : public ContentMainDelegate {
   // Asks the embedder to start a process. Return -1 for the default behavior.
   virtual int RunProcess(const std::string& process_type, const MainFunctionParams& main_function_params) OVERRIDE;
 
+  virtual ContentBrowserClient* CreateContentBrowserClient() OVERRIDE;
 
 private:
   SimpleContentClient content_client_;
+  scoped_ptr<SimpleContentBrowserClient> browser_client_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleMainDelegate);
 };
