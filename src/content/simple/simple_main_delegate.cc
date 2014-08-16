@@ -35,7 +35,8 @@ SimpleMainDelegate::~SimpleMainDelegate() {
 
 bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
 
-  // SetContentClient(&content_client_);
+  // ¥”SimpleContentClient÷–…Ë÷√user agent
+  SetContentClient(&content_client_);
   return false;
 }
 

@@ -8,9 +8,11 @@
 #include "base/compiler_specific.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/app/content_main_delegate.h"
+#include "content/simple/simple_content_client.h"
 
 namespace content {
 
+// 自定义的浏览器从这里开始
 class SimpleMainDelegate : public ContentMainDelegate {
  public:
   SimpleMainDelegate();
@@ -24,6 +26,10 @@ class SimpleMainDelegate : public ContentMainDelegate {
   // set. This is the place for embedder to do the things that must happen at
   // the start. Most of its startup code should be in the methods below.
   virtual bool BasicStartupComplete(int* exit_code) OVERRIDE;
+
+
+private:
+  SimpleContentClient content_client_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleMainDelegate);
 };
