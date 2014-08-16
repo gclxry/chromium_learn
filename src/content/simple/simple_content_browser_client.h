@@ -19,6 +19,7 @@
 namespace content {
 
 class SimpleBrowserMainParts;
+class SimpleBrowserContext;
 
 // browser½ø³ÌµÄÂß¼­
 class SimpleContentBrowserClient : public ContentBrowserClient,

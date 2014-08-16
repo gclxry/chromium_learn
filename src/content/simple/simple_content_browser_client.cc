@@ -14,6 +14,7 @@
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
 #include "content/simple/simple_browser_main_parts.h"
+#include "content/simple/simple_browser_context.h"
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
 
