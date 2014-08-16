@@ -27,6 +27,9 @@ class SimpleMainDelegate : public ContentMainDelegate {
   // the start. Most of its startup code should be in the methods below.
   virtual bool BasicStartupComplete(int* exit_code) OVERRIDE;
 
+  // Asks the embedder to start a process. Return -1 for the default behavior.
+  virtual int RunProcess(const std::string& process_type, const MainFunctionParams& main_function_params) OVERRIDE;
+
 
 private:
   SimpleContentClient content_client_;

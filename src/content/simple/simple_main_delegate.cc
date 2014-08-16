@@ -12,6 +12,7 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/url_constants.h"
 #include "content/public/test/layouttest_support.h"
+#include "content/simple/simple_browser_main.h"
 #include "net/cookies/cookie_monster.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/base/ui_base_paths.h"
@@ -38,6 +39,12 @@ bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
   // ¥”SimpleContentClient÷–…Ë÷√user agent
   SetContentClient(&content_client_);
   return false;
+}
+
+int SimpleMainDelegate::RunProcess(const std::string& process_type, const MainFunctionParams& main_function_params) {
+    if (!process_type.empty())
+      return -1;
+    return SimpleBrowserMain(main_function_params);
 }
 
 }  // namespace content
