@@ -31,4 +31,19 @@ SimpleBrowserMainParts::SimpleBrowserMainParts(
 SimpleBrowserMainParts::~SimpleBrowserMainParts() {
 }
 
+void SimpleBrowserMainParts::PreMainMessageLoopRun() {
+  //browser_context_.reset(new ShellBrowserContext(false));
+  //off_the_record_browser_context_.reset(new ShellBrowserContext(true));
+
+  //Shell::Initialize();
+  //Shell::CreateNewWindow(browser_context_.get(), GetStartupURL(), NULL, MSG_ROUTING_NONE, gfx::Size());
+
+  //if (parameters_.ui_task) 
+  //{
+  //  parameters_.ui_task->Run();
+  //  delete parameters_.ui_task;
+  //  run_message_loop_ = false;
+  //}
+}
+
 }  // namespace

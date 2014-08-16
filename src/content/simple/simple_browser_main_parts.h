@@ -56,7 +56,8 @@ class SimpleBrowserMainParts : public BrowserMainParts {
   explicit SimpleBrowserMainParts(const MainFunctionParams& parameters);
   virtual ~SimpleBrowserMainParts();
 
-  
+  // BrowserMainParts overrides.
+  virtual void PreMainMessageLoopRun() OVERRIDE;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleBrowserMainParts);
 };
