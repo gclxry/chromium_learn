@@ -33,4 +33,10 @@ SimpleMainDelegate::SimpleMainDelegate() {
 SimpleMainDelegate::~SimpleMainDelegate() {
 }
 
+bool SimpleMainDelegate::BasicStartupComplete(int* exit_code) {
+
+  // SetContentClient(&content_client_);
+  return false;
+}
+
 }  // namespace content
