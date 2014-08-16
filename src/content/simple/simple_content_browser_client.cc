@@ -13,7 +13,7 @@
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
-#include "content/shell/geolocation/shell_access_token_store.h"
+#include "content/simple/simple_browser_main_parts.h"
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
 
@@ -29,6 +29,12 @@ SimpleContentBrowserClient::~SimpleContentBrowserClient() {
 }
 
 void SimpleContentBrowserClient::Observe(int type, const NotificationSource& source, const NotificationDetails& details) {
+}
+
+BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(const MainFunctionParams& parameters) {
+  simple_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
+  return simple_browser_main_parts_;
+
 }
 
 }  // namespace content

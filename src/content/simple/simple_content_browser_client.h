@@ -15,7 +15,10 @@
 #include "content/public/browser/notification_observer.h"
 #include "content/public/browser/notification_registrar.h"
 
+
 namespace content {
+
+class SimpleBrowserMainParts;
 
 // browser½ø³ÌµÄÂß¼­
 class SimpleContentBrowserClient : public ContentBrowserClient,
@@ -24,11 +27,14 @@ public:
   SimpleContentBrowserClient();
   virtual ~SimpleContentBrowserClient();
 
+  // ContentBrowserClient overrides.
+  virtual BrowserMainParts* CreateBrowserMainParts(const MainFunctionParams& parameters) OVERRIDE;
+
   // NotificationObserver implementation.
   virtual void Observe(int type, const NotificationSource& source, const NotificationDetails& details) OVERRIDE;
 
 private:
-
+  SimpleBrowserMainParts* simple_browser_main_parts_;
 };
 
 }  // namespace content
