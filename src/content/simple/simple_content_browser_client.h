@@ -31,6 +31,8 @@ public:
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(const MainFunctionParams& parameters) OVERRIDE;
 
+  virtual WebContentsViewDelegate* GetWebContentsViewDelegate(WebContents* web_contents) OVERRIDE;
+
   // NotificationObserver implementation.
   virtual void Observe(int type, const NotificationSource& source, const NotificationDetails& details) OVERRIDE;
 
