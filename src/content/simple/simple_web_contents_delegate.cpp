@@ -25,12 +25,46 @@
 #include "content/simple/simple_browser_main_parts.h"
 #include "content/simple/simple_content_browser_client.h"
 
+#include "stdafx.h"
+#include "resource.h"
+#include <windows.h>
+
+#include "SimpleView.h"
+#include "aboutdlg.h"
+#include "MainFrm.h"
+
+
+CAppModule _Module;
+
 // Content area size for newly created windows.
 static const int kTestWindowWidth = 800;
 static const int kTestWindowHeight = 600;
 
 namespace content {
 
+  int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
+  {
+
+    CMessageLoop theLoop;
+    _Module.AddMessageLoop(&theLoop);
+
+    CMainFrame wndMain;
+
+    if(wndMain.CreateEx() == NULL)
+    {
+      ATLTRACE(_T("Main window creation failed!\n"));
+      return 0;
+    }
+
+    wndMain.ShowWindow(nCmdShow);
+
+
+
+    int nRet = theLoop.Run();
+
+    _Module.RemoveMessageLoop();
+    return nRet;
+  }
 
   SimpleWebContentsDelegate::SimpleWebContentsDelegate(WebContents* web_contents){
       //registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -54,6 +88,25 @@ namespace content {
     //InitCtrlEx.dwICC  = ICC_STANDARD_CLASSES;
     //InitCommonControlsEx(&InitCtrlEx);
     //RegisterWindowClass();
+
+    HRESULT hRes = ::CoInitialize(NULL);
+    // If you are running on NT 4.0 or higher you can use the following call instead to 
+    // make the EXE free threaded. This means that calls come in on a random RPC thread.
+    //	HRESULT hRes = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    ATLASSERT(SUCCEEDED(hRes));
+
+    // this resolves ATL window thunking problem when Microsoft Layer for Unicode (MSLU) is used
+    ::DefWindowProc(NULL, 0, 0, 0L);
+
+    AtlInitCommonControls(ICC_COOL_CLASSES | ICC_BAR_CLASSES);	// add flags to support other controls
+
+    hRes = _Module.Init(NULL, GetModuleHandle(NULL));
+    ATLASSERT(SUCCEEDED(hRes));
+
+    int nRet = Run(_T(""), SW_SHOW);
+
+    _Module.Term();
+    ::CoUninitialize();
   }
 
   SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateNewWindow(BrowserContext* browser_context,
