@@ -37,7 +37,7 @@ void SimpleBrowserMainParts::PreMainMessageLoopRun() {
   off_the_record_browser_context_.reset(new SimpleBrowserContext(true));
 
   Shell::Initialize();
-  Shell::CreateNewWindow(browser_context_.get(), L"www.baidu.com", NULL, MSG_ROUTING_NONE, gfx::Size());
+  Shell::CreateNewWindow(browser_context_.get(), GURL("www.baidu.com"), NULL, MSG_ROUTING_NONE, gfx::Size());
 
   if (parameters_.ui_task) 
   {

@@ -27,4 +27,53 @@ SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
 SimpleBrowserContext::~SimpleBrowserContext() {
 }
 
+base::FilePath SimpleBrowserContext::GetPath() {
+  return path_;
+}
+
+bool SimpleBrowserContext::IsOffTheRecord() const {
+  return off_the_record_;
+}
+
+DownloadManagerDelegate* SimpleBrowserContext::GetDownloadManagerDelegate()  {
+
+  return NULL;
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::GetRequestContext()  {
+  return GetDefaultStoragePartition(this)->GetURLRequestContext();
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::GetRequestContextForRenderProcess(int renderer_child_id)  {
+    return GetRequestContext();
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::GetMediaRequestContext()  {
+    return GetRequestContext();
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::GetMediaRequestContextForRenderProcess(int renderer_child_id)  {
+    return GetRequestContext();
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::GetMediaRequestContextForStoragePartition(const base::FilePath& partition_path,bool in_memory) {
+    return GetRequestContext();
+}
+
+ResourceContext* SimpleBrowserContext::GetResourceContext()  {
+  return NULL;
+}
+
+GeolocationPermissionContext* SimpleBrowserContext::GetGeolocationPermissionContext()  {
+    return NULL;
+}
+
+SpeechRecognitionPreferences* SimpleBrowserContext::GetSpeechRecognitionPreferences() {
+    return NULL;
+}
+
+quota::SpecialStoragePolicy* SimpleBrowserContext::GetSpecialStoragePolicy() {
+  return NULL;
+}
+
 }  // namespace content

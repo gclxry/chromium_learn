@@ -24,9 +24,25 @@ public:
   explicit SimpleBrowserContext(bool off_the_record);
   virtual ~SimpleBrowserContext();
 
+  // BrowserContext implementation.
+  virtual base::FilePath GetPath() OVERRIDE;
+  virtual bool IsOffTheRecord() const OVERRIDE;
+  virtual DownloadManagerDelegate* GetDownloadManagerDelegate() OVERRIDE;
+  virtual net::URLRequestContextGetter* GetRequestContext() OVERRIDE;
+  virtual net::URLRequestContextGetter* GetRequestContextForRenderProcess(int renderer_child_id) OVERRIDE;
+  virtual net::URLRequestContextGetter* GetMediaRequestContext() OVERRIDE;
+  virtual net::URLRequestContextGetter* GetMediaRequestContextForRenderProcess(int renderer_child_id) OVERRIDE;
+  virtual net::URLRequestContextGetter* GetMediaRequestContextForStoragePartition(const base::FilePath& partition_path, bool in_memory) OVERRIDE;
+  virtual ResourceContext* GetResourceContext() OVERRIDE;
+  virtual GeolocationPermissionContext* GetGeolocationPermissionContext() OVERRIDE;
+  virtual SpeechRecognitionPreferences* GetSpeechRecognitionPreferences() OVERRIDE;
+  virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
+
+
 
 private:
   bool off_the_record_;
+  base::FilePath path_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleBrowserContext);
 };
