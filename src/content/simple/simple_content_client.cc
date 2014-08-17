@@ -19,4 +19,9 @@ namespace content {
 SimpleContentClient::~SimpleContentClient() {
 }
 
+std::string SimpleContentClient::GetUserAgent() const {
+  std::string product = "Chrome/";
+  return webkit_glue::BuildUserAgentFromProduct(product);
+}
+
 }  // namespace content

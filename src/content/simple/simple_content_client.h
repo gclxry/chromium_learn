@@ -18,6 +18,8 @@ class SimpleContentClient : public ContentClient {
  public:
   virtual ~SimpleContentClient();
 
+  virtual std::string GetUserAgent() const OVERRIDE;
+
 };
 
 }  // namespace content

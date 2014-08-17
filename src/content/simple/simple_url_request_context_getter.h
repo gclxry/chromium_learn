@@ -46,16 +46,16 @@ class SimpleURLRequestContextGetter : public net::URLRequestContextGetter {
   virtual ~SimpleURLRequestContextGetter();
 
  private:
-  //bool ignore_certificate_errors_;
-  //base::FilePath base_path_;
-  //base::MessageLoop* io_loop_;
-  //base::MessageLoop* file_loop_;
+  bool ignore_certificate_errors_;
+  base::FilePath base_path_;
+  base::MessageLoop* io_loop_;
+  base::MessageLoop* file_loop_;
 
-  //scoped_ptr<net::ProxyConfigService> proxy_config_service_;
-  //scoped_ptr<net::NetworkDelegate> network_delegate_;
-  //scoped_ptr<net::URLRequestContextStorage> storage_;
+  scoped_ptr<net::ProxyConfigService> proxy_config_service_;
+  scoped_ptr<net::NetworkDelegate> network_delegate_;
+  scoped_ptr<net::URLRequestContextStorage> storage_;
   scoped_ptr<net::URLRequestContext> url_request_context_;
-  //ProtocolHandlerMap protocol_handlers_;
+  ProtocolHandlerMap protocol_handlers_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleURLRequestContextGetter);
 };
