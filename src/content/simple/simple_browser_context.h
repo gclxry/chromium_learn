@@ -41,10 +41,10 @@ public:
 
 
 private:
-  //class SimpleResourceContext;
+  class SimpleResourceContext;
   bool off_the_record_;
   base::FilePath path_;
-  //scoped_ptr<SimpleResourceContext> resource_context_;
+  scoped_ptr<SimpleResourceContext> resource_context_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleBrowserContext);
 };

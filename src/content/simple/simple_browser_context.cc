@@ -15,34 +15,35 @@
 #include "content/public/browser/resource_context.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
+#include "content/simple/simple_url_request_context_getter.h"
 
 
 namespace content {
 
-  //class SimpleBrowserContext::SimpleResourceContext : public ResourceContext {
-  //public:
-  //  SimpleResourceContext() : getter_(NULL) {}
-  //  virtual ~SimpleResourceContext() {}
+  class SimpleBrowserContext::SimpleResourceContext : public ResourceContext {
+  public:
+    SimpleResourceContext() : getter_(NULL) {}
+    virtual ~SimpleResourceContext() {}
 
-  //  // ResourceContext implementation:
-  //  virtual net::HostResolver* GetHostResolver() OVERRIDE {
-  //    CHECK(getter_);
-  //    return getter_->host_resolver();
-  //  }
-  //  virtual net::URLRequestContext* GetRequestContext() OVERRIDE {
-  //    CHECK(getter_);
-  //    return getter_->GetURLRequestContext();
-  //  }
+    // ResourceContext implementation:
+    //virtual net::HostResolver* GetHostResolver() OVERRIDE {
+    //  CHECK(getter_);
+    //  return getter_->host_resolver();
+    //}
+    virtual net::URLRequestContext* GetRequestContext() OVERRIDE {
+      CHECK(getter_);
+      return getter_->GetURLRequestContext();
+    }
 
-  //  void set_url_request_context_getter(ShellURLRequestContextGetter* getter) {
-  //    getter_ = getter;
-  //  }
+    void set_url_request_context_getter(SimpleURLRequestContextGetter* getter) {
+      getter_ = getter;
+    }
 
-  //private:
-  //  ShellURLRequestContextGetter* getter_;
+  private:
+    SimpleURLRequestContextGetter* getter_;
 
-  //  DISALLOW_COPY_AND_ASSIGN(SimpleResourceContext);
-  //};
+    DISALLOW_COPY_AND_ASSIGN(SimpleResourceContext);
+  };
 
 SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
     : off_the_record_(off_the_record){
