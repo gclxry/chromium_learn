@@ -15,7 +15,6 @@
 #include "content/public/common/content_switches.h"
 #include "content/simple/simple_browser_main_parts.h"
 #include "content/simple/simple_browser_context.h"
-#include "content/simple/simple_web_contents_view_delegate_creator.h"
 #include "googleurl/src/gurl.h"
 #include "webkit/glue/webpreferences.h"
 
@@ -37,10 +36,6 @@ BrowserMainParts* SimpleContentBrowserClient::CreateBrowserMainParts(const MainF
   simple_browser_main_parts_ = new SimpleBrowserMainParts(parameters);
   return simple_browser_main_parts_;
 
-}
-
-WebContentsViewDelegate* SimpleContentBrowserClient::GetWebContentsViewDelegate(WebContents* web_contents) {
-  return CreateSimpleWebContentsViewDelegate(web_contents);
 }
 
 SimpleBrowserContext* SimpleContentBrowserClient::SimpleBrowserContextForBrowserContext(BrowserContext* content_browser_context) {

@@ -34,7 +34,6 @@ public:
   virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(BrowserContext* browser_context,
     const base::FilePath& partition_path, bool in_memory, ProtocolHandlerMap* protocol_handlers) OVERRIDE;
 
-  virtual WebContentsViewDelegate* GetWebContentsViewDelegate(WebContents* web_contents) OVERRIDE;
 
   // NotificationObserver implementation.
   virtual void Observe(int type, const NotificationSource& source, const NotificationDetails& details) OVERRIDE;
