@@ -19,7 +19,7 @@ class DownloadManagerDelegate;
 class ResourceContext;
 class SimpleURLRequestContextGetter;
 
-// 存放浏览器回话上下文信息
+// 存放浏览器会话上下文信息
 class SimpleBrowserContext : public BrowserContext {
 public:
   explicit SimpleBrowserContext(bool off_the_record);
