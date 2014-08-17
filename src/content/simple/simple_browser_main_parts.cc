@@ -14,6 +14,8 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
+#include "content/simple/shell.h"
+#include "content/simple/simple_browser_context.h"
 #include "googleurl/src/gurl.h"
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
@@ -23,27 +25,26 @@
 
 namespace content {
 
-SimpleBrowserMainParts::SimpleBrowserMainParts(
-    const MainFunctionParams& parameters)
-    : BrowserMainParts(){
+SimpleBrowserMainParts::SimpleBrowserMainParts(const MainFunctionParams& parameters)
+  : BrowserMainParts(), parameters_(parameters), run_message_loop_(true){
 }
 
 SimpleBrowserMainParts::~SimpleBrowserMainParts() {
 }
 
 void SimpleBrowserMainParts::PreMainMessageLoopRun() {
-  //browser_context_.reset(new ShellBrowserContext(false));
-  //off_the_record_browser_context_.reset(new ShellBrowserContext(true));
+  browser_context_.reset(new SimpleBrowserContext(false));
+  off_the_record_browser_context_.reset(new SimpleBrowserContext(true));
 
-  //Shell::Initialize();
-  //Shell::CreateNewWindow(browser_context_.get(), GetStartupURL(), NULL, MSG_ROUTING_NONE, gfx::Size());
+  Shell::Initialize();
+  Shell::CreateNewWindow(browser_context_.get(), L"www.baidu.com", NULL, MSG_ROUTING_NONE, gfx::Size());
 
-  //if (parameters_.ui_task) 
-  //{
-  //  parameters_.ui_task->Run();
-  //  delete parameters_.ui_task;
-  //  run_message_loop_ = false;
-  //}
+  if (parameters_.ui_task) 
+  {
+    parameters_.ui_task->Run();
+    delete parameters_.ui_task;
+    run_message_loop_ = false;
+  }
 }
 
 }  // namespace

@@ -12,6 +12,7 @@
 namespace content {
 
 struct MainFunctionParams;
+class SimpleBrowserContext;
 
 // This class contains different "stages" to be executed by |BrowserMain()|,
 // Each stage is represented by a single BrowserMainParts method, called from
@@ -58,6 +59,21 @@ class SimpleBrowserMainParts : public BrowserMainParts {
 
   // BrowserMainParts overrides.
   virtual void PreMainMessageLoopRun() OVERRIDE;
+
+
+
+  SimpleBrowserContext* browser_context() { return browser_context_.get(); }
+  SimpleBrowserContext* off_the_record_browser_context() {
+    return off_the_record_browser_context_.get();
+  }
+
+private:
+  scoped_ptr<SimpleBrowserContext> browser_context_;
+  scoped_ptr<SimpleBrowserContext> off_the_record_browser_context_;
+
+  // For running content_browsertests.
+  const MainFunctionParams& parameters_;
+  bool run_message_loop_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleBrowserMainParts);
 };
