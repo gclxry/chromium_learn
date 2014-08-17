@@ -33,6 +33,8 @@ namespace content {
   public:
     virtual ~SimpleWebContentsDelegate();
 
+    void LoadURL(const GURL& url);
+
     // Do one time initialization at application startup.
     static void Initialize();
 
@@ -52,6 +54,8 @@ namespace content {
 
     // Helper to create a new Shell given a newly created WebContents.
     static SimpleWebContentsDelegate* CreateShell(WebContents* web_contents);
+
+    scoped_ptr<WebContents> web_contents_;
 
   };
 

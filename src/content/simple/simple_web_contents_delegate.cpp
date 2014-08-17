@@ -66,8 +66,8 @@ namespace content {
         create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
       WebContents* web_contents = WebContents::Create(create_params);
       SimpleWebContentsDelegate* shell = CreateShell(web_contents);
-      //if (!url.is_empty())
-      //  shell->LoadURL(url);
+      if (!url.is_empty())
+        shell->LoadURL(url);
       return shell;
   }
 
@@ -81,8 +81,6 @@ namespace content {
     // shell->PlatformSetContents();
 
     // shell->PlatformResizeSubViews();
-
-
     return shell;
   }
 
@@ -105,5 +103,15 @@ namespace content {
       //  NOTREACHED();
       //}
   }
+
+  void SimpleWebContentsDelegate::LoadURL(const GURL& url) {
+    NavigationController::LoadURLParams params(url);
+    params.transition_type = PageTransitionFromInt(
+      PAGE_TRANSITION_TYPED | PAGE_TRANSITION_FROM_ADDRESS_BAR);
+    params.frame_name = std::string();
+    web_contents_->GetController().LoadURLWithParams(params);
+    web_contents_->GetView()->Focus();
+  }
+
 
 }  // namespace content
