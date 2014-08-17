@@ -26,10 +26,10 @@ namespace content {
     virtual ~SimpleResourceContext() {}
 
     // ResourceContext implementation:
-    //virtual net::HostResolver* GetHostResolver() OVERRIDE {
-    //  CHECK(getter_);
-    //  return getter_->host_resolver();
-    //}
+    virtual net::HostResolver* GetHostResolver() OVERRIDE {
+      CHECK(getter_);
+      return getter_->host_resolver();
+    }
     virtual net::URLRequestContext* GetRequestContext() OVERRIDE {
       CHECK(getter_);
       return getter_->GetURLRequestContext();
@@ -46,7 +46,7 @@ namespace content {
   };
 
 SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
-    : off_the_record_(off_the_record){
+    : off_the_record_(off_the_record), resource_context_(new SimpleResourceContext){
 }
 
 SimpleBrowserContext::~SimpleBrowserContext() {
@@ -86,7 +86,7 @@ net::URLRequestContextGetter* SimpleBrowserContext::GetMediaRequestContextForSto
 }
 
 ResourceContext* SimpleBrowserContext::GetResourceContext()  {
-  return NULL;
+  return resource_context_.get();
 }
 
 GeolocationPermissionContext* SimpleBrowserContext::GetGeolocationPermissionContext()  {

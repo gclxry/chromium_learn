@@ -78,4 +78,8 @@ scoped_refptr<base::SingleThreadTaskRunner> SimpleURLRequestContextGetter::GetNe
     return BrowserThread::GetMessageLoopProxyForThread(BrowserThread::IO);
 }
 
+net::HostResolver* SimpleURLRequestContextGetter::host_resolver() {
+  return url_request_context_->host_resolver();
+}
+
 }  // namespace content

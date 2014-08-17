@@ -40,6 +40,7 @@ class SimpleURLRequestContextGetter : public net::URLRequestContextGetter {
   virtual net::URLRequestContext* GetURLRequestContext() OVERRIDE;
   virtual scoped_refptr<base::SingleThreadTaskRunner> GetNetworkTaskRunner() const OVERRIDE;
  
+  net::HostResolver* host_resolver();
 
  protected:
   virtual ~SimpleURLRequestContextGetter();
