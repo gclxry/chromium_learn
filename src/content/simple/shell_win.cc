@@ -18,8 +18,8 @@
 
 namespace {
 
-const wchar_t kWindowTitle[] = L"Content Shell";
-const wchar_t kWindowClass[] = L"CONTENT_SHELL";
+const wchar_t kWindowTitle[] = L"Content Simple";
+const wchar_t kWindowClass[] = L"CONTENT_SIMPLE";
 
 const int kButtonWidth = 72;
 const int kURLBarHeight = 24;

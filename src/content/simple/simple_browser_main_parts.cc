@@ -14,8 +14,9 @@
 #include "content/public/common/content_switches.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
-#include "content/simple/shell.h"
+//#include "content/simple/shell.h"
 #include "content/simple/simple_browser_context.h"
+#include "content/simple/simple_web_contents_delegate.h"
 #include "googleurl/src/gurl.h"
 #include "grit/net_resources.h"
 #include "net/base/net_module.h"
@@ -36,8 +37,8 @@ void SimpleBrowserMainParts::PreMainMessageLoopRun() {
   browser_context_.reset(new SimpleBrowserContext(false));
   off_the_record_browser_context_.reset(new SimpleBrowserContext(true));
 
-  Shell::Initialize();
-  Shell::CreateNewWindow(browser_context_.get(), GURL("http://www.baidu.com/"), NULL, MSG_ROUTING_NONE, gfx::Size());
+  SimpleWebContentsDelegate::Initialize();
+  SimpleWebContentsDelegate::CreateNewWindow(browser_context_.get(), GURL("http://www.baidu.com/"), NULL, MSG_ROUTING_NONE, gfx::Size());
 
   if (parameters_.ui_task) 
   {

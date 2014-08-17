@@ -32,6 +32,27 @@ namespace content {
     public NotificationObserver {
   public:
     virtual ~SimpleWebContentsDelegate();
+
+    // Do one time initialization at application startup.
+    static void Initialize();
+
+    static SimpleWebContentsDelegate* CreateNewWindow(BrowserContext* browser_context,
+      const GURL& url,
+      SiteInstance* site_instance,
+      int routing_id,
+      const gfx::Size& initial_size);
+
+    // NotificationObserver
+    virtual void Observe(int type,
+      const NotificationSource& source,
+      const NotificationDetails& details) OVERRIDE;
+
+  private:
+    explicit SimpleWebContentsDelegate(WebContents* web_contents);
+
+    // Helper to create a new Shell given a newly created WebContents.
+    static SimpleWebContentsDelegate* CreateShell(WebContents* web_contents);
+
   };
 
 }  // namespace content

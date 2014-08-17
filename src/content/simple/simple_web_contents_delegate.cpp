@@ -32,8 +32,78 @@ static const int kTestWindowHeight = 600;
 namespace content {
 
 
+  SimpleWebContentsDelegate::SimpleWebContentsDelegate(WebContents* web_contents){
+      //registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
+      //  Source<WebContents>(web_contents));
+      //windows_.push_back(this);
+
+      //if (!shell_created_callback_.is_null()) {
+      //  shell_created_callback_.Run(this);
+      //  shell_created_callback_.Reset();
+      //}
+  }
+
   SimpleWebContentsDelegate::~SimpleWebContentsDelegate() {
   }
 
+  void SimpleWebContentsDelegate::Initialize() {
+    //_setmode(_fileno(stdout), _O_BINARY);
+    //_setmode(_fileno(stderr), _O_BINARY);
+    //INITCOMMONCONTROLSEX InitCtrlEx;
+    //InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
+    //InitCtrlEx.dwICC  = ICC_STANDARD_CLASSES;
+    //InitCommonControlsEx(&InitCtrlEx);
+    //RegisterWindowClass();
+  }
+
+  SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateNewWindow(BrowserContext* browser_context,
+    const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
+      WebContents::CreateParams create_params(browser_context, site_instance);
+      create_params.routing_id = routing_id;
+      if (!initial_size.IsEmpty())
+        create_params.initial_size = initial_size;
+      else
+        create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
+      WebContents* web_contents = WebContents::Create(create_params);
+      SimpleWebContentsDelegate* shell = CreateShell(web_contents);
+      //if (!url.is_empty())
+      //  shell->LoadURL(url);
+      return shell;
+  }
+
+  SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateShell(WebContents* web_contents) {
+    SimpleWebContentsDelegate* shell = new SimpleWebContentsDelegate(web_contents);
+    //shell->PlatformCreateWindow(kTestWindowWidth, kTestWindowHeight);
+
+    //shell->web_contents_.reset(web_contents);
+    //web_contents->SetDelegate(shell);
+
+    // shell->PlatformSetContents();
+
+    // shell->PlatformResizeSubViews();
+
+
+    return shell;
+  }
+
+  void SimpleWebContentsDelegate::Observe(int type, const NotificationSource& source, const NotificationDetails& details) {
+      //if (type == NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) 
+      //{
+      //  std::pair<NavigationEntry*, bool>* title =
+      //    Details<std::pair<NavigationEntry*, bool> >(details).ptr();
+
+      //  if (title->first) {
+      //    string16 text = title->first->GetTitle();
+      //    PlatformSetTitle(text);
+      //  }
+      //} else if (type == NOTIFICATION_WEB_CONTENTS_DESTROYED) 
+      //{
+      //  //devtools_frontend_ = NULL;
+      //  registrar_.Remove(this, NOTIFICATION_WEB_CONTENTS_DESTROYED, source);
+      //} else 
+      //{
+      //  NOTREACHED();
+      //}
+  }
 
 }  // namespace content
