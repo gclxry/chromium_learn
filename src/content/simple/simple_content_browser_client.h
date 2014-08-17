@@ -30,14 +30,23 @@ public:
 
   // ContentBrowserClient overrides.
   virtual BrowserMainParts* CreateBrowserMainParts(const MainFunctionParams& parameters) OVERRIDE;
+  virtual net::URLRequestContextGetter* CreateRequestContext(BrowserContext* browser_context, ProtocolHandlerMap* protocol_handlers) OVERRIDE;
+  virtual net::URLRequestContextGetter* CreateRequestContextForStoragePartition(BrowserContext* browser_context,
+    const base::FilePath& partition_path, bool in_memory, ProtocolHandlerMap* protocol_handlers) OVERRIDE;
 
   virtual WebContentsViewDelegate* GetWebContentsViewDelegate(WebContents* web_contents) OVERRIDE;
 
   // NotificationObserver implementation.
   virtual void Observe(int type, const NotificationSource& source, const NotificationDetails& details) OVERRIDE;
 
+  SimpleBrowserContext* browser_context();
+  SimpleBrowserContext* off_the_record_browser_context();
+
 private:
+  SimpleBrowserContext* SimpleBrowserContextForBrowserContext(BrowserContext* content_browser_context);
+
   SimpleBrowserMainParts* simple_browser_main_parts_;
+
 };
 
 }  // namespace content

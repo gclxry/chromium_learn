@@ -17,6 +17,7 @@ namespace content {
 
 class DownloadManagerDelegate;
 class ResourceContext;
+class SimpleURLRequestContextGetter;
 
 // 存放浏览器回话上下文信息
 class SimpleBrowserContext : public BrowserContext {
@@ -38,13 +39,17 @@ public:
   virtual SpeechRecognitionPreferences* GetSpeechRecognitionPreferences() OVERRIDE;
   virtual quota::SpecialStoragePolicy* GetSpecialStoragePolicy() OVERRIDE;
 
-
+  net::URLRequestContextGetter* CreateRequestContext(ProtocolHandlerMap* protocol_handlers);
+  net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+    const base::FilePath& partition_path, bool in_memory, ProtocolHandlerMap* protocol_handlers);
 
 private:
   class SimpleResourceContext;
   bool off_the_record_;
   base::FilePath path_;
+  bool ignore_certificate_errors_;
   scoped_ptr<SimpleResourceContext> resource_context_;
+  scoped_refptr<SimpleURLRequestContextGetter> url_request_getter_;
 
   DISALLOW_COPY_AND_ASSIGN(SimpleBrowserContext);
 };

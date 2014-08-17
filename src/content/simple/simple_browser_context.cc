@@ -46,7 +46,9 @@ namespace content {
   };
 
 SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
-    : off_the_record_(off_the_record), resource_context_(new SimpleResourceContext){
+    : off_the_record_(off_the_record),
+    ignore_certificate_errors_(false),
+    resource_context_(new SimpleResourceContext){
 }
 
 SimpleBrowserContext::~SimpleBrowserContext() {
@@ -99,6 +101,22 @@ SpeechRecognitionPreferences* SimpleBrowserContext::GetSpeechRecognitionPreferen
 
 quota::SpecialStoragePolicy* SimpleBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContext(ProtocolHandlerMap* protocol_handlers) {
+    DCHECK(!url_request_getter_);
+    url_request_getter_ = new SimpleURLRequestContextGetter(
+      ignore_certificate_errors_,GetPath(),
+      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::IO),
+      BrowserThread::UnsafeGetMessageLoopForThread(BrowserThread::FILE),
+      protocol_handlers);
+    resource_context_->set_url_request_context_getter(url_request_getter_.get());
+    return url_request_getter_.get();
+}
+
+net::URLRequestContextGetter* SimpleBrowserContext::CreateRequestContextForStoragePartition(
+  const base::FilePath& partition_path, bool in_memory, ProtocolHandlerMap* protocol_handlers) {
+    return NULL;
 }
 
 }  // namespace content
