@@ -19,6 +19,30 @@
 
 namespace content {
 
+  //class SimpleBrowserContext::SimpleResourceContext : public ResourceContext {
+  //public:
+  //  SimpleResourceContext() : getter_(NULL) {}
+  //  virtual ~SimpleResourceContext() {}
+
+  //  // ResourceContext implementation:
+  //  virtual net::HostResolver* GetHostResolver() OVERRIDE {
+  //    CHECK(getter_);
+  //    return getter_->host_resolver();
+  //  }
+  //  virtual net::URLRequestContext* GetRequestContext() OVERRIDE {
+  //    CHECK(getter_);
+  //    return getter_->GetURLRequestContext();
+  //  }
+
+  //  void set_url_request_context_getter(ShellURLRequestContextGetter* getter) {
+  //    getter_ = getter;
+  //  }
+
+  //private:
+  //  ShellURLRequestContextGetter* getter_;
+
+  //  DISALLOW_COPY_AND_ASSIGN(SimpleResourceContext);
+  //};
 
 SimpleBrowserContext::SimpleBrowserContext(bool off_the_record)
     : off_the_record_(off_the_record){
