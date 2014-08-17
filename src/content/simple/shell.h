@@ -18,24 +18,12 @@
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/size.h"
 
-#if defined(TOOLKIT_GTK)
-#include <gtk/gtk.h>
-#include "ui/base/gtk/gtk_signal.h"
 
-typedef struct _GtkToolItem GtkToolItem;
-#elif defined(OS_ANDROID)
-#include "base/android/scoped_java_ref.h"
-#elif defined(USE_AURA)
-#if defined(OS_CHROMEOS)
-namespace content {
-class MinimalAsh;
-}
-#endif
 namespace views {
-class Widget;
-class ViewsDelegate;
+  class Widget;
+  class ViewsDelegate;
 }
-#endif
+
 
 class GURL;
 namespace content {
@@ -62,10 +50,10 @@ class Shell : public WebContentsDelegate,
   void Close();
   void ShowDevTools();
   void CloseDevTools();
-#if (defined(OS_WIN) && !defined(USE_AURA)) || defined(TOOLKIT_GTK)
+
   // Resizes the main window to the given dimensions.
   void SizeTo(int width, int height);
-#endif
+
 
   // Do one time initialization at application startup.
   static void Initialize();
@@ -95,23 +83,12 @@ class Shell : public WebContentsDelegate,
   WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }
 
-#if defined(OS_MACOSX)
-  // Public to be called by an ObjC bridge object.
-  void ActionPerformed(int control);
-  void URLEntered(std::string url_string);
-#elif defined(OS_ANDROID)
-  // Registers the Android Java to native methods.
-  static bool Register(JNIEnv* env);
-#endif
 
   // WebContentsDelegate
   virtual WebContents* OpenURLFromTab(WebContents* source,
                                       const OpenURLParams& params) OVERRIDE;
   virtual void LoadingStateChanged(WebContents* source) OVERRIDE;
-#if defined(OS_ANDROID)
-  virtual void LoadProgressChanged(WebContents* source,
-                                   double progress) OVERRIDE;
-#endif
+
   virtual void ToggleFullscreenModeForTab(WebContents* web_contents,
                                           bool enter_fullscreen) OVERRIDE;
   virtual bool IsFullscreenForTabOrPending(
@@ -129,11 +106,7 @@ class Shell : public WebContentsDelegate,
   virtual void DidNavigateMainFramePostCommit(
       WebContents* web_contents) OVERRIDE;
   //virtual JavaScriptDialogManager* GetJavaScriptDialogManager() OVERRIDE;
-#if defined(OS_MACOSX)
-  virtual void HandleKeyboardEvent(
-      WebContents* source,
-      const NativeWebKeyboardEvent& event) OVERRIDE;
-#endif
+
   //virtual bool AddMessageToConsole(WebContents* source,
   //                                 int32 level,
   //                                 const string16& message,
@@ -176,12 +149,6 @@ class Shell : public WebContentsDelegate,
   void PlatformSetIsLoading(bool loading);
   // Set the title of shell window
   void PlatformSetTitle(const string16& title);
-#if defined(OS_ANDROID)
-  void PlatformToggleFullscreenModeForTab(WebContents* web_contents,
-                                          bool enter_fullscreen);
-  bool PlatformIsFullscreenForTabOrPending(
-      const WebContents* web_contents) const;
-#endif
 
   gfx::NativeView GetContentView();
 
@@ -190,31 +157,12 @@ class Shell : public WebContentsDelegate,
                        const NotificationSource& source,
                        const NotificationDetails& details) OVERRIDE;
 
-#if defined(OS_WIN) && !defined(USE_AURA)
   static ATOM RegisterWindowClass();
   static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
   static LRESULT CALLBACK EditWndProc(HWND, UINT, WPARAM, LPARAM);
-#elif defined(TOOLKIT_GTK)
-  CHROMEGTK_CALLBACK_0(Shell, void, OnBackButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnForwardButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnReloadButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnStopButtonClicked);
-  CHROMEGTK_CALLBACK_0(Shell, void, OnURLEntryActivate);
-  CHROMEGTK_CALLBACK_0(Shell, gboolean, OnWindowDestroyed);
 
-  CHROMEG_CALLBACK_3(Shell, gboolean, OnCloseWindowKeyPressed, GtkAccelGroup*,
-                     GObject*, guint, GdkModifierType);
-  CHROMEG_CALLBACK_3(Shell, gboolean, OnNewWindowKeyPressed, GtkAccelGroup*,
-                     GObject*, guint, GdkModifierType);
-  CHROMEG_CALLBACK_3(Shell, gboolean, OnHighlightURLView, GtkAccelGroup*,
-                     GObject*, guint, GdkModifierType);
-#endif
-
-//  scoped_ptr<ShellJavaScriptDialogManager> dialog_manager_;
 
   scoped_ptr<WebContents> web_contents_;
-
-//  ShellDevToolsFrontend* devtools_frontend_;
 
   bool is_fullscreen_;
 
@@ -224,32 +172,13 @@ class Shell : public WebContentsDelegate,
   // Notification manager
   NotificationRegistrar registrar_;
 
-#if defined(OS_WIN) && !defined(USE_AURA)
+
   WNDPROC default_edit_wnd_proc_;
   static HINSTANCE instance_handle_;
-#elif defined(TOOLKIT_GTK)
-  GtkWidget* vbox_;
 
-  GtkToolItem* back_button_;
-  GtkToolItem* forward_button_;
-  GtkToolItem* reload_button_;
-  GtkToolItem* stop_button_;
-
-  GtkWidget* spinner_;
-  GtkToolItem* spinner_item_;
-
-  int content_width_;
-  int content_height_;
-#elif defined(OS_ANDROID)
-  base::android::ScopedJavaGlobalRef<jobject> java_object_;
-#elif defined(USE_AURA)
-#if defined(OS_CHROMEOS)
-  static content::MinimalAsh* minimal_ash_;
-#endif
   static views::ViewsDelegate* views_delegate_;
 
   views::Widget* window_widget_;
-#endif
 
   bool headless_;
 
