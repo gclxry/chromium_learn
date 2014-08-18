@@ -49,12 +49,15 @@ namespace content {
       const NotificationSource& source,
       const NotificationDetails& details) OVERRIDE;
 
+    int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT);
+
   private:
     explicit SimpleWebContentsDelegate(WebContents* web_contents);
 
     // Helper to create a new Shell given a newly created WebContents.
     static SimpleWebContentsDelegate* CreateShell(WebContents* web_contents);
 
+  public:
     scoped_ptr<WebContents> web_contents_;
 
   };

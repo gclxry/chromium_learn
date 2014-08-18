@@ -37,14 +37,14 @@
 CAppModule _Module;
 
 // Content area size for newly created windows.
-static const int kTestWindowWidth = 800;
-static const int kTestWindowHeight = 600;
+static const int kTestWindowWidth = 1420;
+static const int kTestWindowHeight = 750;
 
 namespace content {
 
-  int Run(LPTSTR /*lpstrCmdLine*/ = NULL, int nCmdShow = SW_SHOWDEFAULT)
+  int ThreadFunc(void* param)
   {
-
+    SimpleWebContentsDelegate* shell = (SimpleWebContentsDelegate*)param;
     CMessageLoop theLoop;
     _Module.AddMessageLoop(&theLoop);
 
@@ -56,7 +56,9 @@ namespace content {
       return 0;
     }
 
-    wndMain.ShowWindow(nCmdShow);
+    SetParent(shell->web_contents_->GetView()->GetNativeView(), wndMain.m_clientview->m_hWnd);
+
+    wndMain.ShowWindow(SW_SHOW);
 
 
 
@@ -65,6 +67,7 @@ namespace content {
     _Module.RemoveMessageLoop();
     return nRet;
   }
+
 
   SimpleWebContentsDelegate::SimpleWebContentsDelegate(WebContents* web_contents){
       //registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -78,6 +81,12 @@ namespace content {
   }
 
   SimpleWebContentsDelegate::~SimpleWebContentsDelegate() {
+  }
+
+  int SimpleWebContentsDelegate::Run(LPTSTR lpstrCmdLine, int nCmdShow)
+  {
+    HANDLE hThread=CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadFunc, this, 0, NULL);
+    return TRUE;
   }
 
   void SimpleWebContentsDelegate::Initialize() {
@@ -103,10 +112,10 @@ namespace content {
     hRes = _Module.Init(NULL, GetModuleHandle(NULL));
     ATLASSERT(SUCCEEDED(hRes));
 
-    int nRet = Run(_T(""), SW_SHOW);
+    //int nRet = Run(_T(""), SW_SHOW);
 
-    _Module.Term();
-    ::CoUninitialize();
+    //_Module.Term();
+    //::CoUninitialize();
   }
 
   SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateNewWindow(BrowserContext* browser_context,
@@ -128,12 +137,14 @@ namespace content {
     SimpleWebContentsDelegate* shell = new SimpleWebContentsDelegate(web_contents);
     //shell->PlatformCreateWindow(kTestWindowWidth, kTestWindowHeight);
 
-    //shell->web_contents_.reset(web_contents);
-    //web_contents->SetDelegate(shell);
+    shell->web_contents_.reset(web_contents);
+    web_contents->SetDelegate(shell);
 
     // shell->PlatformSetContents();
+    
 
-    // shell->PlatformResizeSubViews();
+    //shell->PlatformResizeSubViews();
+    shell->Run(_T(""), SW_SHOW);
     return shell;
   }
 

@@ -3,7 +3,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-
+#include "SimpleClient.h"
 class CAddressBar;
 class CSimpleClient;
 class CSimpleTab;
@@ -53,7 +53,7 @@ public:
 
   void IniUI();
   void LayoutUI(int x, int y);
-private:
+public:
   CAddressBar* m_addressbar;
   CSimpleClient* m_clientview;
   CSimpleTab* m_tab;
