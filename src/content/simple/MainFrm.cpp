@@ -51,7 +51,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	// AddSimpleReBarBand(hWndCmdBar);
 	// AddSimpleReBarBand(hWndToolBar, NULL, TRUE);
 
-	CreateSimpleStatusBar();
+	// CreateSimpleStatusBar();
 
   IniUI();
 
@@ -84,18 +84,6 @@ LRESULT CMainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*
 	return 1;
 }
 
-LRESULT CMainFrame::OnFileExit(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-{
-	PostMessage(WM_CLOSE);
-	return 0;
-}
-
-LRESULT CMainFrame::OnFileNew(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
-{
-	// TODO: add code to initialize document
-
-	return 0;
-}
 
 LRESULT CMainFrame::OnViewToolBar(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
@@ -159,25 +147,26 @@ void CMainFrame::LayoutUI(int x, int y)
 {
   if (NULL != m_addressbar)
   {
-    RECT rc;
+    RECT rcAddressBar = {0};
     
-    rc.left = 0;
-    rc.top = 0;
-    rc.right = x;
-    rc.bottom = rc.left + 30;
-    m_addressbar->MoveWindow(&rc);
+    rcAddressBar.left = 0;
+    rcAddressBar.top = 0;
+    rcAddressBar.right = x;
+    rcAddressBar.bottom = rcAddressBar.left + 30;
+    m_addressbar->MoveWindow(&rcAddressBar);
 
-    rc.left = 0;
-    rc.top = rc.bottom;
-    rc.right = x;
-    rc.bottom = rc.bottom + 30;
-    m_tab->MoveWindow(&rc);
+    RECT rcTab = {0};
+    rcTab.left = 0;
+    rcTab.top = rcAddressBar.bottom;
+    rcTab.right = x;
+    rcTab.bottom = rcTab.top + 30;
+    m_tab->MoveWindow(&rcTab);
 
-
-    rc.left = 0;
-    rc.top = rc.bottom;
-    rc.right = x;
-    rc.bottom = y - rc.bottom;
-    m_clientview->MoveWindow(&rc);
+    RECT rcClientView = {0};
+    rcClientView.left = 0;
+    rcClientView.top = rcTab.bottom;
+    rcClientView.right = x;
+    rcClientView.bottom = y;
+    m_clientview->MoveWindow(&rcClientView);
   }
 }

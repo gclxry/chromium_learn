@@ -5,7 +5,7 @@
 
 CSimpleClient::CSimpleClient()
 {
-  m_hBkBrush = CreateSolidBrush(RGB(255, 255, 255));
+  m_hBkBrush = CreateSolidBrush(RGB(0, 162, 232));
 }
 
 CSimpleClient::~CSimpleClient()
