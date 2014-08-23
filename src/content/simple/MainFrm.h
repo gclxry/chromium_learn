@@ -3,10 +3,11 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
-#include "SimpleClient.h"
+#include "content/simple/simple_browser_main_parts.h"
 class CAddressBar;
 class CSimpleClient;
 class CSimpleTab;
+class content::SimpleBrowserMainParts;
 
 class CMainFrame : 
 	public CFrameWindowImpl<CMainFrame>, 
@@ -16,11 +17,12 @@ class CMainFrame :
 public:
 	DECLARE_FRAME_WND_CLASS(NULL, IDR_MAINFRAME)
 
-	CSimpleView m_view;
-	CCommandBarCtrl m_CmdBar;
+	//CSimpleView m_view;
+	//CCommandBarCtrl m_CmdBar;
 
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	virtual BOOL OnIdle();
+  virtual ~CMainFrame(){};
 
 	BEGIN_UPDATE_UI_MAP(CMainFrame)
 		UPDATE_ELEMENT(ID_VIEW_TOOLBAR, UPDUI_MENUPOPUP)
@@ -51,10 +53,13 @@ public:
 	LRESULT OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
   void OnSize(UINT nType, CSize size);
 
+  void OpenHomePage();
+
   void IniUI();
   void LayoutUI(int x, int y);
 public:
   CAddressBar* m_addressbar;
   CSimpleClient* m_clientview;
   CSimpleTab* m_tab;
+  content::SimpleBrowserMainParts* m_browser_main;
 };

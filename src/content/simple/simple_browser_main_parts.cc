@@ -22,7 +22,11 @@
 #include "net/base/net_module.h"
 #include "net/base/net_util.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "stdafx.h"
+#include "resource.h"
+#include "MainFrm.h"
 
+//CAppModule _Module;
 
 namespace content {
 
@@ -37,8 +41,13 @@ void SimpleBrowserMainParts::PreMainMessageLoopRun() {
   browser_context_.reset(new SimpleBrowserContext(false));
   off_the_record_browser_context_.reset(new SimpleBrowserContext(true));
 
-  SimpleWebContentsDelegate::Initialize();
-  SimpleWebContentsDelegate::CreateNewWindow(browser_context_.get(), GURL("http://www.baidu.com/"), NULL, MSG_ROUTING_NONE, gfx::Size());
+  main_ui_.reset(new CMainFrame);
+  main_ui_->m_browser_main = this;
+  main_ui_->CreateEx();
+  main_ui_->ShowWindow(SW_SHOWDEFAULT);
+
+  //SimpleWebContentsDelegate::Initialize();
+  //SimpleWebContentsDelegate::CreateNewWindow(browser_context_.get(), GURL("http://www.baidu.com/"), NULL, MSG_ROUTING_NONE, gfx::Size());
 
   if (parameters_.ui_task) 
   {

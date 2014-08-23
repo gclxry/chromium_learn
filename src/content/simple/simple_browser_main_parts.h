@@ -9,10 +9,12 @@
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/browser_main_parts.h"
 
+class CMainFrame;
 namespace content {
 
 struct MainFunctionParams;
 class SimpleBrowserContext;
+
 
 // This class contains different "stages" to be executed by |BrowserMain()|,
 // Each stage is represented by a single BrowserMainParts method, called from
@@ -68,8 +70,10 @@ class SimpleBrowserMainParts : public BrowserMainParts {
   }
 
 private:
+public:
   scoped_ptr<SimpleBrowserContext> browser_context_;
   scoped_ptr<SimpleBrowserContext> off_the_record_browser_context_;
+  scoped_ptr<CMainFrame> main_ui_;
 
   // For running content_browsertests.
   const MainFunctionParams& parameters_;

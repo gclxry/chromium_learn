@@ -6,12 +6,14 @@
 #include "resource.h"
 
 #include "aboutdlg.h"
-#include "SimpleView.h"
+//#include "SimpleView.h"
 #include "MainFrm.h"
 #include "AddressBar.h"
 #include "SimpleClient.h"
 #include "SimpleTab.h"
 
+
+CAppModule _Module;
 
 CMainFrame::CMainFrame()
 {
@@ -25,7 +27,8 @@ BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
 	if(CFrameWindowImpl<CMainFrame>::PreTranslateMessage(pMsg))
 		return TRUE;
 
-	return m_view.PreTranslateMessage(pMsg);
+  return FALSE;
+	//return m_view.PreTranslateMessage(pMsg);
 }
 
 BOOL CMainFrame::OnIdle()
@@ -64,10 +67,10 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	//UISetCheck(ID_VIEW_STATUS_BAR, 1);
 
 	// register object for message filtering and idle updates
-	CMessageLoop* pLoop = _Module.GetMessageLoop();
-	ATLASSERT(pLoop != NULL);
-	pLoop->AddMessageFilter(this);
-	pLoop->AddIdleHandler(this);
+	//CMessageLoop* pLoop = _Module.GetMessageLoop();
+	//ATLASSERT(pLoop != NULL);
+	//pLoop->AddMessageFilter(this);
+	//pLoop->AddIdleHandler(this);
 
 	return 0;
 }
@@ -75,10 +78,10 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 LRESULT CMainFrame::OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 {
 	// unregister message filtering and idle updates
-	CMessageLoop* pLoop = _Module.GetMessageLoop();
-	ATLASSERT(pLoop != NULL);
-	pLoop->RemoveMessageFilter(this);
-	pLoop->RemoveIdleHandler(this);
+	//CMessageLoop* pLoop = _Module.GetMessageLoop();
+	//ATLASSERT(pLoop != NULL);
+	//pLoop->RemoveMessageFilter(this);
+	//pLoop->RemoveIdleHandler(this);
 
 	bHandled = FALSE;
 	return 1;
@@ -169,4 +172,9 @@ void CMainFrame::LayoutUI(int x, int y)
     rcClientView.bottom = y;
     m_clientview->MoveWindow(&rcClientView);
   }
+}
+
+void CMainFrame::OpenHomePage()
+{
+
 }

@@ -25,49 +25,13 @@
 #include "content/simple/simple_browser_main_parts.h"
 #include "content/simple/simple_content_browser_client.h"
 
-#include "stdafx.h"
-#include "resource.h"
-#include <windows.h>
 
-#include "SimpleView.h"
-#include "aboutdlg.h"
-#include "MainFrm.h"
-
-
-CAppModule _Module;
 
 // Content area size for newly created windows.
 static const int kTestWindowWidth = 1420;
 static const int kTestWindowHeight = 750;
 
 namespace content {
-
-  int ThreadFunc(void* param)
-  {
-    SimpleWebContentsDelegate* shell = (SimpleWebContentsDelegate*)param;
-    CMessageLoop theLoop;
-    _Module.AddMessageLoop(&theLoop);
-
-    CMainFrame wndMain;
-
-    if(wndMain.CreateEx() == NULL)
-    {
-      ATLTRACE(_T("Main window creation failed!\n"));
-      return 0;
-    }
-
-    SetParent(shell->web_contents_->GetView()->GetNativeView(), wndMain.m_clientview->m_hWnd);
-
-    wndMain.ShowWindow(SW_SHOW);
-
-
-
-    int nRet = theLoop.Run();
-
-    _Module.RemoveMessageLoop();
-    return nRet;
-  }
-
 
   SimpleWebContentsDelegate::SimpleWebContentsDelegate(WebContents* web_contents){
       //registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
@@ -83,39 +47,7 @@ namespace content {
   SimpleWebContentsDelegate::~SimpleWebContentsDelegate() {
   }
 
-  int SimpleWebContentsDelegate::Run(LPTSTR lpstrCmdLine, int nCmdShow)
-  {
-    HANDLE hThread=CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadFunc, this, 0, NULL);
-    return TRUE;
-  }
-
   void SimpleWebContentsDelegate::Initialize() {
-    //_setmode(_fileno(stdout), _O_BINARY);
-    //_setmode(_fileno(stderr), _O_BINARY);
-    //INITCOMMONCONTROLSEX InitCtrlEx;
-    //InitCtrlEx.dwSize = sizeof(INITCOMMONCONTROLSEX);
-    //InitCtrlEx.dwICC  = ICC_STANDARD_CLASSES;
-    //InitCommonControlsEx(&InitCtrlEx);
-    //RegisterWindowClass();
-
-    HRESULT hRes = ::CoInitialize(NULL);
-    // If you are running on NT 4.0 or higher you can use the following call instead to 
-    // make the EXE free threaded. This means that calls come in on a random RPC thread.
-    //	HRESULT hRes = ::CoInitializeEx(NULL, COINIT_MULTITHREADED);
-    ATLASSERT(SUCCEEDED(hRes));
-
-    // this resolves ATL window thunking problem when Microsoft Layer for Unicode (MSLU) is used
-    ::DefWindowProc(NULL, 0, 0, 0L);
-
-    AtlInitCommonControls(ICC_COOL_CLASSES | ICC_BAR_CLASSES);	// add flags to support other controls
-
-    hRes = _Module.Init(NULL, GetModuleHandle(NULL));
-    ATLASSERT(SUCCEEDED(hRes));
-
-    //int nRet = Run(_T(""), SW_SHOW);
-
-    //_Module.Term();
-    //::CoUninitialize();
   }
 
   SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateNewWindow(BrowserContext* browser_context,
@@ -144,7 +76,6 @@ namespace content {
     
 
     //shell->PlatformResizeSubViews();
-    shell->Run(_T(""), SW_SHOW);
     return shell;
   }
 

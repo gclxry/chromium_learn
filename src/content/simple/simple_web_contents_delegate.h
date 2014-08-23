@@ -38,7 +38,7 @@ namespace content {
     // Do one time initialization at application startup.
     static void Initialize();
 
-    static SimpleWebContentsDelegate* CreateNewWindow(BrowserContext* browser_context,
+    SimpleWebContentsDelegate* CreateNewWindow(BrowserContext* browser_context,
       const GURL& url,
       SiteInstance* site_instance,
       int routing_id,
@@ -48,8 +48,6 @@ namespace content {
     virtual void Observe(int type,
       const NotificationSource& source,
       const NotificationDetails& details) OVERRIDE;
-
-    int Run(LPTSTR lpstrCmdLine = NULL, int nCmdShow = SW_SHOWDEFAULT);
 
   private:
     explicit SimpleWebContentsDelegate(WebContents* web_contents);
