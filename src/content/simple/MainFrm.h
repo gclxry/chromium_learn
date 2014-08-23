@@ -4,6 +4,7 @@
 
 #pragma once
 #include "content/simple/simple_browser_main_parts.h"
+#include "content/simple/simple_web_contents_delegate.h"
 class CAddressBar;
 class CSimpleClient;
 class CSimpleTab;
@@ -62,4 +63,5 @@ public:
   CSimpleClient* m_clientview;
   CSimpleTab* m_tab;
   content::SimpleBrowserMainParts* m_browser_main;
+  content::SimpleWebContentsDelegate* m_web_contents_delegate;
 };

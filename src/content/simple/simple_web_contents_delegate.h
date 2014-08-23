@@ -18,7 +18,6 @@
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/size.h"
 
-
 class GURL;
 namespace content {
 
@@ -38,7 +37,7 @@ namespace content {
     // Do one time initialization at application startup.
     static void Initialize();
 
-    SimpleWebContentsDelegate* CreateNewWindow(BrowserContext* browser_context,
+    void CreateNew(BrowserContext* browser_context,
       const GURL& url,
       SiteInstance* site_instance,
       int routing_id,
@@ -50,13 +49,12 @@ namespace content {
       const NotificationDetails& details) OVERRIDE;
 
   private:
-    explicit SimpleWebContentsDelegate(WebContents* web_contents);
-
-    // Helper to create a new Shell given a newly created WebContents.
-    static SimpleWebContentsDelegate* CreateShell(WebContents* web_contents);
+  public:
+    explicit SimpleWebContentsDelegate();
 
   public:
     scoped_ptr<WebContents> web_contents_;
+    HWND window_;
 
   };
 

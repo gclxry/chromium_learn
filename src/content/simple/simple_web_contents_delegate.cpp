@@ -33,7 +33,7 @@ static const int kTestWindowHeight = 750;
 
 namespace content {
 
-  SimpleWebContentsDelegate::SimpleWebContentsDelegate(WebContents* web_contents){
+  SimpleWebContentsDelegate::SimpleWebContentsDelegate(){
       //registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       //  Source<WebContents>(web_contents));
       //windows_.push_back(this);
@@ -50,7 +50,7 @@ namespace content {
   void SimpleWebContentsDelegate::Initialize() {
   }
 
-  SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateNewWindow(BrowserContext* browser_context,
+  void SimpleWebContentsDelegate::CreateNew(BrowserContext* browser_context,
     const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
       WebContents::CreateParams create_params(browser_context, site_instance);
       create_params.routing_id = routing_id;
@@ -59,24 +59,14 @@ namespace content {
       else
         create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
       WebContents* web_contents = WebContents::Create(create_params);
-      SimpleWebContentsDelegate* shell = CreateShell(web_contents);
+      web_contents_.reset(web_contents);
+      web_contents->SetDelegate(this);
+      SetParent(web_contents_->GetView()->GetNativeView(), window_);
+      
       if (!url.is_empty())
-        shell->LoadURL(url);
-      return shell;
-  }
-
-  SimpleWebContentsDelegate* SimpleWebContentsDelegate::CreateShell(WebContents* web_contents) {
-    SimpleWebContentsDelegate* shell = new SimpleWebContentsDelegate(web_contents);
-    //shell->PlatformCreateWindow(kTestWindowWidth, kTestWindowHeight);
-
-    shell->web_contents_.reset(web_contents);
-    web_contents->SetDelegate(shell);
-
-    // shell->PlatformSetContents();
-    
-
-    //shell->PlatformResizeSubViews();
-    return shell;
+      {
+        LoadURL(url);
+      }
   }
 
   void SimpleWebContentsDelegate::Observe(int type, const NotificationSource& source, const NotificationDetails& details) {

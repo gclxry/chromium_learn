@@ -71,6 +71,7 @@ LRESULT CMainFrame::OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 	//ATLASSERT(pLoop != NULL);
 	//pLoop->AddMessageFilter(this);
 	//pLoop->AddIdleHandler(this);
+  OpenHomePage();
 
 	return 0;
 }
@@ -176,5 +177,7 @@ void CMainFrame::LayoutUI(int x, int y)
 
 void CMainFrame::OpenHomePage()
 {
-
+  m_web_contents_delegate = new content::SimpleWebContentsDelegate();
+  m_web_contents_delegate->window_ = m_clientview->m_hWnd;
+  m_web_contents_delegate->CreateNew((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
 }
