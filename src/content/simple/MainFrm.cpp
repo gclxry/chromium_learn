@@ -180,4 +180,5 @@ void CMainFrame::OpenHomePage()
   m_web_contents_delegate = new content::SimpleWebContentsDelegate();
   m_web_contents_delegate->window_ = m_clientview->m_hWnd;
   m_web_contents_delegate->CreateNew((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
+  m_addressbar->SetUrl(L"http://www.baidu.com/");
 }

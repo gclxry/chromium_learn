@@ -2,11 +2,15 @@
 #include "resource.h"
 #include "AddressBar.h"
 
+CAddressBar::CAddressBar() : m_edit(this, 1)
+{
 
+}
 
 LRESULT CAddressBar::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
   // CenterWindow(GetParent());
+  m_edit.SubclassWindow ( GetDlgItem(IDC_EDIT1) );
   return TRUE;
 }
 
@@ -54,10 +58,31 @@ CString CAddressBar::GetUrl()
   int nLength;
   LPTSTR pszText;
 
-  edit.Attach(GetDlgItem(IDC_EDIT1));
+  HWND hEdit = GetDlgItem(IDC_EDIT1);
+  if (!::IsWindow(hEdit))
+  {
+    return CString();
+  }
+  edit.Attach(hEdit);
   nLength = edit.GetWindowTextLength();
-  pszText = url.GetBuffer(nLength+1);
-  edit.GetWindowText(pszText);
+  nLength++;
+  pszText = url.GetBuffer(nLength);
+  edit.GetWindowText(pszText, nLength);
   url.ReleaseBuffer(nLength);
   return url;
+}
+
+LRESULT CAddressBar::OnEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+  int ia = 0;
+  ia++;
+  if (VK_RETURN == (TCHAR)wParam)
+  {
+    MessageBox(GetUrl());
+    //SetMsgHandled(TRUE);
+    bHandled = TRUE;
+  }
+  bHandled = FALSE;
+
+  return 0;
 }

@@ -13,12 +13,17 @@ public:
     COMMAND_ID_HANDLER(IDC_FORWARD, OnForward)
     COMMAND_ID_HANDLER(IDC_RELOAD, OnReload)
     COMMAND_ID_HANDLER(IDC_STOP, OnStop)
+  ALT_MSG_MAP(1)
+    //MSG_WM_CHAR(OnEdit)
+    MESSAGE_HANDLER(WM_CHAR, OnEdit)
   END_MSG_MAP()
 
   // Handler prototypes (uncomment arguments if needed):
   //	LRESULT MessageHandler(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
   //	LRESULT CommandHandler(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
   //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
+
+  CAddressBar();
 
   LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
@@ -28,4 +33,7 @@ public:
   LRESULT OnStop(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
   void SetUrl(CString url);
   CString GetUrl();
+  LRESULT OnEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+  CContainedWindow m_edit;
 };
