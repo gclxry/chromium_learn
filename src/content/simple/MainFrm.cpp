@@ -4,7 +4,7 @@
 
 #include "stdafx.h"
 #include "resource.h"
-
+//#include "content/simple/simple_web_contents_delegate.h"
 #include "aboutdlg.h"
 //#include "SimpleView.h"
 #include "MainFrm.h"
@@ -12,8 +12,8 @@
 #include "SimpleClient.h"
 #include "SimpleTab.h"
 
-
 CAppModule _Module;
+
 
 CMainFrame::CMainFrame()
 {
@@ -181,6 +181,7 @@ void CMainFrame::OpenHomePage()
   m_current_web_contents_delegate->window_ = m_clientview->m_hWnd;
   m_current_web_contents_delegate->CreateNew((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
   m_addressbar->SetUrl(L"http://www.baidu.com/");
+  m_current_web_contents_delegate->SetHWND(m_clientview->m_hWnd);
 }
 
 LRESULT CMainFrame::OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)

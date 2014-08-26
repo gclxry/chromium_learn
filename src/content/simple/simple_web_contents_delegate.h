@@ -4,7 +4,6 @@
 #ifndef CONTENT_SIMPLE_SIMPLE_WEB_CONTENTS_DELEGATE_H_
 #define CONTENT_SIMPLE_SIMPLE_WEB_CONTENTS_DELEGATE_H_
 
-
 #include <vector>
 
 #include "base/basictypes.h"
@@ -18,7 +17,10 @@
 #include "ui/gfx/native_widget_types.h"
 #include "ui/gfx/size.h"
 
+//bool AddWebContentsDelegate(content::SimpleWebContentsDelegate* web_content_delegate);
+
 class GURL;
+//class content::SimpleWebContentsDelegate;
 namespace content {
 
   class BrowserContext;
@@ -42,6 +44,15 @@ namespace content {
       SiteInstance* site_instance,
       int routing_id,
       const gfx::Size& initial_size);
+
+    void SetHWND(HWND window);
+
+    // WebContentsDelegate
+    virtual void WebContentsCreated(WebContents* source_contents,
+      int64 source_frame_id,
+      const string16& frame_name,
+      const GURL& target_url,
+      WebContents* new_contents) OVERRIDE;
 
     // NotificationObserver
     virtual void Observe(int type,

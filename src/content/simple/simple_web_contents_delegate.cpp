@@ -31,6 +31,15 @@
 static const int kTestWindowWidth = 1420;
 static const int kTestWindowHeight = 750;
 
+std::vector<content::SimpleWebContentsDelegate*> g_WebContentsDelegate;
+HWND g_hWnd = NULL;
+
+bool AddWebContentsDelegate(content::SimpleWebContentsDelegate* web_content_delegate)
+{
+  g_WebContentsDelegate.push_back(web_content_delegate);
+  return true;
+}
+
 namespace content {
 
   SimpleWebContentsDelegate::SimpleWebContentsDelegate(){
@@ -95,5 +104,32 @@ namespace content {
     web_contents_->GetView()->Focus();
   }
 
+  void SimpleWebContentsDelegate::WebContentsCreated(WebContents* source_contents,
+    int64 source_frame_id,
+    const string16& frame_name,
+    const GURL& target_url,
+    WebContents* new_contents) {
+
+      SimpleWebContentsDelegate* new_tab = new content::SimpleWebContentsDelegate();
+      
+      new_tab->SetHWND(g_hWnd);
+
+      new_tab->web_contents_.reset(source_contents);
+      new_tab->web_contents_->SetDelegate(new_tab);
+      SetParent(new_tab->web_contents_->GetView()->GetNativeView(), window_);
+      new_tab->LoadURL(target_url);
+
+
+      AddWebContentsDelegate(new_tab);
+
+      //new_tab->CreateNew((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
+
+  }
+
+  void SimpleWebContentsDelegate::SetHWND(HWND window)
+  {
+    //window_ = window;
+    g_hWnd = window;
+  }
 
 }  // namespace content

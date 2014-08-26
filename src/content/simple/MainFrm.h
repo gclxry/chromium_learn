@@ -3,12 +3,18 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #pragma once
+#include <vector>
+
 #include "content/simple/simple_browser_main_parts.h"
 #include "content/simple/simple_web_contents_delegate.h"
 class CAddressBar;
 class CSimpleClient;
 class CSimpleTab;
 class content::SimpleBrowserMainParts;
+
+typedef content::SimpleWebContentsDelegate short_web_content_delegate;
+
+bool AddWebContentsDelegate(short_web_content_delegate* web_content_delegate);
 
 class CMainFrame : 
 	public CFrameWindowImpl<CMainFrame>, 
