@@ -35,7 +35,7 @@ namespace content {
     void LoadURL(const GURL& url);
 
     // Do one time initialization at application startup.
-    static void Initialize();
+    //void Initialize();
 
     void CreateNew(BrowserContext* browser_context,
       const GURL& url,

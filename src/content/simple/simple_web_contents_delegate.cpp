@@ -47,9 +47,6 @@ namespace content {
   SimpleWebContentsDelegate::~SimpleWebContentsDelegate() {
   }
 
-  void SimpleWebContentsDelegate::Initialize() {
-  }
-
   void SimpleWebContentsDelegate::CreateNew(BrowserContext* browser_context,
     const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
       WebContents::CreateParams create_params(browser_context, site_instance);

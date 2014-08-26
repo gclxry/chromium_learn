@@ -78,8 +78,9 @@ LRESULT CAddressBar::OnEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHand
   ia++;
   if (VK_RETURN == (TCHAR)wParam)
   {
-    MessageBox(GetUrl());
+    //MessageBox(GetUrl());
     //SetMsgHandled(TRUE);
+    ::PostMessage(GetParent(), WM_USER_RETURN, 0, 0);
     bHandled = TRUE;
   }
   bHandled = FALSE;

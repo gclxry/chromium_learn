@@ -33,6 +33,7 @@ public:
 	BEGIN_MSG_MAP(CMainFrame)
 		MESSAGE_HANDLER(WM_CREATE, OnCreate)
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
+    MESSAGE_HANDLER(WM_USER_RETURN, OnReturn)
     MSG_WM_SIZE(OnSize)
 		COMMAND_ID_HANDLER(ID_VIEW_TOOLBAR, OnViewToolBar)
 		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
@@ -52,6 +53,7 @@ public:
 	LRESULT OnViewToolBar(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnViewStatusBar(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+  LRESULT OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   void OnSize(UINT nType, CSize size);
 
   void OpenHomePage();
@@ -63,5 +65,7 @@ public:
   CSimpleClient* m_clientview;
   CSimpleTab* m_tab;
   content::SimpleBrowserMainParts* m_browser_main;
-  content::SimpleWebContentsDelegate* m_web_contents_delegate;
+  //vector<>
+  //content::SimpleWebContentsDelegate* m_web_contents_delegate;
+  content::SimpleWebContentsDelegate* m_current_web_contents_delegate;
 };
