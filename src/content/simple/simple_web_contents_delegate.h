@@ -34,11 +34,13 @@ namespace content {
   public:
     virtual ~SimpleWebContentsDelegate();
 
+    // 现有WebContents中从地址栏中打开url
     void LoadURL(const GURL& url);
 
     // Do one time initialization at application startup.
     //void Initialize();
 
+    // 第一次创建WebContents，打开主页
     void CreateNew(BrowserContext* browser_context,
       const GURL& url,
       SiteInstance* site_instance,
@@ -48,6 +50,7 @@ namespace content {
     void SetHWND(HWND window);
 
     // WebContentsDelegate
+    // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate
     virtual void WebContentsCreated(WebContents* source_contents,
       int64 source_frame_id,
       const string16& frame_name,
