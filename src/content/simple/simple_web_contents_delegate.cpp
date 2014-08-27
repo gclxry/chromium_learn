@@ -114,15 +114,13 @@ namespace content {
       
       new_tab->SetHWND(g_hWnd);
 
-      new_tab->web_contents_.reset(source_contents);
+      new_tab->web_contents_.reset(new_contents);
       new_tab->web_contents_->SetDelegate(new_tab);
-      SetParent(new_tab->web_contents_->GetView()->GetNativeView(), window_);
-      new_tab->LoadURL(target_url);
+      new_tab->window_ = window_;
+      SetParent(new_tab->web_contents_->GetView()->GetNativeView(), new_tab->window_);
 
 
       AddWebContentsDelegate(new_tab);
-
-      //new_tab->CreateNew((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
 
   }
 
@@ -130,6 +128,12 @@ namespace content {
   {
     //window_ = window;
     g_hWnd = window;
+  }
+
+  void SimpleWebContentsDelegate::DidNavigateMainFramePostCommit(WebContents* web_contents) {
+    GURL url = web_contents_->GetURL();
+    int ia = 0;
+    ia++;
   }
 
 }  // namespace content

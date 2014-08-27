@@ -54,6 +54,9 @@ namespace content {
       const GURL& target_url,
       WebContents* new_contents) OVERRIDE;
 
+    virtual void DidNavigateMainFramePostCommit(
+      WebContents* web_contents) OVERRIDE;
+
     // NotificationObserver
     virtual void Observe(int type,
       const NotificationSource& source,
