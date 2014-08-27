@@ -9,6 +9,7 @@
 #define IDD_DIALOG1                     203
 #define IDD_SIMPLE_TAB                  203
 #define IDC_BUTTON1                     1000
+#define IDC_ADD                         1000
 #define IDC_EDIT1                       1001
 #define IDC_FORWARD                     1002
 #define IDC_RELOAD                      1003
