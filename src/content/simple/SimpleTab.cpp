@@ -53,6 +53,17 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
 
   if (BN_DBLCLK == wNotifyCode)
   {
+    for (vector<CButton*>::iterator iter = m_buttons.begin(); iter != m_buttons.end(); ++iter)
+    {
+      CButton* btn = *iter;
+      if (hWndCtl == btn->m_hWnd)
+      {
+        btn->DestroyWindow();
+        m_buttons.erase(iter);
+        Layout();
+        return 0;
+      }
+    }
   }
   CString temp;
   temp.Format(L"%u %u\n", wNotifyCode, wID);
