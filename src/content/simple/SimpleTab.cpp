@@ -28,7 +28,7 @@ LRESULT CSimpleTab::OnAdd(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandl
   return TRUE;
 }
 
-void CSimpleTab::CreateNewTab()
+HWND CSimpleTab::CreateNewTab()
 {
   CButton* btn = new CButton;
   m_buttons.push_back(btn);
@@ -36,6 +36,7 @@ void CSimpleTab::CreateNewTab()
   btn->Create(m_hWnd, rc, L"ÐÂ½¨±êÇ©Ò³", WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_NOTIFY | BS_PUSHLIKE, 0, ++m_index);
 
   Layout();
+  return btn->m_hWnd;
 }
 
 void CSimpleTab::Layout()
@@ -74,9 +75,6 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
       }
     }
   }
-  CString temp;
-  temp.Format(L"%u %u\n", wNotifyCode, wID);
-  OutputDebugString(temp);
 
   return TRUE;
 }

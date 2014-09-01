@@ -69,25 +69,6 @@ namespace content {
       }
   }
 
-  //void SimpleWebContentsDelegate::CreateNew(BrowserContext* browser_context,
-  //  const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
-  //    WebContents::CreateParams create_params(browser_context, site_instance);
-  //    create_params.routing_id = routing_id;
-  //    if (!initial_size.IsEmpty())
-  //      create_params.initial_size = initial_size;
-  //    else
-  //      create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
-  //    WebContents* web_contents = WebContents::Create(create_params);
-  //    web_contents_.reset(web_contents);
-  //    web_contents->SetDelegate(this);
-  //    SetParent(web_contents_->GetView()->GetNativeView(), window_);
-  //    
-  //    if (!url.is_empty())
-  //    {
-  //      LoadURL(url);
-  //    }
-  //}
-
   void SimpleWebContentsDelegate::Observe(int type, const NotificationSource& source, const NotificationDetails& details) {
       //if (type == NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) 
       //{
@@ -142,6 +123,11 @@ namespace content {
     // PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
     int ia = 0;
     ia++;
+  }
+
+  void SimpleWebContentsDelegate::MakePair(HWND button_hwnd, LPARAM lParam)
+  {
+    WebContents* web_contents = (WebContents*)lParam;
   }
 
 }  // namespace content

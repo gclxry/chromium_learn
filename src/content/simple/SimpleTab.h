@@ -29,7 +29,7 @@ public:
   LRESULT OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
 
   void Layout();
-  void CreateNewTab();
+  HWND CreateNewTab();
 
   int m_index;
   vector<CButton*> m_buttons;

@@ -199,8 +199,10 @@ LRESULT CMainFrame::OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
   return 0;
 }
 
-LRESULT CMainFrame::OnCreateTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+LRESULT CMainFrame::OnCreateTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-  m_tab->CreateNewTab();
+  HWND hwnd = m_tab->CreateNewTab();
+  m_web_contents_delegate->MakePair(hwnd, lParam);
+ 
   return 0;
 }

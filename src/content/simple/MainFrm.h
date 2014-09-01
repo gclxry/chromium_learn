@@ -74,6 +74,8 @@ public:
 
   void IniUI();
   void LayoutUI(int x, int y);
+  //void SwitchTab(HWND hwnd);
+  //void SwitchTab(HWND hwnd);
 
 public:
   CAddressBar* m_addressbar;

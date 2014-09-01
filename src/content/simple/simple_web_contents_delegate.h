@@ -45,6 +45,7 @@ namespace content {
       const gfx::Size& initial_size);
 
     void SetHWND(HWND main_window, HWND client_window);
+    void MakePair(HWND button_hwnd, LPARAM lParam);
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate
