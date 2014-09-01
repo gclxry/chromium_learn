@@ -36,4 +36,5 @@ public:
   HBRUSH m_hButtonBk;
   HBRUSH m_hCurrentBrush;
   HWND m_current_tab;
+  HWND m_main_frame;
 };

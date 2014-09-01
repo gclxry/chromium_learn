@@ -59,6 +59,8 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
   if (BN_CLICKED == wNotifyCode)
   {
     m_current_tab = hWndCtl;
+    ::PostMessage(m_main_frame, WM_USER_SWITCH_TAB, (WPARAM)hWndCtl, 0);
+    return TRUE;
   }
 
   if (BN_DBLCLK == wNotifyCode)

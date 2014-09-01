@@ -16,12 +16,6 @@ typedef content::SimpleWebContentsDelegate short_web_content_delegate;
 
 bool AddWebContentsDelegate(short_web_content_delegate* web_content_delegate);
 
-struct TAB_INFO
-{
-  content::SimpleWebContentsDelegate* web_contents_delegate;
-  HWND hwnd;
-};
-
 class CMainFrame : 
 	public CFrameWindowImpl<CMainFrame>, 
 	public CUpdateUI<CMainFrame>,
@@ -47,6 +41,7 @@ public:
 		MESSAGE_HANDLER(WM_DESTROY, OnDestroy)
     MESSAGE_HANDLER(WM_USER_RETURN, OnReturn)
     MESSAGE_HANDLER(WM_USER_CREATE_TAB, OnCreateTab)
+    MESSAGE_HANDLER(WM_USER_SWITCH_TAB, OnSwitchTab)
     MSG_WM_SIZE(OnSize)
 		COMMAND_ID_HANDLER(ID_VIEW_TOOLBAR, OnViewToolBar)
 		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
@@ -68,6 +63,7 @@ public:
 	LRESULT OnAppAbout(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
   LRESULT OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   LRESULT OnCreateTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  LRESULT OnSwitchTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   void OnSize(UINT nType, CSize size);
 
   void OpenHomePage();
@@ -82,6 +78,5 @@ public:
   CSimpleClient* m_clientview;
   CSimpleTab* m_tab;
   content::SimpleBrowserMainParts* m_browser_main;
-  std::vector<TAB_INFO> m_tabs;
   content::SimpleWebContentsDelegate* m_web_contents_delegate;
 };

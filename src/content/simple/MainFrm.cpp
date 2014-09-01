@@ -129,6 +129,7 @@ void CMainFrame::IniUI()
   m_addressbar->Create(m_hWnd);
 
   m_tab = new CSimpleTab;
+  m_tab->m_main_frame = m_hWnd;
   m_tab->Create(m_hWnd);
 
   m_clientview = new CSimpleClient;
@@ -204,5 +205,11 @@ LRESULT CMainFrame::OnCreateTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
   HWND hwnd = m_tab->CreateNewTab();
   m_web_contents_delegate->MakePair(hwnd, lParam);
  
+  return 0;
+}
+
+LRESULT CMainFrame::OnSwitchTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+  m_web_contents_delegate->SwitchTab((HWND)wParam);
   return 0;
 }

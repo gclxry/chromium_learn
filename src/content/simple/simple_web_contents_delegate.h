@@ -27,6 +27,12 @@ namespace content {
   class SiteInstance;
   class WebContents;
 
+  struct TAB_INFO
+  {
+    WebContents* web_contents;
+    HWND hwnd;
+  };
+
   // This represents one window of the Content Shell, i.e. all the UI including
   // buttons and url bar, as well as the web content area.
   class SimpleWebContentsDelegate : public WebContentsDelegate,
@@ -46,6 +52,7 @@ namespace content {
 
     void SetHWND(HWND main_window, HWND client_window);
     void MakePair(HWND button_hwnd, LPARAM lParam);
+    void SwitchTab(HWND hwnd);
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate
@@ -68,10 +75,10 @@ namespace content {
     explicit SimpleWebContentsDelegate();
 
   public:
-    scoped_ptr<WebContents> web_contents_;
+    //scoped_ptr<WebContents> web_contents_;
     HWND window_;
     HWND main_window_;
-    std::vector<WebContents*> vector_web_contents_;
+    std::vector<TAB_INFO> tab_info_;
     WebContents* current_web_contents_;
 
   };

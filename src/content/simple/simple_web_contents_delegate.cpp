@@ -56,12 +56,12 @@ namespace content {
       else
         create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
       WebContents* web_contents = WebContents::Create(create_params);
-      web_contents->SetDelegate(this);
-      SetParent(web_contents->GetView()->GetNativeView(), window_);
-      PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
-
       current_web_contents_ = web_contents;
-      vector_web_contents_.push_back(web_contents);
+      current_web_contents_->SetDelegate(this);
+      SetParent(current_web_contents_->GetView()->GetNativeView(), window_);
+      PostMessage(main_window_,WM_USER_CREATE_TAB, 0, (LPARAM)current_web_contents_);
+
+      
       
       if (!url.is_empty())
       {
@@ -107,9 +107,7 @@ namespace content {
       WebContents* web_contents = new_contents;
       web_contents->SetDelegate(this);
       SetParent(web_contents->GetView()->GetNativeView(), window_);
-      PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
-
-      vector_web_contents_.push_back(web_contents);
+      PostMessage(main_window_,WM_USER_CREATE_TAB, 0, (LPARAM)web_contents);
   }
 
   void SimpleWebContentsDelegate::SetHWND(HWND main_window, HWND client_window)
@@ -128,6 +126,27 @@ namespace content {
   void SimpleWebContentsDelegate::MakePair(HWND button_hwnd, LPARAM lParam)
   {
     WebContents* web_contents = (WebContents*)lParam;
+    TAB_INFO ti;
+    ti.hwnd = button_hwnd;
+    ti.web_contents = web_contents;
+    tab_info_.push_back(ti);
+  }
+
+  void SimpleWebContentsDelegate::SwitchTab(HWND hwnd)
+  {
+    for (std::vector<TAB_INFO>::iterator iter = tab_info_.begin(); iter != tab_info_.end(); ++iter)
+    {
+      if (hwnd == iter->hwnd)
+      {
+        current_web_contents_ = iter->web_contents;
+        SetParent(current_web_contents_->GetView()->GetNativeView(), window_);
+        //current_web_contents_->GetController().Reload(false);
+        CString str;
+        str.Format(L"%u  %u\n", iter->hwnd, iter->web_contents);
+        OutputDebugString(str);
+      }
+    }
+    
   }
 
 }  // namespace content
