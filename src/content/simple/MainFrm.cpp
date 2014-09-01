@@ -177,11 +177,12 @@ void CMainFrame::LayoutUI(int x, int y)
 
 void CMainFrame::OpenHomePage()
 {
-  m_current_web_contents_delegate = new content::SimpleWebContentsDelegate();
-  m_current_web_contents_delegate->window_ = m_clientview->m_hWnd;
-  m_current_web_contents_delegate->CreateNew((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
+  m_web_contents_delegate = new content::SimpleWebContentsDelegate();
+  m_web_contents_delegate->SetHWND(m_hWnd, m_clientview->m_hWnd);
+  m_web_contents_delegate->window_ = m_clientview->m_hWnd;
+  m_web_contents_delegate->Initialize((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
   m_addressbar->SetUrl(L"http://www.baidu.com/");
-  m_current_web_contents_delegate->SetHWND(m_clientview->m_hWnd);
+  
 }
 
 LRESULT CMainFrame::OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
@@ -193,7 +194,13 @@ LRESULT CMainFrame::OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
   }
   
   string16 sUrl= url;
-  m_current_web_contents_delegate->LoadURL(GURL(sUrl));
+  m_web_contents_delegate->LoadURL(GURL(sUrl));
   m_addressbar->SetUrl(sUrl.c_str());
+  return 0;
+}
+
+LRESULT CMainFrame::OnCreateTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  m_tab->CreateNewTab();
   return 0;
 }

@@ -25,20 +25,11 @@
 #include "content/simple/simple_browser_main_parts.h"
 #include "content/simple/simple_content_browser_client.h"
 
-
+#include "stdafx.h"
 
 // Content area size for newly created windows.
 static const int kTestWindowWidth = 1420;
 static const int kTestWindowHeight = 750;
-
-std::vector<content::SimpleWebContentsDelegate*> g_WebContentsDelegate;
-HWND g_hWnd = NULL;
-
-bool AddWebContentsDelegate(content::SimpleWebContentsDelegate* web_content_delegate)
-{
-  g_WebContentsDelegate.push_back(web_content_delegate);
-  return true;
-}
 
 namespace content {
 
@@ -56,7 +47,7 @@ namespace content {
   SimpleWebContentsDelegate::~SimpleWebContentsDelegate() {
   }
 
-  void SimpleWebContentsDelegate::CreateNew(BrowserContext* browser_context,
+  void SimpleWebContentsDelegate::Initialize(BrowserContext* browser_context,
     const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
       WebContents::CreateParams create_params(browser_context, site_instance);
       create_params.routing_id = routing_id;
@@ -65,15 +56,37 @@ namespace content {
       else
         create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
       WebContents* web_contents = WebContents::Create(create_params);
-      web_contents_.reset(web_contents);
       web_contents->SetDelegate(this);
-      SetParent(web_contents_->GetView()->GetNativeView(), window_);
+      SetParent(web_contents->GetView()->GetNativeView(), window_);
+      PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
+
+      current_web_contents_ = web_contents;
+      vector_web_contents_.push_back(web_contents);
       
       if (!url.is_empty())
       {
         LoadURL(url);
       }
   }
+
+  //void SimpleWebContentsDelegate::CreateNew(BrowserContext* browser_context,
+  //  const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
+  //    WebContents::CreateParams create_params(browser_context, site_instance);
+  //    create_params.routing_id = routing_id;
+  //    if (!initial_size.IsEmpty())
+  //      create_params.initial_size = initial_size;
+  //    else
+  //      create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
+  //    WebContents* web_contents = WebContents::Create(create_params);
+  //    web_contents_.reset(web_contents);
+  //    web_contents->SetDelegate(this);
+  //    SetParent(web_contents_->GetView()->GetNativeView(), window_);
+  //    
+  //    if (!url.is_empty())
+  //    {
+  //      LoadURL(url);
+  //    }
+  //}
 
   void SimpleWebContentsDelegate::Observe(int type, const NotificationSource& source, const NotificationDetails& details) {
       //if (type == NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) 
@@ -100,8 +113,8 @@ namespace content {
     params.transition_type = PageTransitionFromInt(
       PAGE_TRANSITION_TYPED | PAGE_TRANSITION_FROM_ADDRESS_BAR);
     params.frame_name = std::string();
-    web_contents_->GetController().LoadURLWithParams(params);
-    web_contents_->GetView()->Focus();
+    current_web_contents_->GetController().LoadURLWithParams(params);
+    current_web_contents_->GetView()->Focus();
   }
 
   void SimpleWebContentsDelegate::WebContentsCreated(WebContents* source_contents,
@@ -110,28 +123,23 @@ namespace content {
     const GURL& target_url,
     WebContents* new_contents) {
 
-      SimpleWebContentsDelegate* new_tab = new content::SimpleWebContentsDelegate();
-      
-      new_tab->SetHWND(g_hWnd);
+      WebContents* web_contents = new_contents;
+      web_contents->SetDelegate(this);
+      SetParent(web_contents->GetView()->GetNativeView(), window_);
+      PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
 
-      new_tab->web_contents_.reset(new_contents);
-      new_tab->web_contents_->SetDelegate(new_tab);
-      new_tab->window_ = window_;
-      SetParent(new_tab->web_contents_->GetView()->GetNativeView(), new_tab->window_);
-
-
-      AddWebContentsDelegate(new_tab);
-
+      vector_web_contents_.push_back(web_contents);
   }
 
-  void SimpleWebContentsDelegate::SetHWND(HWND window)
+  void SimpleWebContentsDelegate::SetHWND(HWND main_window, HWND client_window)
   {
-    //window_ = window;
-    g_hWnd = window;
+    main_window_ = main_window;
+    window_ = client_window;
   }
 
   void SimpleWebContentsDelegate::DidNavigateMainFramePostCommit(WebContents* web_contents) {
-    GURL url = web_contents_->GetURL();
+    GURL url = current_web_contents_->GetURL();
+    // PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
     int ia = 0;
     ia++;
   }

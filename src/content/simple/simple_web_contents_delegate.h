@@ -38,16 +38,13 @@ namespace content {
     void LoadURL(const GURL& url);
 
     // Do one time initialization at application startup.
-    //void Initialize();
-
-    // 第一次创建WebContents，打开主页
-    void CreateNew(BrowserContext* browser_context,
+    void Initialize(BrowserContext* browser_context,
       const GURL& url,
       SiteInstance* site_instance,
       int routing_id,
       const gfx::Size& initial_size);
 
-    void SetHWND(HWND window);
+    void SetHWND(HWND main_window, HWND client_window);
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate
@@ -72,6 +69,9 @@ namespace content {
   public:
     scoped_ptr<WebContents> web_contents_;
     HWND window_;
+    HWND main_window_;
+    std::vector<WebContents*> vector_web_contents_;
+    WebContents* current_web_contents_;
 
   };
 

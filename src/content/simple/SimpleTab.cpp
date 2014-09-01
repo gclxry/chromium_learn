@@ -24,13 +24,18 @@ LRESULT CSimpleTab::OnAdd(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandl
 {
 
   // MessageBox(L"OnAdd");
+  CreateNewTab();
+  return TRUE;
+}
+
+void CSimpleTab::CreateNewTab()
+{
   CButton* btn = new CButton;
   m_buttons.push_back(btn);
   RECT rc = {0,0, 0, 0};
   btn->Create(m_hWnd, rc, L"ÐÂ½¨±êÇ©Ò³", WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_NOTIFY | BS_PUSHLIKE, 0, ++m_index);
 
   Layout();
-  return TRUE;
 }
 
 void CSimpleTab::Layout()
