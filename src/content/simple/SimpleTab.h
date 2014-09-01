@@ -10,6 +10,7 @@ public:
 
   BEGIN_MSG_MAP(CSimpleTab)
     MESSAGE_HANDLER(WM_INITDIALOG, OnInitDialog)
+    MSG_WM_CTLCOLORBTN(OnCtlColorBtn)
     COMMAND_ID_HANDLER(IDOK, OnCloseCmd)
     COMMAND_ID_HANDLER(IDCANCEL, OnCloseCmd)
     COMMAND_ID_HANDLER(IDC_ADD, OnAdd)
@@ -22,6 +23,8 @@ public:
   //	LRESULT NotifyHandler(int /*idCtrl*/, LPNMHDR /*pnmh*/, BOOL& /*bHandled*/)
 
   LRESULT OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  HBRUSH OnCtlColorBtn(CDCHandle dc, CButton button);
+
   LRESULT OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
   LRESULT OnAdd(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
   LRESULT OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
@@ -30,4 +33,7 @@ public:
 
   int m_index;
   vector<CButton*> m_buttons;
+  HBRUSH m_hButtonBk;
+  HBRUSH m_hCurrentBrush;
+  HWND m_current_tab;
 };

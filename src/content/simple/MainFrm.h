@@ -16,6 +16,12 @@ typedef content::SimpleWebContentsDelegate short_web_content_delegate;
 
 bool AddWebContentsDelegate(short_web_content_delegate* web_content_delegate);
 
+struct TAB_INFO
+{
+  content::SimpleWebContentsDelegate* web_contents_delegate;
+  HWND hwnd;
+};
+
 class CMainFrame : 
 	public CFrameWindowImpl<CMainFrame>, 
 	public CUpdateUI<CMainFrame>,
@@ -71,7 +77,7 @@ public:
   CSimpleClient* m_clientview;
   CSimpleTab* m_tab;
   content::SimpleBrowserMainParts* m_browser_main;
-  //vector<>
+  std::vector<TAB_INFO> m_tabs;
   //content::SimpleWebContentsDelegate* m_web_contents_delegate;
   content::SimpleWebContentsDelegate* m_current_web_contents_delegate;
 };

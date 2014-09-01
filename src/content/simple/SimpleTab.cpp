@@ -5,6 +5,9 @@
 
 LRESULT CSimpleTab::OnInitDialog(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
+  m_hButtonBk = CreateSolidBrush(RGB(255, 0, 0));
+  m_hCurrentBrush = (HBRUSH) GetCurrentObject(NULL,OBJ_BRUSH);
+
   CenterWindow(GetParent());
   m_index = 1000;
   Layout();
@@ -49,6 +52,7 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
 {
   if (BN_CLICKED == wNotifyCode)
   {
+    m_current_tab = hWndCtl;
   }
 
   if (BN_DBLCLK == wNotifyCode)
@@ -70,4 +74,14 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
   OutputDebugString(temp);
 
   return TRUE;
-}  
+}
+
+HBRUSH CSimpleTab::OnCtlColorBtn(CDCHandle dc, CButton button)
+{
+  if (m_current_tab == button)
+  {
+    return m_hButtonBk;
+  }
+
+  return m_hCurrentBrush;
+}
