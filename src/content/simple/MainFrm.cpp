@@ -213,3 +213,9 @@ LRESULT CMainFrame::OnSwitchTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
   m_web_contents_delegate->SwitchTab((HWND)wParam);
   return 0;
 }
+
+LRESULT CMainFrame::OnAddTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  m_web_contents_delegate->AddTab();
+  return 0;
+}

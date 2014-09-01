@@ -149,4 +149,9 @@ namespace content {
     
   }
 
+  void SimpleWebContentsDelegate::AddTab()
+  {
+    Initialize(current_web_contents_->GetBrowserContext(), GURL(), NULL, MSG_ROUTING_NONE, gfx::Size());
+  }
+
 }  // namespace content

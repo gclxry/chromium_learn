@@ -24,7 +24,8 @@ LRESULT CSimpleTab::OnAdd(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandl
 {
 
   // MessageBox(L"OnAdd");
-  CreateNewTab();
+  //CreateNewTab();
+  ::PostMessage(m_main_frame, WM_USER_ADD_TAB, 0, 0);
   return TRUE;
 }
 
