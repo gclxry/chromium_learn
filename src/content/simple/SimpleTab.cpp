@@ -27,7 +27,7 @@ LRESULT CSimpleTab::OnAdd(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandl
   CButton* btn = new CButton;
   m_buttons.push_back(btn);
   RECT rc = {0,0, 0, 0};
-  btn->Create(m_hWnd, rc, L"新建标签页", WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON |  BS_NOTIFY, 0, ++m_index);
+  btn->Create(m_hWnd, rc, L"新建标签页", WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_NOTIFY | BS_PUSHLIKE, 0, ++m_index);
 
   Layout();
   return TRUE;
@@ -74,14 +74,4 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
   OutputDebugString(temp);
 
   return TRUE;
-}
-
-HBRUSH CSimpleTab::OnCtlColorBtn(CDCHandle dc, CButton button)
-{
-  if (m_current_tab == button)
-  {
-    return m_hButtonBk;
-  }
-
-  return m_hCurrentBrush;
 }
