@@ -56,6 +56,7 @@ namespace content {
     void AddTab();
     void CloseTab(LPARAM lParam);
     const string16 GetURL();
+    const string16 GetTitle();
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate
@@ -84,6 +85,8 @@ namespace content {
     std::vector<TAB_INFO> tab_info_;
     WebContents* current_web_contents_;
 
+    // Notification manager
+    NotificationRegistrar registrar_;
   };
 
 }  // namespace content

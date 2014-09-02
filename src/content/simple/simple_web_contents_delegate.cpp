@@ -34,8 +34,6 @@ static const int kTestWindowHeight = 750;
 namespace content {
 
   SimpleWebContentsDelegate::SimpleWebContentsDelegate(){
-      //registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
-      //  Source<WebContents>(web_contents));
       //windows_.push_back(this);
 
       //if (!shell_created_callback_.is_null()) {
@@ -70,23 +68,29 @@ namespace content {
   }
 
   void SimpleWebContentsDelegate::Observe(int type, const NotificationSource& source, const NotificationDetails& details) {
-      //if (type == NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) 
-      //{
-      //  std::pair<NavigationEntry*, bool>* title =
-      //    Details<std::pair<NavigationEntry*, bool> >(details).ptr();
+      if (type == NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED) 
+      {
+         
+        WebContents* wen_contents = (WebContents*)source.map_key();
 
-      //  if (title->first) {
-      //    string16 text = title->first->GetTitle();
-      //    PlatformSetTitle(text);
-      //  }
-      //} else if (type == NOTIFICATION_WEB_CONTENTS_DESTROYED) 
-      //{
-      //  //devtools_frontend_ = NULL;
-      //  registrar_.Remove(this, NOTIFICATION_WEB_CONTENTS_DESTROYED, source);
-      //} else 
-      //{
-      //  NOTREACHED();
-      //}
+        std::pair<NavigationEntry*, bool>* title =
+          Details<std::pair<NavigationEntry*, bool> >(details).ptr();
+
+        if (title->first) 
+        {
+          string16 text = title->first->GetTitle();
+          int ia = 0;
+          ia++;
+          //PlatformSetTitle(text);
+        }
+      } else if (type == NOTIFICATION_WEB_CONTENTS_DESTROYED) 
+      {
+        //devtools_frontend_ = NULL;
+        registrar_.Remove(this, NOTIFICATION_WEB_CONTENTS_DESTROYED, source);
+      } else 
+      {
+        NOTREACHED();
+      }
   }
 
   void SimpleWebContentsDelegate::LoadURL(const GURL& url) {
@@ -130,6 +134,9 @@ namespace content {
     ti.hwnd = button_hwnd;
     ti.web_contents = web_contents;
     tab_info_.push_back(ti);
+
+    registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
+      Source<WebContents>(web_contents));
   }
 
   void SimpleWebContentsDelegate::SwitchTab(HWND hwnd)
@@ -183,5 +190,15 @@ namespace content {
     std::string sTemp = url.spec();
     string16 sUrl(sTemp.begin(), sTemp.end());
     return sUrl;
+  }
+  
+  const string16 SimpleWebContentsDelegate::GetTitle()
+  {
+    string16 title;
+    if (current_web_contents_)
+    {
+      title = current_web_contents_->GetTitle();
+    }
+    return title;
   }
 }  // namespace content
