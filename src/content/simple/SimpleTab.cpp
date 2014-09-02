@@ -74,6 +74,7 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
         btn->DestroyWindow();
         m_buttons.erase(iter);
         Layout();
+        ::PostMessage(m_main_frame, WM_USER_CLOSE_TAB, (WPARAM)hWndCtl, 0);
         return 0;
       }
     }

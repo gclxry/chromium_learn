@@ -219,3 +219,10 @@ LRESULT CMainFrame::OnAddTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
   m_web_contents_delegate->AddTab();
   return 0;
 }
+
+LRESULT CMainFrame::OnCloseTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+
+  m_web_contents_delegate->CloseTab(wParam);
+  return 0;
+}

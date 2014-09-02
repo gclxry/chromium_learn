@@ -54,6 +54,7 @@ namespace content {
     void MakePair(HWND button_hwnd, LPARAM lParam);
     void SwitchTab(HWND hwnd);
     void AddTab();
+    void CloseTab(LPARAM lParam);
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate

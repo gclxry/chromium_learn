@@ -154,4 +154,22 @@ namespace content {
     Initialize(current_web_contents_->GetBrowserContext(), GURL(), NULL, MSG_ROUTING_NONE, gfx::Size());
   }
 
+  void SimpleWebContentsDelegate::CloseTab(LPARAM lParam)
+  {
+    HWND hwnd = (HWND)lParam;
+    for (std::vector<TAB_INFO>::iterator iter = tab_info_.begin(); iter != tab_info_.end(); ++iter)
+    {
+      if (hwnd == iter->hwnd)
+      {
+        tab_info_.erase(iter);
+        break;
+      }
+    }
+    if (tab_info_.empty())
+    {
+      AddTab();
+      return;
+    }
+    current_web_contents_ = tab_info_[0].web_contents;
+  }
 }  // namespace content
