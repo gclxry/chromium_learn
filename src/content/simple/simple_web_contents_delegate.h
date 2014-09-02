@@ -55,6 +55,7 @@ namespace content {
     void SwitchTab(HWND hwnd);
     void AddTab();
     void CloseTab(LPARAM lParam);
+    const string16 GetURL();
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate

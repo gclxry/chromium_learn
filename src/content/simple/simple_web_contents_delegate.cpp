@@ -172,4 +172,16 @@ namespace content {
     }
     current_web_contents_ = tab_info_[0].web_contents;
   }
+
+  const string16 SimpleWebContentsDelegate::GetURL()
+  {
+    GURL url;
+    if (current_web_contents_)
+    {
+      url = current_web_contents_->GetURL();
+    }
+    std::string sTemp = url.spec();
+    string16 sUrl(sTemp.begin(), sTemp.end());
+    return sUrl;
+  }
 }  // namespace content

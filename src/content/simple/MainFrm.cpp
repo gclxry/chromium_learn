@@ -211,6 +211,12 @@ LRESULT CMainFrame::OnCreateTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 LRESULT CMainFrame::OnSwitchTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
   m_web_contents_delegate->SwitchTab((HWND)wParam);
+ 
+  // 设置地址栏
+  m_addressbar->SetUrl(m_web_contents_delegate->GetURL().c_str());
+  // 设置tab标题
+
+  // 设置tab选中
   return 0;
 }
 
