@@ -42,6 +42,10 @@ public:
     MESSAGE_HANDLER(WM_USER_CLOSE_TAB, OnCloseTab)
     MESSAGE_HANDLER(WM_USER_UPDATE_TAB, OnUpdateTab)
     MESSAGE_HANDLER(WM_USER_SET_URL, OnSetUrl)
+    MESSAGE_HANDLER(WM_USER_BACK, OnBack)
+    MESSAGE_HANDLER(WM_USER_FORWARD, OnForward)
+    MESSAGE_HANDLER(WM_USER_RELOAD, OnReload)
+    MESSAGE_HANDLER(WM_USER_STOP, OnStop)
     MSG_WM_SIZE(OnSize)
 		COMMAND_ID_HANDLER(ID_VIEW_TOOLBAR, OnViewToolBar)
 		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
@@ -68,6 +72,10 @@ public:
   LRESULT OnCloseTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   LRESULT OnUpdateTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   LRESULT OnSetUrl(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  LRESULT OnBack(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  LRESULT OnForward(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  LRESULT OnReload(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  LRESULT OnStop(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   void OnSize(UINT nType, CSize size);
 
   void OpenHomePage();

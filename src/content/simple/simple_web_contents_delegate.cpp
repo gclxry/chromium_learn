@@ -230,4 +230,29 @@ namespace content {
     }
     return ti;
   }
+
+  void SimpleWebContentsDelegate::Back()
+  {
+    current_web_contents_->GetController().GoBack();
+    current_web_contents_->GetView()->Focus();
+  }
+
+  void SimpleWebContentsDelegate::Forward()
+  {
+    current_web_contents_->GetController().GoForward();
+    current_web_contents_->GetView()->Focus();
+  }
+
+  void SimpleWebContentsDelegate::Reload()
+  {
+    current_web_contents_->GetController().Reload(false);
+    current_web_contents_->GetView()->Focus();
+  }
+
+  void SimpleWebContentsDelegate::Stop()
+  {
+    current_web_contents_->Stop();
+    current_web_contents_->GetView()->Focus();
+  }
+
 }  // namespace content

@@ -36,4 +36,5 @@ public:
   LRESULT OnEdit(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
   CContainedWindow m_edit;
+  HWND m_main_frame;
 };

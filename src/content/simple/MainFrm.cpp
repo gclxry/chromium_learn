@@ -126,6 +126,7 @@ void CMainFrame::IniUI()
   RECT rcView = rcClient;
 
   m_addressbar = new CAddressBar;
+  m_addressbar->m_main_frame = m_hWnd;
   m_addressbar->Create(m_hWnd);
 
   m_tab = new CSimpleTab;
@@ -255,5 +256,29 @@ LRESULT CMainFrame::OnSetUrl(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
 {
   // ÉèÖÃµØÖ·À¸
   m_addressbar->SetUrl(m_web_contents_delegate->GetURL().c_str());
+  return 0;
+}
+
+LRESULT CMainFrame::OnBack(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  m_web_contents_delegate->Back();
+  return 0;
+}
+
+LRESULT CMainFrame::OnForward(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  m_web_contents_delegate->Forward();
+  return 0;
+}
+
+LRESULT CMainFrame::OnReload(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  m_web_contents_delegate->Reload();
+  return 0;
+}
+
+LRESULT CMainFrame::OnStop(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  m_web_contents_delegate->Stop();
   return 0;
 }

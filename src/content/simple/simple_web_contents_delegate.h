@@ -59,6 +59,12 @@ namespace content {
     const string16 GetURL();
     const string16 GetTitle();
     TAB_INFO GetTabInfo(HWND hwnd);
+    void Back();
+    void Forward();
+    void Reload();
+    void Stop();
+
+
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate

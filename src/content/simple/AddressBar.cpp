@@ -22,25 +22,25 @@ LRESULT CAddressBar::OnCloseCmd(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/
 
 LRESULT CAddressBar::OnBack(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-  MessageBox(L"OnBack");
+  ::PostMessage(m_main_frame, WM_USER_BACK, 0, 0);
   return 0;
 }
 
 LRESULT CAddressBar::OnForward(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-  MessageBox(L"OnForward");
+  ::PostMessage(m_main_frame, WM_USER_FORWARD, 0, 0);
   return 0;
 }
 
 LRESULT CAddressBar::OnReload(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-  MessageBox(L"OnReload");
+  ::PostMessage(m_main_frame, WM_USER_RELOAD, 0, 0);
   return 0;
 }
 
 LRESULT CAddressBar::OnStop(WORD /*wNotifyCode*/, WORD wID, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
 {
-  MessageBox(L"OnStop");
+  ::PostMessage(m_main_frame, WM_USER_STOP, 0, 0);
   return 0;
 }
 
