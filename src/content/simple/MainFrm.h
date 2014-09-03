@@ -40,6 +40,7 @@ public:
     MESSAGE_HANDLER(WM_USER_SWITCH_TAB, OnSwitchTab)
     MESSAGE_HANDLER(WM_USER_ADD_TAB, OnAddTab)
     MESSAGE_HANDLER(WM_USER_CLOSE_TAB, OnCloseTab)
+    MESSAGE_HANDLER(WM_USER_UPDATE_TAB, OnUpdateTab)
     MSG_WM_SIZE(OnSize)
 		COMMAND_ID_HANDLER(ID_VIEW_TOOLBAR, OnViewToolBar)
 		COMMAND_ID_HANDLER(ID_VIEW_STATUS_BAR, OnViewStatusBar)
@@ -64,6 +65,7 @@ public:
   LRESULT OnSwitchTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   LRESULT OnAddTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   LRESULT OnCloseTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+  LRESULT OnUpdateTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
   void OnSize(UINT nType, CSize size);
 
   void OpenHomePage();

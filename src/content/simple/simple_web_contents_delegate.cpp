@@ -79,6 +79,18 @@ namespace content {
         if (title->first) 
         {
           string16 text = title->first->GetTitle();
+
+          for (std::vector<TAB_INFO>::iterator iter = tab_info_.begin(); iter != tab_info_.end(); ++iter)
+          {
+            if (wen_contents == iter->web_contents)
+            {
+              iter->title = text;
+              PostMessage(main_window_,WM_USER_UPDATE_TAB, (WPARAM)iter->web_contents, (LPARAM)iter->hwnd);
+              break;
+            }
+          }
+
+
           int ia = 0;
           ia++;
           //PlatformSetTitle(text);
@@ -200,5 +212,20 @@ namespace content {
       title = current_web_contents_->GetTitle();
     }
     return title;
+  }
+
+  TAB_INFO SimpleWebContentsDelegate::GetTabInfo(HWND hwnd)
+  {
+    TAB_INFO ti;
+    for (std::vector<TAB_INFO>::iterator iter = tab_info_.begin(); iter != tab_info_.end(); ++iter)
+    {
+      if (hwnd == iter->hwnd)
+      {
+        
+        ti = *iter;
+        break;
+      }
+    }
+    return ti;
   }
 }  // namespace content

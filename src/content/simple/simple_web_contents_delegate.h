@@ -30,6 +30,7 @@ namespace content {
   struct TAB_INFO
   {
     WebContents* web_contents;
+    string16 title;
     HWND hwnd;
   };
 
@@ -57,6 +58,7 @@ namespace content {
     void CloseTab(LPARAM lParam);
     const string16 GetURL();
     const string16 GetTitle();
+    TAB_INFO GetTabInfo(HWND hwnd);
 
     // WebContentsDelegate
     // 浏览器内部自己处理的跳转，创建一个新的SimpleWebContentsDelegate

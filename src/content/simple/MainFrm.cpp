@@ -224,12 +224,6 @@ LRESULT CMainFrame::OnSwitchTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
   // 设置地址栏
   m_addressbar->SetUrl(m_web_contents_delegate->GetURL().c_str());
 
-  CButton button;
-  button.Attach((HWND)wParam);
-  // 设置tab标题
-  CString title = m_web_contents_delegate->GetTitle().c_str();
-  button.SetWindowText(title);
-
   // 设置tab选中
   return 0;
 }
@@ -244,5 +238,16 @@ LRESULT CMainFrame::OnCloseTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bH
 {
 
   m_web_contents_delegate->CloseTab(wParam);
+  return 0;
+}
+
+LRESULT CMainFrame::OnUpdateTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+  HWND hwnd = (HWND)lParam;
+  content::TAB_INFO ti = m_web_contents_delegate->GetTabInfo(hwnd);
+  CButton button;
+  button.Attach(hwnd);
+  // 设置tab标题
+  button.SetWindowText(ti.title.c_str());
   return 0;
 }
