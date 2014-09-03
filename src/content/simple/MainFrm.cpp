@@ -204,6 +204,7 @@ LRESULT CMainFrame::OnCreateTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 {
   HWND hwnd = m_tab->CreateNewTab();
   m_web_contents_delegate->MakePair(hwnd, lParam);
+  m_tab->SetCheck(hwnd);
 
   //// ÉèÖÃµØÖ·À¸
   //m_addressbar->SetUrl(m_web_contents_delegate->GetURL().c_str());

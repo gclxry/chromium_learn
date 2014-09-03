@@ -30,6 +30,7 @@ public:
 
   void Layout();
   HWND CreateNewTab();
+  void SetCheck(HWND hwnd);
 
   int m_index;
   vector<CButton*> m_buttons;

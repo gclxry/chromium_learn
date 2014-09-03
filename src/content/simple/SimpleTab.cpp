@@ -79,6 +79,21 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
       }
     }
   }
-
   return TRUE;
+}
+
+void CSimpleTab::SetCheck(HWND hwnd)
+{
+  for (vector<CButton*>::iterator iter = m_buttons.begin(); iter != m_buttons.end(); ++iter)
+  {
+    CButton* btn = *iter;
+    if (hwnd == btn->m_hWnd)
+    {
+      btn->SetCheck(TRUE);
+    }
+    else
+    {
+      btn->SetCheck(FALSE);
+    }
+  }
 }
