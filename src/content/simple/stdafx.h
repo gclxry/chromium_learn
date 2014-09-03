@@ -31,6 +31,7 @@ extern CAppModule _Module;
 #define WM_USER_ADD_TAB (WM_USER+4)
 #define WM_USER_CLOSE_TAB (WM_USER+5)
 #define WM_USER_UPDATE_TAB (WM_USER+6)
+#define WM_USER_SET_URL (WM_USER+7)
 
 #if defined _M_IX86
   #pragma comment(linker, "/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")

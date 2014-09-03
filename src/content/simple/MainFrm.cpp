@@ -182,8 +182,6 @@ void CMainFrame::OpenHomePage()
   m_web_contents_delegate->SetHWND(m_hWnd, m_clientview->m_hWnd);
   m_web_contents_delegate->window_ = m_clientview->m_hWnd;
   m_web_contents_delegate->Initialize((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
-  m_addressbar->SetUrl(L"http://www.baidu.com/");
-  
 }
 
 LRESULT CMainFrame::OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
@@ -196,7 +194,6 @@ LRESULT CMainFrame::OnReturn(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/
   
   string16 sUrl= url;
   m_web_contents_delegate->LoadURL(GURL(sUrl));
-  m_addressbar->SetUrl(sUrl.c_str());
   return 0;
 }
 
@@ -232,6 +229,7 @@ LRESULT CMainFrame::OnSwitchTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
 LRESULT CMainFrame::OnAddTab(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
 {
   m_web_contents_delegate->AddTab();
+  m_addressbar->SetUrl(L"");
   return 0;
 }
 
@@ -250,5 +248,12 @@ LRESULT CMainFrame::OnUpdateTab(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& b
   button.Attach(hwnd);
   // 设置tab标题
   button.SetWindowText(ti.title.c_str());
+  return 0;
+}
+
+LRESULT CMainFrame::OnSetUrl(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+{
+  // 设置地址栏
+  m_addressbar->SetUrl(m_web_contents_delegate->GetURL().c_str());
   return 0;
 }

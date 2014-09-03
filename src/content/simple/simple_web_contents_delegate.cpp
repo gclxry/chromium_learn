@@ -133,8 +133,8 @@ namespace content {
   }
 
   void SimpleWebContentsDelegate::DidNavigateMainFramePostCommit(WebContents* web_contents) {
-    GURL url = current_web_contents_->GetURL();
-    // PostMessage(main_window_,WM_USER_CREATE_TAB, 0, 0);
+    //GURL url = current_web_contents_->GetURL();
+    PostMessage(main_window_,WM_USER_SET_URL, 0, 0);
     int ia = 0;
     ia++;
   }
@@ -146,6 +146,8 @@ namespace content {
     ti.hwnd = button_hwnd;
     ti.web_contents = web_contents;
     tab_info_.push_back(ti);
+
+    current_web_contents_ = web_contents;
 
     registrar_.Add(this, NOTIFICATION_WEB_CONTENTS_TITLE_UPDATED,
       Source<WebContents>(web_contents));
