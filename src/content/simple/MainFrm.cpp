@@ -20,6 +20,7 @@ CMainFrame::CMainFrame()
   m_addressbar = NULL;
   m_clientview = NULL;
   m_tab = NULL;
+  m_web_contents_delegate = NULL;
 }
 
 BOOL CMainFrame::PreTranslateMessage(MSG* pMsg)
@@ -174,6 +175,11 @@ void CMainFrame::LayoutUI(int x, int y)
     rcClientView.right = x;
     rcClientView.bottom = y;
     m_clientview->MoveWindow(&rcClientView);
+
+    if (m_web_contents_delegate)
+    {
+      m_web_contents_delegate->ResizeView(rcClientView);
+    }
   }
 }
 

@@ -65,6 +65,8 @@ namespace content {
     void Forward();
     void Reload();
     void Stop();
+    void ResizeView(RECT rc);
+    RECT GetClietnSize();
 
 
 

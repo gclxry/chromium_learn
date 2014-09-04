@@ -57,15 +57,17 @@ namespace content {
       if (!initial_size.IsEmpty())
         create_params.initial_size = initial_size;
       else
-        create_params.initial_size = gfx::Size(kTestWindowWidth, kTestWindowHeight);
+      {
+        RECT rc = GetClietnSize();
+        create_params.initial_size = gfx::Size(rc.right - rc.left, rc.bottom - rc.top);
+      }
+        
       WebContents* web_contents = WebContents::Create(create_params);
       current_web_contents_ = web_contents;
       current_web_contents_->SetDelegate(this);
       SetParent(current_web_contents_->GetView()->GetNativeView(), window_);
       PostMessage(main_window_,WM_USER_CREATE_TAB, 0, (LPARAM)current_web_contents_);
 
-      
-      
       if (!url.is_empty())
       {
         LoadURL(url);
@@ -262,4 +264,17 @@ namespace content {
     current_web_contents_->GetView()->Focus();
   }
 
+  void SimpleWebContentsDelegate::ResizeView(RECT rc)
+  {
+    MoveWindow(current_web_contents_->GetView()->GetNativeView(), rc.left, 0, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+  }
+
+  RECT SimpleWebContentsDelegate::GetClietnSize()
+  {
+    CWindow client;
+    client.Attach(window_);
+    RECT rc;
+    client.GetWindowRect(&rc);
+    return rc;
+  }
 }  // namespace content
