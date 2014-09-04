@@ -34,7 +34,7 @@ HWND CSimpleTab::CreateNewTab()
   CButton* btn = new CButton;
   m_buttons.push_back(btn);
   RECT rc = {0,0, 0, 0};
-  btn->Create(m_hWnd, rc, L"新建标签页", WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | BS_NOTIFY | BS_PUSHLIKE, 0, ++m_index);
+  btn->Create(m_hWnd, rc, L"新建标签页", WS_CHILD | WS_VISIBLE | BS_LEFT | BS_AUTORADIOBUTTON | BS_NOTIFY | BS_PUSHLIKE, 0, ++m_index);
 
   Layout();
   return btn->m_hWnd;
@@ -73,6 +73,7 @@ LRESULT CSimpleTab::OnButton(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHa
       {
         btn->DestroyWindow();
         m_buttons.erase(iter);
+        delete btn;
         Layout();
         ::PostMessage(m_main_frame, WM_USER_CLOSE_TAB, (WPARAM)hWndCtl, 0);
         return 0;

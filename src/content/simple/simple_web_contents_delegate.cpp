@@ -182,7 +182,9 @@ namespace content {
     {
       if (hwnd == iter->hwnd)
       {
+        TAB_INFO ti = *iter;
         tab_info_.erase(iter);
+        delete ti.web_contents;
         break;
       }
     }
