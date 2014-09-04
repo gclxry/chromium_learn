@@ -45,6 +45,11 @@ namespace content {
   SimpleWebContentsDelegate::~SimpleWebContentsDelegate() {
   }
 
+  void SimpleWebContentsDelegate::SetBrowserContext(BrowserContext* browser_context)
+  {
+    browser_context_ = browser_context;
+  }
+
   void SimpleWebContentsDelegate::Initialize(BrowserContext* browser_context,
     const GURL& url, SiteInstance* site_instance, int routing_id, const gfx::Size& initial_size) {
       WebContents::CreateParams create_params(browser_context, site_instance);
@@ -172,7 +177,7 @@ namespace content {
 
   void SimpleWebContentsDelegate::AddTab()
   {
-    Initialize(current_web_contents_->GetBrowserContext(), GURL(), NULL, MSG_ROUTING_NONE, gfx::Size());
+    Initialize(browser_context_, GURL(), NULL, MSG_ROUTING_NONE, gfx::Size());
   }
 
   void SimpleWebContentsDelegate::CloseTab(LPARAM lParam)

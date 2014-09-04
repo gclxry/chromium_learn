@@ -182,6 +182,7 @@ void CMainFrame::OpenHomePage()
   m_web_contents_delegate = new content::SimpleWebContentsDelegate();
   m_web_contents_delegate->SetHWND(m_hWnd, m_clientview->m_hWnd);
   m_web_contents_delegate->window_ = m_clientview->m_hWnd;
+  m_web_contents_delegate->SetBrowserContext((content::BrowserContext*)m_browser_main->browser_context_.get());
   m_web_contents_delegate->Initialize((content::BrowserContext*)m_browser_main->browser_context_.get(), GURL("http://www.baidu.com/"), NULL,MSG_ROUTING_NONE, gfx::Size());
 }
 

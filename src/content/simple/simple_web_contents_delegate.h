@@ -44,6 +44,8 @@ namespace content {
     // 现有WebContents中从地址栏中打开url
     void LoadURL(const GURL& url);
 
+    void SetBrowserContext(BrowserContext* browser_context);
+
     // Do one time initialization at application startup.
     void Initialize(BrowserContext* browser_context,
       const GURL& url,
@@ -92,6 +94,7 @@ namespace content {
     HWND main_window_;
     std::vector<TAB_INFO> tab_info_;
     WebContents* current_web_contents_;
+    BrowserContext* browser_context_;
 
     // Notification manager
     NotificationRegistrar registrar_;
